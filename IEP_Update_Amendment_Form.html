@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – IEP Update / Amendment Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;
+  --gold:#326E6A;--gold-lt:#ffffff;--gold-pale:rgba(50,110,106,.08);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e5ea;--text:#1a1d23;--muted:#6b7280;--teal-pale:rgba(50,110,106,.08);
+  --shadow:0 4px 24px rgba(50,110,106,.12);--shadow-lg:0 12px 48px rgba(50,110,106,.18);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;--red-bg:#fef2f2;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 0% 0%,rgba(50,110,106,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 100% 100%,rgba(255,255,255,.04) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* HEADER */
+header{background:var(--teal);border-bottom:4px solid var(--teal);padding:18px 32px;display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+.logo-badge{width:48px;height:48px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:15px;color:var(--teal);flex-shrink:0;box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.header-text p{color:var(--white);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.header-right{margin-left:auto}
+.badge-pill{background:rgba(255,255,255,.18);border:1px solid var(--teal);color:var(--white);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:20px}
+
+/* MAIN */
+main{max-width:680px;margin:36px auto 60px;padding:0 20px;position:relative;z-index:1}
+
+/* FORM CARD */
+.form-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.form-card-header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);padding:26px 30px;border-bottom:3px solid var(--teal)}
+.form-card-header h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:21px;margin-bottom:5px}
+.form-card-header p{color:rgba(255,255,255,.6);font-size:13px;line-height:1.5}
+.chip-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:var(--white);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:12px}
+
+/* FORM BODY */
+.form-body{padding:28px 30px}
+.req-legend{font-size:11px;color:var(--muted);margin-bottom:18px}
+.req-legend span{color:var(--teal);font-weight:700}
+
+/* SECTION */
+.section{margin-bottom:26px}
+.section-title{font-family:'Libre Baskerville',serif;font-size:13px;color:var(--teal);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px}
+.s-icon{width:26px;height:26px;border-radius:6px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.two-col{grid-template-columns:1fr}}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:520px){.three-col{grid-template-columns:1fr}}
+
+/* FIELD */
+.field-row{margin-bottom:14px}
+.field-label{display:block;font-size:12px;font-weight:700;color:var(--teal);margin-bottom:5px;line-height:1.4}
+.field-label .req{color:var(--teal);margin-left:2px}
+.field-hint{font-size:10px;font-weight:400;color:var(--muted);margin-left:3px}
+
+.text-input,.select-input,.textarea-input{width:100%;border:2px solid var(--gray);border-radius:8px;padding:10px 13px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
+.text-input:focus,.select-input:focus,.textarea-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(255,255,255,.13)}
+.text-input::placeholder,.textarea-input::placeholder{color:#bbb}
+.textarea-input{resize:vertical;min-height:72px}
+.select-wrap{position:relative}
+.select-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:14px;pointer-events:none}
+.select-input{padding-right:34px;cursor:pointer}
+
+/* AMENDMENT TYPE CARDS */
+.amend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;margin-bottom:6px}
+.amend-card{border:2px solid var(--gray);border-radius:9px;padding:12px 14px;cursor:pointer;transition:all .18s;background:var(--offwhite);display:flex;align-items:flex-start;gap:9px;user-select:none}
+.amend-card:hover{border-color:var(--teal);background:#fff}
+.amend-card.selected{border-color:var(--teal);background:var(--teal-pale)}
+.amend-card input[type=checkbox]{display:none}
+.amend-dot{width:16px;height:16px;border-radius:4px;border:2px solid var(--gray-mid,#c8cdd6);flex-shrink:0;margin-top:1px;transition:all .18s;display:flex;align-items:center;justify-content:center;font-size:10px}
+.amend-card.selected .amend-dot{background:var(--teal);border-color:var(--teal);color:var(--teal)}
+.amend-label{font-size:12px;font-weight:700;color:var(--teal);line-height:1.3}
+.amend-sub{font-size:10px;color:var(--muted);margin-top:1px}
+
+/* BEFORE/AFTER */
+.change-row{background:var(--offwhite);border:1px solid var(--gray);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.change-row-title{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.change-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.change-pair{grid-template-columns:1fr}}
+.before-label{font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px}
+.after-label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px}
+
+/* REASON */
+.reason-options{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.reason-btn{border:2px solid var(--gray);border-radius:20px;padding:6px 14px;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;background:var(--offwhite);transition:all .18s;user-select:none}
+.reason-btn:hover{border-color:var(--teal);color:var(--teal)}
+.reason-btn.selected{border-color:var(--teal);background:var(--teal-pale);color:var(--teal)}
+
+/* SIGNATURE AREA */
+.sig-area{background:var(--offwhite);border:2px dashed var(--gray);border-radius:10px;padding:16px;text-align:center;color:var(--muted);font-size:12px;margin-top:6px}
+.sig-area strong{display:block;color:var(--teal);font-size:13px;margin-bottom:3px}
+
+/* FIELD ERROR */
+.field-error{font-size:11px;font-weight:700;color:var(--red);margin-top:4px;display:none}
+.field-error.show{display:block}
+
+/* SUBMIT AREA */
+.submit-area{padding:20px 30px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.submit-note{font-size:11px;color:var(--muted);line-height:1.5;max-width:320px}
+.submit-note strong{color:var(--teal)}
+.submit-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:13px 32px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(50,110,106,.22)}
+.submit-btn:hover{background:var(--teal-light);transform:translateY(-1px);box-shadow:0 6px 20px rgba(50,110,106,.28)}
+.submit-btn:active{transform:translateY(0)}
+
+/* SUCCESS */
+#successMsg{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:28px;text-align:center;margin:20px 30px 30px;animation:fadeUp .4s ease}
+#successMsg .si{font-size:34px;margin-bottom:10px}
+#successMsg h3{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--green);margin-bottom:6px}
+#successMsg p{font-size:13px;color:var(--muted)}
+
+/* DIVIDER */
+hr.divider{border:none;border-top:1px solid var(--gray);margin:20px 0}
+
+/* ── PRINT STYLES ── */
+@media print {
+  body { background: #fff !important; }
+  header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .form-card { box-shadow: none !important; border-radius: 0 !important; }
+  .submit-area, .print-hint, #successMsg .print-actions { display: none !important; }
+  .print-filename-banner { display: block !important; }
+  #lockScreen { display: none !important; }
+}
+.print-hint {
+  background: var(--teal-pale);
+  border: 1px solid rgba(50,110,106,.2);
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 12px;
+  color: var(--teal-mid);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.print-hint strong { color: var(--teal); }
+.print-filename-banner {
+  display: none;
+  background: var(--teal);
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+.ssn-note {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight: 400;
+}
+/* success print button */
+#successMsg .print-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#successMsg .save-pdf-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#successMsg .save-pdf-btn:hover { opacity: .9; }
+#successMsg .filing-instructions {
+  margin-top: 16px;
+  background: var(--offwhite);
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: left;
+}
+#successMsg .filing-instructions strong { color: var(--teal); }
+#successMsg .filename-display {
+  font-family: monospace;
+  background: var(--teal);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 6px 0;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">THLP</div>
+  <div class="header-text">
+    <h1>The Houston Launch Pad</h1>
+    <p>HVRP Document &amp; Forms Center</p>
+  </div>
+  <div class="header-right">
+    <span class="badge-pill">HVRP Program</span>
+  </div>
+</header>
+
+<main>
+  <div class="form-card">
+
+    <!-- HEADER -->
+    <div class="form-card-header">
+      <h2>IEP Update / Amendment</h2>
+      <p>Individual Employment Plan — Modification Form<br/>
+         Use this form to document changes to an existing IEP. All amendments must be reviewed and signed by the case manager and participant.</p>
+      <div class="chip-row">
+        <span class="chip">Grant #23560HV000039</span>
+        <span class="chip">DOL-VETS</span>
+        <span class="chip">IEP Amendment</span>
+        <span class="chip">Confidential</span>
+      </div>
+    </div>
+
+    <!-- FORM BODY -->
+    <div class="form-body" id="formBody">
+      <div class="req-legend"><span>*</span> Required field</div>
+
+      <!-- ── SECTION 1: PARTICIPANT INFO ── -->
+      <div class="section">
+        <div class="section-title"><div class="s-icon">👤</div> Participant Information</div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Participant Name<span class="req">*</span></label>
+            <input type="text" class="text-input" id="partName" placeholder="Last, First Middle"/>
+            <div class="field-error" id="err-partName">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Veteran ID / Case #<span class="req">*</span></label>
+            <input type="text" class="text-input" id="vetId" placeholder="e.g. VET-0041 or 4-digit ID"/>
+            <div class="field-error" id="err-vetId">Required.</div>
+          </div>
+        <div class="field-row">
+          <label class="field-label">Last 4 of SSN<span class="req">*</span>
+            <span class="ssn-note">Used to match DocuShare case folder</span>
+          </label>
+          <input type="text" class="text-input" id="ssn4"
+                 placeholder="e.g. 4567"
+                 maxlength="4"
+                 pattern="[0-9]{4}"
+                 inputmode="numeric"/>
+        </div>
+        </div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Case Manager<span class="req">*</span></label>
+            <div class="select-wrap">
+              <select class="select-input" id="caseManager">
+                <option value="">— Select —</option>
+                <option>Deirdre Gilbert</option>
+                <option>Renee Milo</option>
+                <option>Brandi Nicholson</option>
+                <option>Carl Poole</option>
+              </select>
+            </div>
+            <div class="field-error" id="err-caseManager">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Amendment Date<span class="req">*</span></label>
+            <input type="date" class="text-input" id="amendDate"/>
+            <div class="field-error" id="err-amendDate">Required.</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Original IEP Date<span class="req">*</span></label>
+            <input type="date" class="text-input" id="originalIepDate"/>
+            <div class="field-error" id="err-originalIepDate">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Amendment #<span class="field-hint">(e.g. 1st, 2nd)</span></label>
+            <div class="select-wrap">
+              <select class="select-input" id="amendNum">
+                <option value="">— Select —</option>
+                <option>1st Amendment</option>
+                <option>2nd Amendment</option>
+                <option>3rd Amendment</option>
+                <option>4th Amendment</option>
+                <option>5th Amendment or more</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: AMENDMENT TYPE ── -->
+      <div class="section">
+        <div class="section-title"><div class="s-icon">✏️</div> What Is Being Amended?<span style="color:var(--teal);margin-left:4px">*</span></div>
+        <div class="amend-grid" id="amendGrid">
+          <div class="amend-card" onclick="toggleAmend(this,'goal')">
+            <div class="amend-dot" id="dot-goal"></div>
+            <div><div class="amend-label">Employment Goal</div><div class="amend-sub">Target job title or industry</div></div>
+          </div>
+          <div class="amend-card" onclick="toggleAmend(this,'timeline')">
+            <div class="amend-dot" id="dot-timeline"></div>
+            <div><div class="amend-label">Timeline / Target Date</div><div class="amend-sub">Expected employment date</div></div>
+          </div>
+          <div class="amend-card" onclick="toggleAmend(this,'barriers')">
+            <div class="amend-dot" id="dot-barriers"></div>
+            <div><div class="amend-label">Barriers Identified</div><div class="amend-sub">New or resolved barriers</div></div>
+          </div>
+          <div class="amend-card" onclick="toggleAmend(this,'services')">
+            <div class="amend-dot" id="dot-services"></div>
+            <div><div class="amend-label">Supportive Services</div><div class="amend-sub">Added or removed services</div></div>
+          </div>
+          <div class="amend-card" onclick="toggleAmend(this,'training')">
+            <div class="amend-dot" id="dot-training"></div>
+            <div><div class="amend-label">Training / Education</div><div class="amend-sub">Certifications, courses</div></div>
+          </div>
+          <div class="amend-card" onclick="toggleAmend(this,'other')">
+            <div class="amend-dot" id="dot-other"></div>
+            <div><div class="amend-label">Other</div><div class="amend-sub">Specify below</div></div>
+          </div>
+        </div>
+        <div class="field-error" id="err-amend">Please select at least one area being amended.</div>
+      </div>
+
+      <!-- ── SECTION 3: CHANGE DETAILS ── -->
+      <div class="section">
+        <div class="section-title"><div class="s-icon">🔄</div> Change Details</div>
+
+        <div class="change-row">
+          <div class="change-row-title">📌 Employment Goal</div>
+          <div class="change-pair">
+            <div>
+              <div class="before-label">❌ Previous Goal</div>
+              <input type="text" class="text-input" id="goalBefore" placeholder="Previous employment goal..."/>
+            </div>
+            <div>
+              <div class="after-label">✅ Updated Goal</div>
+              <input type="text" class="text-input" id="goalAfter" placeholder="New employment goal..."/>
+            </div>
+          </div>
+        </div>
+
+        <div class="change-row">
+          <div class="change-row-title">📅 Target Employment Date</div>
+          <div class="change-pair">
+            <div>
+              <div class="before-label">❌ Previous Date</div>
+              <input type="date" class="text-input" id="dateBefore"/>
+            </div>
+            <div>
+              <div class="after-label">✅ New Target Date</div>
+              <input type="date" class="text-input" id="dateAfter"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row" style="margin-top:14px">
+          <label class="field-label">Description of All Changes<span class="req">*</span><span class="field-hint">— Describe what is changing and why</span></label>
+          <textarea class="textarea-input" id="changeDesc" placeholder="Provide a clear narrative of all amendments being made to the IEP, including what changed and the reason for each change..."></textarea>
+          <div class="field-error" id="err-changeDesc">Required.</div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 4: REASON FOR AMENDMENT ── -->
+      <div class="section">
+        <div class="section-title"><div class="s-icon">📋</div> Reason for Amendment<span style="color:var(--teal);margin-left:4px">*</span></div>
+        <div class="reason-options" id="reasonOptions">
+          <div class="reason-btn" onclick="selectReason(this,'Participant request')">Participant Request</div>
+          <div class="reason-btn" onclick="selectReason(this,'Change in employment market')">Employment Market Change</div>
+          <div class="reason-btn" onclick="selectReason(this,'New barrier identified')">New Barrier Identified</div>
+          <div class="reason-btn" onclick="selectReason(this,'Barrier resolved')">Barrier Resolved</div>
+          <div class="reason-btn" onclick="selectReason(this,'Program requirement')">Program Requirement</div>
+          <div class="reason-btn" onclick="selectReason(this,'Case manager recommendation')">CM Recommendation</div>
+          <div class="reason-btn" onclick="selectReason(this,'Other')">Other</div>
+        </div>
+        <input type="hidden" id="reasonValue"/>
+        <div class="field-error" id="err-reason">Please select a reason.</div>
+        <div id="reasonOtherWrap" style="display:none;margin-top:8px">
+          <input type="text" class="text-input" id="reasonOther" placeholder="Describe reason for amendment..."/>
+        </div>
+      </div>
+
+      <!-- ── SECTION 5: STAFF USE ── -->
+      <div class="section">
+        <div class="section-title"><div class="s-icon">📝</div> Staff Use Only</div>
+        <div class="field-row">
+          <label class="field-label">Supervisor Review Notes <span class="field-hint">(optional)</span></label>
+          <textarea class="textarea-input" id="supervisorNotes" placeholder="Supervisor comments or approval notes..."></textarea>
+        </div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Participant Signature Date</label>
+            <input type="date" class="text-input" id="partSigDate"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Case Manager Signature Date</label>
+            <input type="date" class="text-input" id="cmSigDate"/>
+          </div>
+        </div>
+        <div class="sig-area">
+          <strong>Signatures Required</strong>
+          This form must be signed by both the participant and case manager before filing. Print and obtain physical signatures or use DocuShare Flex e-signature workflow.
+        </div>
+      </div>
+
+    </div><!-- end form-body -->
+
+    <!-- SUCCESS -->
+      <div class="print-filename-banner" id="filenameBanner"></div>
+  <div id="successMsg">
+      <div class="si">✅</div>
+      <h3>IEP Amendment Submitted</h3>
+      <p>The amendment has been recorded. Please print this form, obtain required signatures, and file in the participant's case folder in DocuShare Flex.</p>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-area" id="submitArea">
+      <div class="submit-note">
+        <strong>Note:</strong> This amendment modifies an existing IEP on file. Both original and amended IEPs must be retained in the participant's case file per 2 CFR Part 200 recordkeeping requirements.
+      </div>
+      <button type="button" class="submit-btn" onclick="submitForm()">
+        Submit Amendment &#10148;
+      </button>
+    </div>
+
+  </div><!-- end form-card -->
+</main>
+
+<script>
+// ── Amendment checkboxes ──
+const selectedAmends = new Set();
+function toggleAmend(card, key){
+  card.classList.toggle('selected');
+  const dot = document.getElementById('dot-'+key);
+  if(card.classList.contains('selected')){
+    selectedAmends.add(key);
+    dot.textContent = '✓';
+  } else {
+    selectedAmends.delete(key);
+    dot.textContent = '';
+  }
+  document.getElementById('err-amend').classList.remove('show');
+}
+
+// ── Reason selection ──
+let selectedReason = '';
+function selectReason(btn, val){
+  document.querySelectorAll('.reason-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedReason = val;
+  document.getElementById('reasonValue').value = val;
+  document.getElementById('err-reason').classList.remove('show');
+  const ow = document.getElementById('reasonOtherWrap');
+  ow.style.display = val === 'Other' ? 'block' : 'none';
+}
+
+// ── Validation ──
+function validate(){
+  let valid = true;
+  const req = [
+    {id:'partName',   err:'err-partName'},
+    {id:'vetId',      err:'err-vetId'},
+    {id:'caseManager',err:'err-caseManager'},
+    {id:'amendDate',  err:'err-amendDate'},
+    {id:'originalIepDate', err:'err-originalIepDate'},
+    {id:'changeDesc', err:'err-changeDesc'},
+  ];
+  req.forEach(({id,err})=>{
+    const el = document.getElementById(id);
+    if(!el.value.trim()){
+      document.getElementById(err).classList.add('show');
+      valid = false;
+    } else {
+      document.getElementById(err).classList.remove('show');
+    }
+  });
+  if(selectedAmends.size === 0){
+    document.getElementById('err-amend').classList.add('show');
+    valid = false;
+  }
+  if(!selectedReason){
+    document.getElementById('err-reason').classList.add('show');
+    valid = false;
+  }
+  return valid;
+}
+
+// ── Submit ──
+function submitForm(){
+  if(!validate()){
+    const first = document.querySelector('.field-error.show');
+    if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  document.getElementById('formBody').style.display = 'none';
+  document.getElementById('submitArea').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Default dates ──
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('amendDate').value = today;
+document.getElementById('cmSigDate').value = today;
+
+// ══════════════════════════════════════════
+// AUTO-NAME PDF ON SUBMIT
+// ══════════════════════════════════════════
+function buildFileName(formType) {
+  // Try to get veteran name
+  const nameEl = document.getElementById('vetName') || document.getElementById('partName');
+  const idEl   = document.getElementById('vetId');
+  const ssnEl  = document.getElementById('ssn4');
+  const dateEl = document.getElementById('exitDate') || document.getElementById('followUpDate') ||
+                 document.getElementById('amendDate') || document.getElementById('referralDate') ||
+                 document.getElementById('letterDate') || document.getElementById('sessionDate') ||
+                 document.getElementById('periodStart');
+
+  let namePart = 'THLP';
+  if (nameEl && nameEl.value.trim()) {
+    // Format: LastFirst (reverse if "Last, First" format)
+    const raw = nameEl.value.trim();
+    const parts = raw.split(',');
+    if (parts.length >= 2) {
+      namePart = (parts[0].trim() + '_' + parts[1].trim().split(' ')[0]).replace(/\s+/g,'_');
+    } else {
+      namePart = raw.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+    }
+  }
+
+  let idPart = '';
+  if (idEl && idEl.value.trim()) idPart = '_' + idEl.value.trim().replace(/\s+/g,'');
+
+  let ssnPart = '';
+  if (ssnEl && ssnEl.value.trim()) ssnPart = '_SSN' + ssnEl.value.trim();
+
+  const today = new Date().toISOString().split('T')[0];
+  let datePart = '_' + today;
+  if (dateEl && dateEl.value) datePart = '_' + dateEl.value;
+
+  return namePart + idPart + ssnPart + '_' + formType + datePart + '.pdf';
+}
+
+function triggerPrint(formType) {
+  const fileName = buildFileName(formType);
+
+  // Show filename banner for print
+  const banner = document.getElementById('filenameBanner');
+  if (banner) {
+    banner.textContent = '📄 Save as: ' + fileName;
+    banner.style.display = 'block';
+  }
+
+  // Update success message filename display
+  const fnDisplay = document.getElementById('fnDisplay');
+  if (fnDisplay) fnDisplay.textContent = fileName;
+
+  // Update DocuShare filing path
+  const ssnEl = document.getElementById('ssn4');
+  const ssn4 = ssnEl ? ssnEl.value.trim() : '????';
+  const filingPath = document.getElementById('filingPath');
+  if (filingPath) {
+    filingPath.textContent = 'DocuShare Flex → Client Folder (last 4: ' + ssn4 + ') → ' + fileName;
+  }
+
+  // Set document title to filename so browser uses it as default save name
+  document.title = fileName;
+
+  setTimeout(() => { window.print(); }, 300);
+}
+
+</script>
+</body>
+</html>

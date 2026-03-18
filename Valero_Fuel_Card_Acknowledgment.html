@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – Valero Fuel Card Acknowledgment</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;--teal-pale:rgba(50,110,106,.08);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e8e8;--text:#1a2424;--muted:#5a7070;
+  --shadow:0 4px 24px rgba(50,110,106,.13);--shadow-lg:0 12px 48px rgba(50,110,106,.18);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fca5a5;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 0% 0%,rgba(50,110,106,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* ── HEADER ── */
+header{background:var(--teal);border-bottom:4px solid rgba(255,255,255,.3);padding:18px 32px;display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+.logo-badge{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.header-text p{color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.header-right{margin-left:auto}
+.badge-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:20px}
+
+main{max-width:680px;margin:36px auto 60px;padding:0 20px;position:relative;z-index:1}
+
+/* ── FORM CARD ── */
+.form-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.form-card-header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);padding:26px 30px;border-bottom:3px solid rgba(255,255,255,.25)}
+.form-card-header h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:21px;margin-bottom:4px}
+.form-card-header .sub{font-family:'Libre Baskerville',serif;color:rgba(255,255,255,.8);font-size:13px;margin-bottom:6px}
+.form-card-header p{color:rgba(255,255,255,.65);font-size:12px;line-height:1.5}
+.chip-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:12px}
+
+/* ── PRINT HINT ── */
+.print-hint{background:var(--teal-pale);border:1px solid rgba(50,110,106,.2);border-radius:8px;padding:11px 16px;font-size:12px;color:var(--teal-mid);margin:20px 30px 0;display:flex;align-items:center;gap:8px;line-height:1.5}
+.print-hint strong{color:var(--teal)}
+
+.form-body{padding:28px 30px}
+.req-legend{font-size:11px;color:var(--muted);margin-bottom:18px}
+.req-legend span{color:var(--teal);font-weight:700}
+
+/* ── SECTION ── */
+.section{margin-bottom:26px}
+.section-title{font-family:'Libre Baskerville',serif;font-size:14px;color:var(--teal);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px}
+.section-num{background:var(--teal);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:'Source Sans 3',sans-serif}
+
+/* ── PARTICIPANT INFO GRID ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.info-grid{grid-template-columns:1fr}}
+.field-row{margin-bottom:14px}
+.field-label{display:block;font-size:12px;font-weight:700;color:var(--teal);margin-bottom:5px;line-height:1.4}
+.field-label .req{opacity:.7;margin-left:2px}
+.ssn-note{font-size:10px;color:var(--muted);margin-top:3px;font-weight:400;display:block}
+.text-input,.select-input{width:100%;border:2px solid var(--gray);border-radius:8px;padding:10px 13px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
+.text-input:focus,.select-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.12)}
+.text-input::placeholder{color:#bbb}
+.select-wrap{position:relative}
+.select-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:14px;pointer-events:none}
+.select-input{padding-right:34px;cursor:pointer}
+
+/* ── POLICY TEXT BLOCKS ── */
+.policy-block{background:var(--offwhite);border:1px solid var(--gray);border-radius:10px;padding:16px 18px;font-size:13px;color:var(--text);line-height:1.75}
+.policy-block p{margin-bottom:0}
+
+/* ── PROHIBITED LIST ── */
+.prohibited-box{background:var(--red-bg);border:1px solid var(--red-border);border-radius:10px;padding:16px 18px;margin-top:12px}
+.prohibited-box .pb-title{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.prohibited-list{list-style:none;padding:0}
+.prohibited-list li{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--red);margin-bottom:7px;line-height:1.5}
+.prohibited-list li:last-child{margin-bottom:0}
+.prohibited-list li::before{content:'✕';font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* ── AGREEMENT CHECKLIST ── */
+.agreement-list{list-style:none;padding:0}
+.agreement-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:2px solid var(--gray);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all .18s;background:var(--offwhite);user-select:none}
+.agreement-item:hover{border-color:var(--teal);background:#fff}
+.agreement-item.checked{border-color:var(--teal);background:var(--teal-pale)}
+.ag-box{width:18px;height:18px;border-radius:4px;border:2px solid #c8cdd6;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:all .18s}
+.agreement-item.checked .ag-box{background:var(--teal);border-color:var(--teal);color:#fff}
+.ag-text{font-size:12px;color:var(--text);line-height:1.6}
+.ag-text strong{color:var(--teal)}
+.ag-text u{text-decoration:underline}
+.check-all-note{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic}
+.field-error{font-size:11px;font-weight:700;color:var(--red);margin-top:4px;display:none}
+.field-error.show{display:block}
+
+/* ── SIGNATURE AREA ── */
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.sig-grid{grid-template-columns:1fr}}
+.sig-box{border:2px solid var(--gray);border-radius:10px;padding:14px;background:var(--offwhite)}
+.sig-box-title{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.sig-canvas-wrap{position:relative;background:#fff;border:1px solid var(--gray);border-radius:7px;overflow:hidden;margin-bottom:8px}
+canvas{display:block;width:100%;touch-action:none}
+.sig-clear{background:none;border:1px solid var(--gray);border-radius:5px;padding:4px 10px;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .18s}
+.sig-clear:hover{border-color:var(--teal);color:var(--teal)}
+.sig-placeholder{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:11px;color:#ccc;pointer-events:none;font-style:italic}
+
+/* ── COMPLIANCE FOOTER ── */
+.compliance-footer{background:var(--teal);color:rgba(255,255,255,.85);font-size:11px;text-align:center;padding:10px 20px;line-height:1.6}
+.compliance-footer strong{color:#fff}
+
+/* ── PRINT STYLES ── */
+@media print{
+  body{background:#fff!important}
+  header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .form-card{box-shadow:none!important;border-radius:0!important}
+  .submit-area,.print-hint{display:none!important}
+  .print-filename-banner{display:block!important}
+  .sig-clear{display:none!important}
+}
+.print-filename-banner{display:none;background:var(--teal);color:#fff;padding:8px 30px;font-size:12px;font-weight:700;font-family:'Source Sans 3',sans-serif}
+
+/* ── SUBMIT ── */
+.submit-area{padding:20px 30px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.submit-note{font-size:11px;color:var(--muted);line-height:1.5;max-width:320px}
+.submit-note strong{color:var(--teal)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.submit-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;box-shadow:0 4px 14px rgba(50,110,106,.3)}
+.submit-btn:hover{background:var(--teal-mid);transform:translateY(-1px)}
+.print-btn{background:var(--offwhite);color:var(--teal);border:2px solid var(--teal);border-radius:10px;padding:11px 20px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.print-btn:hover{background:var(--teal-pale)}
+
+/* ── SUCCESS ── */
+#successMsg{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:28px;text-align:center;margin:20px 30px 30px;animation:fadeUp .4s ease}
+#successMsg .si{font-size:34px;margin-bottom:10px}
+#successMsg h3{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--green);margin-bottom:6px}
+#successMsg p{font-size:13px;color:var(--muted)}
+#successMsg .print-actions{margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#successMsg .save-pdf-btn{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:11px 24px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+#successMsg .filing-instructions{margin-top:16px;background:var(--offwhite);border:1px solid var(--gray);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.7;text-align:left}
+#successMsg .filing-instructions strong{color:var(--teal)}
+#successMsg .filename-display{font-family:monospace;background:var(--teal);color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;display:inline-block;margin:6px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">THLP</div>
+  <div class="header-text">
+    <h1>The Houston Launch Pad</h1>
+    <p>HVRP Document &amp; Forms Center</p>
+  </div>
+  <div class="header-right">
+    <span class="badge-pill">HVRP Program</span>
+  </div>
+</header>
+
+<main>
+  <div class="form-card">
+
+    <!-- HEADER -->
+    <div class="form-card-header">
+      <div class="sub">The Houston Launch Pad &nbsp;|&nbsp; Homeless Veterans Reintegration Program (HVRP)</div>
+      <h2>⛽ Valero Fuel Card</h2>
+      <p>Recipient Acknowledgment &amp; Use Agreement — This form must be retained in the participant's file as supporting documentation for grant compliance purposes.</p>
+      <div class="chip-row">
+        <span class="chip">Grant #23560HV000039</span>
+        <span class="chip">DOL-VETS</span>
+        <span class="chip">2 CFR Part 200</span>
+        <span class="chip">Supportive Services</span>
+      </div>
+    </div>
+
+    <div class="print-hint">💡 <span>After submitting, you will be prompted to <strong>Save as PDF</strong>. The filename will be auto-filled with the veteran's name and last 4 SSN digits for DocuShare filing.</span></div>
+
+    <div class="form-body" id="formBody">
+      <div class="req-legend"><span>*</span> Required field</div>
+
+      <!-- PARTICIPANT INFO -->
+      <div class="section">
+        <div class="info-grid">
+          <div class="field-row">
+            <label class="field-label">Participant Name<span class="req">*</span></label>
+            <input type="text" class="text-input" id="vetName" placeholder="Last, First Middle"/>
+            <div class="field-error" id="err-vetName">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Case Manager<span class="req">*</span></label>
+            <div class="select-wrap">
+              <select class="select-input" id="caseManager">
+                <option value="">— Select —</option>
+                <option>Deirdre Gilbert</option>
+                <option>Renee Milo</option>
+                <option>Brandi Nicholson</option>
+                <option>Carl Poole</option>
+              </select>
+            </div>
+            <div class="field-error" id="err-caseManager">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Card Number (last 4 digits)<span class="req">*</span></label>
+            <input type="text" class="text-input" id="cardNum" placeholder="e.g. 4782" maxlength="4" inputmode="numeric"/>
+            <div class="field-error" id="err-cardNum">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Date Issued<span class="req">*</span></label>
+            <input type="date" class="text-input" id="dateIssued"/>
+            <div class="field-error" id="err-dateIssued">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Last 4 of SSN<span class="req">*</span>
+              <span class="ssn-note">Used to match DocuShare case folder</span>
+            </label>
+            <input type="text" class="text-input" id="ssn4" placeholder="e.g. 4567" maxlength="4" inputmode="numeric"/>
+            <div class="field-error" id="err-ssn4">Required — 4 digits.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 1: RECEIPT ACKNOWLEDGMENT -->
+      <div class="section">
+        <div class="section-title"><div class="section-num">1</div> Receipt Acknowledgment</div>
+        <div class="policy-block">
+          <p>I, the undersigned participant in The Houston Launch Pad's Homeless Veterans Reintegration Program (HVRP), hereby acknowledge that I have received a <strong>Valero Fuel Card</strong> as a supportive service to assist with employment-related transportation costs. I understand that this card is a program resource provided through federal grant funding administered by the U.S. Department of Labor — Veterans' Employment and Training Service (DOL-VETS).</p>
+        </div>
+      </div>
+
+      <!-- SECTION 2: AUTHORIZED USE -->
+      <div class="section">
+        <div class="section-title"><div class="section-num">2</div> Authorized Use</div>
+        <div class="policy-block">
+          <p>I understand and agree that this fuel card is <strong>restricted exclusively to the purchase of motor fuel (gasoline or diesel)</strong> at Valero-branded fuel stations. The card's restricted terms and applicable DOL guidelines strictly limit use to fuel purchases only.</p>
+        </div>
+        <div class="prohibited-box">
+          <div class="pb-title">🚫 The following purchases are STRICTLY PROHIBITED</div>
+          <ul class="prohibited-list">
+            <li>Alcohol or alcoholic beverages of any kind</li>
+            <li>Tobacco products, including cigarettes, cigars, and vaping products</li>
+            <li>Convenience store items (food, beverages, lottery tickets, or any non-fuel merchandise)</li>
+            <li>Cash advances or any transaction other than motor fuel</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SECTION 3: AGREEMENT -->
+      <div class="section">
+        <div class="section-title"><div class="section-num">3</div> Participant Agreement &amp; Consequences of Misuse</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Please read and check each item to confirm your understanding and agreement.</p>
+        <ul class="agreement-list" id="agreementList">
+          <li class="agreement-item" onclick="toggleAgreement(this,0)">
+            <div class="ag-box"></div>
+            <div class="ag-text">I will use this card <u><strong>only</strong></u> for authorized motor fuel purchases in connection with my employment and reintegration activities.</div>
+          </li>
+          <li class="agreement-item" onclick="toggleAgreement(this,1)">
+            <div class="ag-box"></div>
+            <div class="ag-text">I understand that misuse of this card constitutes a violation of federal grant conditions under <strong>2 CFR Part 200</strong> and DOL-VETS program requirements.</div>
+          </li>
+          <li class="agreement-item" onclick="toggleAgreement(this,2)">
+            <div class="ag-box"></div>
+            <div class="ag-text">I understand that misuse may result in <strong>immediate revocation</strong> of the card, repayment of unauthorized charges, removal from the HVRP program, and/or referral for further action.</div>
+          </li>
+          <li class="agreement-item" onclick="toggleAgreement(this,3)">
+            <div class="ag-box"></div>
+            <div class="ag-text">I will immediately report any <strong>lost, stolen, or compromised card</strong> to my Case Manager.</div>
+          </li>
+          <li class="agreement-item" onclick="toggleAgreement(this,4)">
+            <div class="ag-box"></div>
+            <div class="ag-text">I understand that transactions on this card may be reviewed as part of <strong>federal grant compliance monitoring and audit procedures</strong>.</div>
+          </li>
+        </ul>
+        <div class="check-all-note">All items must be acknowledged before submitting.</div>
+        <div class="field-error" id="err-agreement">Please acknowledge all agreement items above.</div>
+      </div>
+
+      <!-- SECTION 4: SIGNATURES -->
+      <div class="section">
+        <div class="section-title"><div class="section-num">4</div> Signatures</div>
+        <div class="sig-grid">
+
+          <!-- Participant Signature -->
+          <div class="sig-box">
+            <div class="sig-box-title">✍️ Participant Signature</div>
+            <div class="sig-canvas-wrap">
+              <canvas id="sigCanvas" height="100"></canvas>
+              <div class="sig-placeholder" id="sigPlaceholder1">Sign here</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sigCanvas','sigPlaceholder1')">Clear</button>
+              <span style="font-size:10px;color:var(--muted)" id="sigDate1"></span>
+            </div>
+            <div class="field-error" id="err-sig">Participant signature required.</div>
+          </div>
+
+          <!-- Staff Signature -->
+          <div class="sig-box">
+            <div class="sig-box-title">✍️ Program Staff / Case Manager (Witness)</div>
+            <div class="sig-canvas-wrap">
+              <canvas id="staffCanvas" height="100"></canvas>
+              <div class="sig-placeholder" id="sigPlaceholder2">Sign here</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+              <button type="button" class="sig-clear" onclick="clearCanvas('staffCanvas','sigPlaceholder2')">Clear</button>
+              <span style="font-size:10px;color:var(--muted)" id="sigDate2"></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- end form-body -->
+
+    <!-- PRINT FILENAME BANNER -->
+    <div class="print-filename-banner" id="filenameBanner"></div>
+
+    <!-- SUCCESS -->
+    <div id="successMsg">
+      <div class="si">✅</div>
+      <h3>Acknowledgment Form Submitted</h3>
+      <p>The Valero Fuel Card Acknowledgment has been recorded. Save as PDF and file in the veteran's DocuShare case folder.</p>
+      <div class="print-actions">
+        <button class="save-pdf-btn" onclick="triggerPrint('Valero_Fuel_Card_Acknowledgment')">💾 Save as PDF</button>
+      </div>
+      <div class="filing-instructions">
+        <strong>📁 DocuShare Filing Instructions:</strong><br/>
+        1. Click <strong>Save as PDF</strong> above<br/>
+        2. Change destination to <strong>"Save as PDF"</strong><br/>
+        3. Filename pre-filled as:<br/>
+        <span class="filename-display" id="fnDisplay">generating...</span><br/>
+        4. Save → upload to DocuShare Flex →<br/>
+        &nbsp;&nbsp;&nbsp;<strong id="filingPath">Veteran's case folder (by last 4 SSN)</strong>
+      </div>
+    </div>
+
+    <!-- COMPLIANCE FOOTER -->
+    <div class="compliance-footer">
+      <strong>The Houston Launch Pad</strong> — HVRP Grant &nbsp;|&nbsp; DOL-VETS &nbsp;|&nbsp; 2 CFR Part 200 &nbsp;|&nbsp; 2646 S Loop W, Suite 290, Houston, TX 77054
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-area" id="submitArea">
+      <div class="submit-note">
+        <strong>Retention Required:</strong> This form must be retained in the participant's file as supporting documentation for grant compliance and federal audit purposes.
+      </div>
+      <div class="btn-row">
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+        <button class="submit-btn" onclick="submitForm()">Submit &amp; Save &#10148;</button>
+      </div>
+    </div>
+
+  </div><!-- end form-card -->
+</main>
+
+<script>
+// ══════════════════════════════════════════
+// AGREEMENT CHECKBOXES
+// ══════════════════════════════════════════
+const agreementState = [false,false,false,false,false];
+function toggleAgreement(el, idx){
+  el.classList.toggle('checked');
+  el.querySelector('.ag-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  agreementState[idx] = el.classList.contains('checked');
+  document.getElementById('err-agreement').classList.remove('show');
+}
+
+// ══════════════════════════════════════════
+// SIGNATURE CANVASES
+// ══════════════════════════════════════════
+function initCanvas(id, placeholderId){
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let hasSig = false;
+
+  // Set actual pixel size
+  function resize(){
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = 100;
+    ctx.strokeStyle = '#1a2424';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+  resize();
+
+  function getPos(e){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    if(e.touches){
+      return {
+        x:(e.touches[0].clientX - rect.left)*scaleX,
+        y:(e.touches[0].clientY - rect.top)*scaleY
+      };
+    }
+    return {x:(e.clientX-rect.left)*scaleX,y:(e.clientY-rect.top)*scaleY};
+  }
+
+  function start(e){
+    e.preventDefault();
+    drawing=true;
+    hasSig=true;
+    const pos=getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x,pos.y);
+    document.getElementById(placeholderId).style.display='none';
+    // Set timestamp
+    const now=new Date();
+    const dateId = id==='sigCanvas'?'sigDate1':'sigDate2';
+    document.getElementById(dateId).textContent=now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }
+  function draw(e){
+    if(!drawing)return;
+    e.preventDefault();
+    const pos=getPos(e);
+    ctx.lineTo(pos.x,pos.y);
+    ctx.stroke();
+  }
+  function end(){drawing=false;}
+
+  canvas.addEventListener('mousedown',start);
+  canvas.addEventListener('mousemove',draw);
+  canvas.addEventListener('mouseup',end);
+  canvas.addEventListener('mouseleave',end);
+  canvas.addEventListener('touchstart',start,{passive:false});
+  canvas.addEventListener('touchmove',draw,{passive:false});
+  canvas.addEventListener('touchend',end);
+
+  canvas._hasSig = ()=>hasSig;
+  canvas._reset = ()=>{hasSig=false;};
+  window.addEventListener('resize',resize);
+}
+
+function clearCanvas(id,placeholderId){
+  const canvas=document.getElementById(id);
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  canvas._reset();
+  document.getElementById(placeholderId).style.display='block';
+  const dateId = id==='sigCanvas'?'sigDate1':'sigDate2';
+  document.getElementById(dateId).textContent='';
+}
+
+// ══════════════════════════════════════════
+// VALIDATION
+// ══════════════════════════════════════════
+function validate(){
+  let valid=true;
+  [['vetName','err-vetName'],['caseManager','err-caseManager'],
+   ['cardNum','err-cardNum'],['dateIssued','err-dateIssued'],['ssn4','err-ssn4']].forEach(([id,err])=>{
+    const el=document.getElementById(id);
+    if(!el.value.trim()){document.getElementById(err).classList.add('show');valid=false;}
+    else document.getElementById(err).classList.remove('show');
+  });
+  const ssn=document.getElementById('ssn4').value.trim();
+  if(ssn&&!/^\d{4}$/.test(ssn)){document.getElementById('err-ssn4').classList.add('show');valid=false;}
+  if(!agreementState.every(v=>v)){document.getElementById('err-agreement').classList.add('show');valid=false;}
+  const sigCanvas=document.getElementById('sigCanvas');
+  if(!sigCanvas._hasSig()){document.getElementById('err-sig').classList.add('show');valid=false;}
+  else document.getElementById('err-sig').classList.remove('show');
+  return valid;
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+function submitForm(){
+  if(!validate()){
+    document.querySelector('.field-error.show')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  document.getElementById('formBody').style.display='none';
+  document.getElementById('submitArea').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>triggerPrint('Valero_Fuel_Card_Acknowledgment'),500);
+}
+
+// ══════════════════════════════════════════
+// AUTO-NAME PDF
+// ══════════════════════════════════════════
+function buildFileName(formType){
+  const nameEl=document.getElementById('vetName');
+  const ssnEl=document.getElementById('ssn4');
+  let namePart='THLP';
+  if(nameEl&&nameEl.value.trim()){
+    const raw=nameEl.value.trim();
+    const parts=raw.split(',');
+    if(parts.length>=2){namePart=(parts[0].trim()+'_'+parts[1].trim().split(' ')[0]).replace(/\s+/g,'_');}
+    else{namePart=raw.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');}
+  }
+  const ssnPart=ssnEl&&ssnEl.value.trim()?'_SSN'+ssnEl.value.trim():'';
+  const today=new Date().toISOString().split('T')[0];
+  return namePart+ssnPart+'_'+formType+'_'+today+'.pdf';
+}
+
+function triggerPrint(formType){
+  const fileName=buildFileName(formType);
+  const banner=document.getElementById('filenameBanner');
+  if(banner){banner.textContent='📄 Save as: '+fileName;banner.style.display='block';}
+  const fnDisplay=document.getElementById('fnDisplay');
+  if(fnDisplay) fnDisplay.textContent=fileName;
+  const ssn4=document.getElementById('ssn4')?.value.trim()||'????';
+  const fp=document.getElementById('filingPath');
+  if(fp) fp.textContent='DocuShare Flex → Client Folder (last 4: '+ssn4+') → '+fileName;
+  document.title=fileName;
+  setTimeout(()=>window.print(),300);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+initCanvas('sigCanvas','sigPlaceholder1');
+initCanvas('staffCanvas','sigPlaceholder2');
+document.getElementById('dateIssued').value=new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>

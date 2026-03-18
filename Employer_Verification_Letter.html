@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – Employer Verification Letter</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;--teal-pale:rgba(50,110,106,.08);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e8e8;--text:#1a2424;--muted:#5a7070;
+  --shadow-lg:0 12px 48px rgba(50,110,106,.18);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;--red-bg:#fef2f2;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 0% 0%,rgba(50,110,106,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{background:var(--teal);border-bottom:4px solid rgba(255,255,255,.3);padding:18px 32px;display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+.logo-badge{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.header-text p{color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.header-right{margin-left:auto}
+.badge-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:20px}
+main{max-width:680px;margin:36px auto 60px;padding:0 20px;position:relative;z-index:1}
+.form-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.form-card-header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);padding:26px 30px;border-bottom:3px solid rgba(255,255,255,.25)}
+.form-card-header h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:21px;margin-bottom:5px}
+.form-card-header p{color:rgba(255,255,255,.65);font-size:13px;line-height:1.5}
+.chip-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:12px}
+.form-body{padding:28px 30px}
+.req-legend{font-size:11px;color:var(--muted);margin-bottom:18px}
+.req-legend span{color:var(--teal);font-weight:700}
+.section{margin-bottom:26px}
+.section-title{font-family:'Libre Baskerville',serif;font-size:13px;color:var(--teal);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px}
+.s-icon{width:26px;height:26px;border-radius:6px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.two-col{grid-template-columns:1fr}}
+.field-row{margin-bottom:14px}
+.field-label{display:block;font-size:12px;font-weight:700;color:var(--teal);margin-bottom:5px}
+.field-label .req{opacity:.7;margin-left:2px}
+.field-hint{font-size:10px;font-weight:400;color:var(--muted);margin-left:3px}
+.text-input,.select-input,.textarea-input{width:100%;border:2px solid var(--gray);border-radius:8px;padding:10px 13px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
+.text-input:focus,.select-input:focus,.textarea-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.12)}
+.text-input::placeholder,.textarea-input::placeholder{color:#bbb}
+.textarea-input{resize:vertical;min-height:72px}
+.select-wrap{position:relative}
+.select-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:14px;pointer-events:none}
+.select-input{padding-right:34px;cursor:pointer}
+/* LETTER PREVIEW */
+.letter-preview{background:var(--offwhite);border:2px solid var(--gray);border-radius:10px;padding:24px 26px;font-size:13px;line-height:1.8;color:var(--text);margin-top:6px}
+.letter-preview .lp-header{text-align:center;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid var(--teal)}
+.letter-preview .lp-org{font-family:'Libre Baskerville',serif;font-size:16px;font-weight:700;color:var(--teal)}
+.letter-preview .lp-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.letter-preview .lp-date{text-align:right;font-size:12px;color:var(--muted);margin-bottom:14px}
+.letter-preview .lp-body{font-size:13px;color:var(--text);line-height:1.8}
+.letter-preview .lp-body span.blank{background:rgba(50,110,106,.1);border-bottom:1px solid var(--teal);padding:0 4px;color:var(--teal);font-weight:600;border-radius:3px}
+.letter-preview .lp-sig{margin-top:20px;padding-top:16px;border-top:1px solid var(--gray)}
+.letter-preview .lp-sig-line{border-top:1px solid var(--text);width:200px;margin-top:32px;font-size:11px;color:var(--muted);padding-top:4px}
+.preview-note{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;font-style:italic}
+.sig-area{background:var(--offwhite);border:2px dashed var(--gray);border-radius:10px;padding:14px;text-align:center;color:var(--muted);font-size:12px;margin-top:6px}
+.sig-area strong{display:block;color:var(--teal);font-size:13px;margin-bottom:3px}
+.field-error{font-size:11px;font-weight:700;color:var(--red);margin-top:4px;display:none}
+.field-error.show{display:block}
+.submit-area{padding:20px 30px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.submit-note{font-size:11px;color:var(--muted);line-height:1.5;max-width:320px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.submit-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;box-shadow:0 4px 14px rgba(50,110,106,.3)}
+.submit-btn:hover{background:var(--teal-mid);transform:translateY(-1px)}
+.print-btn{background:var(--offwhite);color:var(--teal);border:2px solid var(--teal);border-radius:10px;padding:11px 24px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.print-btn:hover{background:var(--teal-pale)}
+#successMsg{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:28px;text-align:center;margin:20px 30px 30px}
+#successMsg .si{font-size:34px;margin-bottom:10px}
+#successMsg h3{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--green);margin-bottom:6px}
+#successMsg p{font-size:13px;color:var(--muted)}
+
+/* ── PRINT STYLES ── */
+@media print {
+  body { background: #fff !important; }
+  header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .form-card { box-shadow: none !important; border-radius: 0 !important; }
+  .submit-area, .print-hint, #successMsg .print-actions { display: none !important; }
+  .print-filename-banner { display: block !important; }
+  #lockScreen { display: none !important; }
+}
+.print-hint {
+  background: var(--teal-pale);
+  border: 1px solid rgba(50,110,106,.2);
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 12px;
+  color: var(--teal-mid);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.print-hint strong { color: var(--teal); }
+.print-filename-banner {
+  display: none;
+  background: var(--teal);
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+.ssn-note {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight: 400;
+}
+/* success print button */
+#successMsg .print-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#successMsg .save-pdf-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#successMsg .save-pdf-btn:hover { opacity: .9; }
+#successMsg .filing-instructions {
+  margin-top: 16px;
+  background: var(--offwhite);
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: left;
+}
+#successMsg .filing-instructions strong { color: var(--teal); }
+#successMsg .filename-display {
+  font-family: monospace;
+  background: var(--teal);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 6px 0;
+}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">THLP</div>
+  <div class="header-text"><h1>The Houston Launch Pad</h1><p>HVRP Document &amp; Forms Center</p></div>
+  <div class="header-right"><span class="badge-pill">HVRP Program</span></div>
+</header>
+<main>
+<div class="form-card">
+  <div class="form-card-header">
+    <h2>Employer Verification Letter</h2>
+    <p>Employment Request &amp; Verification — Confirms veteran's employment for HVRP program records</p>
+    <div class="chip-row"><span class="chip">Grant #23560HV000039</span><span class="chip">DOL-VETS</span><span class="chip">Verification</span></div>
+  </div>
+  <div class="form-body" id="formBody">
+    <div class="req-legend"><span>*</span> Required field</div>
+
+    <!-- SECTION 1: VETERAN INFO -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">🎖️</div> Veteran Information</div>
+      <div class="two-col">
+        <div class="field-row">
+          <label class="field-label">Veteran Name<span class="req">*</span></label>
+          <input type="text" class="text-input" id="vetName" placeholder="Last, First Middle" oninput="updatePreview()"/>
+          <div class="field-error" id="err-vetName">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Veteran ID / Case #<span class="req">*</span></label>
+          <input type="text" class="text-input" id="vetId" placeholder="4-digit ID" oninput="updatePreview()"/>
+          <div class="field-error" id="err-vetId">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Last 4 of SSN<span class="req">*</span>
+            <span class="ssn-note">Used to match DocuShare case folder</span>
+          </label>
+          <input type="text" class="text-input" id="ssn4"
+                 placeholder="e.g. 4567"
+                 maxlength="4"
+                 pattern="[0-9]{4}"
+                 inputmode="numeric"/>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-row">
+          <label class="field-label">Case Manager<span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="select-input" id="caseManager" onchange="updatePreview()">
+              <option value="">— Select —</option>
+              <option>Deirdre Gilbert</option><option>Renee Milo</option>
+              <option>Brandi Nicholson</option><option>Carl Poole</option>
+            </select>
+          </div>
+          <div class="field-error" id="err-caseManager">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Letter Date<span class="req">*</span></label>
+          <input type="date" class="text-input" id="letterDate" oninput="updatePreview()"/>
+          <div class="field-error" id="err-letterDate">Required.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: EMPLOYER INFO -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">🏢</div> Employer Information</div>
+      <div class="two-col">
+        <div class="field-row">
+          <label class="field-label">Employer / Company Name<span class="req">*</span></label>
+          <input type="text" class="text-input" id="employerName" placeholder="Company name" oninput="updatePreview()"/>
+          <div class="field-error" id="err-employerName">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Employer Contact Name<span class="req">*</span></label>
+          <input type="text" class="text-input" id="contactName" placeholder="HR manager or supervisor" oninput="updatePreview()"/>
+          <div class="field-error" id="err-contactName">Required.</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-row">
+          <label class="field-label">Job Title<span class="req">*</span></label>
+          <input type="text" class="text-input" id="jobTitle" placeholder="Position/job title" oninput="updatePreview()"/>
+          <div class="field-error" id="err-jobTitle">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Employment Start Date<span class="req">*</span></label>
+          <input type="date" class="text-input" id="empStart" oninput="updatePreview()"/>
+          <div class="field-error" id="err-empStart">Required.</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-row">
+          <label class="field-label">Hourly Wage / Salary</label>
+          <input type="text" class="text-input" id="wage" placeholder="e.g. $18.50/hr" oninput="updatePreview()"/>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Employment Type</label>
+          <div class="select-wrap">
+            <select class="select-input" id="empType" onchange="updatePreview()">
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Temporary">Temporary</option>
+              <option value="Contract">Contract</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: LETTER PREVIEW -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">✉️</div> Letter Preview</div>
+      <div class="letter-preview" id="letterPreview">
+        <div class="lp-header">
+          <div class="lp-org">The Houston Launch Pad</div>
+          <div class="lp-sub">2646 S Loop W, Suite 290, Houston, TX 77054 | HVRP Program | Grant #23560HV000039</div>
+        </div>
+        <div class="lp-date" id="prev-date">Date: —</div>
+        <div class="lp-body" id="prev-body">
+          Dear <span class="blank" id="prev-contact">[ Employer Contact ]</span>,<br/><br/>
+          This letter is to confirm that <span class="blank" id="prev-vetname">[ Veteran Name ]</span> is a participant in The Houston Launch Pad's Homeless Veterans Reintegration Program (HVRP), funded by the U.S. Department of Labor, Veterans' Employment and Training Service (DOL-VETS).<br/><br/>
+          We are pleased to verify that <span class="blank" id="prev-vetname2">[ Veteran Name ]</span> has been employed at <span class="blank" id="prev-employer">[ Employer Name ]</span> as a <span class="blank" id="prev-jobtitle">[ Job Title ]</span> (<span class="blank" id="prev-emptype">Full-time</span>) beginning <span class="blank" id="prev-empstart">[ Start Date ]</span>.<br/><br/>
+          This employment represents a successful program outcome. We thank <span class="blank" id="prev-employer2">[ Employer Name ]</span> for your commitment to hiring our nation's veterans.<br/><br/>
+          Please do not hesitate to contact our office if you require any additional information.
+        </div>
+        <div class="lp-sig">
+          Sincerely,<br/>
+          <div class="lp-sig-line" id="prev-cm">[ Case Manager Name ]<br/>Case Manager, HVRP Program</div>
+        </div>
+      </div>
+      <div class="preview-note">Fields update automatically as you type above.</div>
+    </div>
+
+    <div class="sig-area">
+      <strong>Print &amp; File Required</strong>
+      Print on THLP letterhead, obtain case manager signature, and file in veteran's DocuShare Flex case folder.
+    </div>
+  </div>
+    <div class="print-filename-banner" id="filenameBanner"></div>
+  <div id="successMsg"><div class="si">✅</div><h3>Verification Letter Generated</h3><p>Letter has been recorded. Print, sign, and file in veteran's DocuShare Flex case folder.</p></div>
+  <div class="submit-area" id="submitArea">
+    <div class="submit-note"><strong>Note:</strong> This letter serves as official employment verification for HVRP outcome reporting.</div>
+    <div class="btn-row">
+      <button class="print-btn" onclick="window.print()">🖨️ Print Letter</button>
+      <button class="submit-btn" onclick="submitForm()">Submit &amp; Save &#10148;</button>
+    </div>
+  </div>
+</div>
+</main>
+<script>
+function fmt(dateStr){if(!dateStr)return'—';const d=new Date(dateStr+'T00:00:00');return d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});}
+function updatePreview(){
+  const vn=document.getElementById('vetName').value||'[ Veteran Name ]';
+  const em=document.getElementById('employerName').value||'[ Employer Name ]';
+  const ct=document.getElementById('contactName').value||'[ Employer Contact ]';
+  const jt=document.getElementById('jobTitle').value||'[ Job Title ]';
+  const es=fmt(document.getElementById('empStart').value);
+  const et=document.getElementById('empType').value||'Full-time';
+  const cm=document.getElementById('caseManager').value||'[ Case Manager Name ]';
+  const ld=fmt(document.getElementById('letterDate').value);
+  document.getElementById('prev-date').textContent='Date: '+ld;
+  document.getElementById('prev-contact').textContent=ct;
+  ['prev-vetname','prev-vetname2'].forEach(id=>document.getElementById(id).textContent=vn);
+  ['prev-employer','prev-employer2'].forEach(id=>document.getElementById(id).textContent=em);
+  document.getElementById('prev-jobtitle').textContent=jt;
+  document.getElementById('prev-empstart').textContent=es;
+  document.getElementById('prev-emptype').textContent=et;
+  document.getElementById('prev-cm').innerHTML=cm+'<br/>Case Manager, HVRP Program';
+}
+function validate(){
+  let v=true;
+  [['vetName','err-vetName'],['vetId','err-vetId'],['caseManager','err-caseManager'],
+   ['letterDate','err-letterDate'],['employerName','err-employerName'],
+   ['contactName','err-contactName'],['jobTitle','err-jobTitle'],['empStart','err-empStart']].forEach(([id,err])=>{
+    const el=document.getElementById(id);
+    if(!el.value.trim()){document.getElementById(err).classList.add('show');v=false;}
+    else document.getElementById(err).classList.remove('show');
+  });
+  return v;
+}
+function submitForm(){
+  if(!validate()){document.querySelector('.field-error.show')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.getElementById('formBody').style.display='none';
+  document.getElementById('submitArea').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>triggerPrint('Employer_Verification'), 500);
+}
+document.getElementById('letterDate').value=new Date().toISOString().split('T')[0];
+updatePreview();
+
+// ══════════════════════════════════════════
+// AUTO-NAME PDF ON SUBMIT
+// ══════════════════════════════════════════
+function buildFileName(formType) {
+  // Try to get veteran name
+  const nameEl = document.getElementById('vetName') || document.getElementById('partName');
+  const idEl   = document.getElementById('vetId');
+  const ssnEl  = document.getElementById('ssn4');
+  const dateEl = document.getElementById('exitDate') || document.getElementById('followUpDate') ||
+                 document.getElementById('amendDate') || document.getElementById('referralDate') ||
+                 document.getElementById('letterDate') || document.getElementById('sessionDate') ||
+                 document.getElementById('periodStart');
+
+  let namePart = 'THLP';
+  if (nameEl && nameEl.value.trim()) {
+    // Format: LastFirst (reverse if "Last, First" format)
+    const raw = nameEl.value.trim();
+    const parts = raw.split(',');
+    if (parts.length >= 2) {
+      namePart = (parts[0].trim() + '_' + parts[1].trim().split(' ')[0]).replace(/\s+/g,'_');
+    } else {
+      namePart = raw.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+    }
+  }
+
+  let idPart = '';
+  if (idEl && idEl.value.trim()) idPart = '_' + idEl.value.trim().replace(/\s+/g,'');
+
+  let ssnPart = '';
+  if (ssnEl && ssnEl.value.trim()) ssnPart = '_SSN' + ssnEl.value.trim();
+
+  const today = new Date().toISOString().split('T')[0];
+  let datePart = '_' + today;
+  if (dateEl && dateEl.value) datePart = '_' + dateEl.value;
+
+  return namePart + idPart + ssnPart + '_' + formType + datePart + '.pdf';
+}
+
+function triggerPrint(formType) {
+  const fileName = buildFileName(formType);
+
+  // Show filename banner for print
+  const banner = document.getElementById('filenameBanner');
+  if (banner) {
+    banner.textContent = '📄 Save as: ' + fileName;
+    banner.style.display = 'block';
+  }
+
+  // Update success message filename display
+  const fnDisplay = document.getElementById('fnDisplay');
+  if (fnDisplay) fnDisplay.textContent = fileName;
+
+  // Update DocuShare filing path
+  const ssnEl = document.getElementById('ssn4');
+  const ssn4 = ssnEl ? ssnEl.value.trim() : '????';
+  const filingPath = document.getElementById('filingPath');
+  if (filingPath) {
+    filingPath.textContent = 'DocuShare Flex → Client Folder (last 4: ' + ssn4 + ') → ' + fileName;
+  }
+
+  // Set document title to filename so browser uses it as default save name
+  document.title = fileName;
+
+  setTimeout(() => { window.print(); }, 300);
+}
+
+</script>
+</body>
+</html>

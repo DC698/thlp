@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – HVRP Intake Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;
+  --gold:#326E6A;--gold-lt:#ffffff;--gold-pale:rgba(50,110,106,.08);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e5ea;--gray-mid:#c8cdd6;
+  --text:#1a1d23;--muted:#6b7280;--teal-pale:rgba(50,110,106,.08);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fca5a5;
+  --shadow:0 4px 24px rgba(50,110,106,.12);
+  --shadow-lg:0 12px 48px rgba(50,110,106,.18);
+}
+body{
+  font-family:'Source Sans 3',sans-serif;
+  background:var(--offwhite);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* ── PAGE BG TEXTURE ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 0% 0%, rgba(50,110,106,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(255,255,255,.05) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+header{
+  background:var(--teal);
+  border-bottom:4px solid var(--teal);
+  padding:20px 32px;
+  display:flex;align-items:center;gap:18px;
+  position:relative;z-index:1;
+}
+.logo-badge{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--teal);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Libre Baskerville',serif;font-weight:700;font-size:16px;
+  color:var(--teal);flex-shrink:0;
+  box-shadow:0 0 0 3px rgba(255,255,255,.3);
+}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:19px}
+.header-text p{color:var(--white);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
+.header-right{margin-left:auto}
+.badge-pill{
+  background:rgba(255,255,255,.18);border:1px solid var(--teal);
+  color:var(--white);font-size:11px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;
+  padding:5px 14px;border-radius:20px;
+}
+
+/* ── MAIN WRAPPER ── */
+main{
+  max-width:720px;margin:40px auto 60px;
+  padding:0 20px;
+  position:relative;z-index:1;
+}
+
+/* ── FORM CARD ── */
+.form-card{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  animation:fadeUp .5s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.form-card-header{
+  background:linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+  padding:28px 32px;
+  border-bottom:3px solid var(--teal);
+}
+.form-card-header h2{
+  font-family:'Libre Baskerville',serif;
+  color:#fff;font-size:22px;margin-bottom:6px;
+}
+.form-card-header p{color:rgba(255,255,255,.65);font-size:13px;line-height:1.5}
+.form-id-row{
+  display:flex;align-items:center;gap:8px;
+  margin-top:14px;
+}
+.form-id-chip{
+  background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);
+  color:var(--white);font-size:10px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;
+  padding:3px 10px;border-radius:12px;
+}
+
+/* ── FORM BODY ── */
+.form-body{padding:32px}
+
+/* ── SECTION ── */
+.section{margin-bottom:32px}
+.section-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:14px;color:var(--teal);
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--teal);
+  display:flex;align-items:center;gap:8px;
+}
+.section-title .s-icon{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--teal);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+
+/* ── FIELD ROWS ── */
+.field-row{
+  margin-bottom:16px;
+}
+.field-label{
+  display:block;
+  font-size:13px;font-weight:700;color:var(--teal);
+  margin-bottom:6px;
+  line-height:1.4;
+}
+.field-label .req{color:var(--teal);margin-left:2px}
+.field-hint{font-size:11px;font-weight:400;color:var(--muted);margin-left:4px}
+
+/* ── YES/NO TOGGLE ── */
+.yn-group{display:flex;gap:10px;flex-wrap:wrap}
+.yn-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--offwhite);
+  border:2px solid var(--gray);
+  border-radius:8px;
+  padding:10px 20px;
+  font-family:'Source Sans 3',sans-serif;
+  font-size:13px;font-weight:600;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .18s;
+  user-select:none;
+}
+.yn-btn:hover{border-color:var(--teal);color:var(--teal)}
+.yn-btn.selected-yes{
+  background:var(--green-bg);border-color:var(--green);
+  color:var(--green);
+}
+.yn-btn.selected-no{
+  background:var(--red-bg);border-color:var(--red-border);
+  color:var(--red);
+}
+.yn-btn .yn-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:currentColor;opacity:.5;
+  transition:opacity .18s;
+}
+.yn-btn.selected-yes .yn-dot,
+.yn-btn.selected-no .yn-dot{opacity:1}
+
+/* ── TEXT INPUT ── */
+.text-input,
+.select-input,
+.textarea-input{
+  width:100%;
+  border:2px solid var(--gray);
+  border-radius:8px;
+  padding:11px 14px;
+  font-family:'Source Sans 3',sans-serif;
+  font-size:14px;color:var(--text);
+  background:#fff;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  appearance:none;
+}
+.text-input:focus,
+.select-input:focus,
+.textarea-input:focus{
+  border-color:var(--teal);
+  box-shadow:0 0 0 3px rgba(255,255,255,.14);
+}
+.text-input::placeholder,
+.textarea-input::placeholder{color:#bbb}
+.textarea-input{resize:vertical;min-height:80px}
+
+/* ── SELECT WRAPPER ── */
+.select-wrap{position:relative}
+.select-wrap::after{
+  content:'▾';
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  color:var(--teal);font-size:15px;pointer-events:none;
+}
+.select-input{padding-right:36px;cursor:pointer}
+
+/* ── TWO-COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.two-col{grid-template-columns:1fr}}
+
+/* ── HOUSING CARDS ── */
+.housing-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.housing-card{
+  border:2px solid var(--gray);border-radius:10px;
+  padding:14px 16px;cursor:pointer;
+  transition:all .18s;
+  display:flex;align-items:center;gap:10px;
+  background:var(--offwhite);
+  user-select:none;
+}
+.housing-card:hover{border-color:var(--teal);background:#fff}
+.housing-card.selected{
+  border-color:var(--teal);background:var(--teal-pale);
+}
+.housing-card .hc-icon{font-size:20px;flex-shrink:0}
+.housing-card .hc-label{font-size:12px;font-weight:700;color:var(--teal);line-height:1.3}
+.housing-card .hc-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── CONDITIONAL FIELD ── */
+.conditional-field{
+  display:none;
+  margin-top:12px;
+  padding:14px 16px;
+  background:var(--offwhite);
+  border-left:3px solid var(--teal);
+  border-radius:0 8px 8px 0;
+  animation:slideDown .2s ease;
+}
+.conditional-field.show{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.conditional-field .field-label{font-size:12px}
+
+/* ── DIVIDER ── */
+.divider{border:none;border-top:1px solid var(--gray);margin:24px 0}
+
+/* ── SUBMIT AREA ── */
+.submit-area{
+  padding:24px 32px;
+  border-top:1px solid var(--gray);
+  background:var(--offwhite);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;
+}
+.submit-note{font-size:11px;color:var(--muted);line-height:1.5;max-width:340px}
+.submit-note strong{color:var(--teal)}
+.submit-btn{
+  background:var(--teal);color:#fff;
+  border:none;border-radius:10px;
+  padding:14px 36px;
+  font-family:'Source Sans 3',sans-serif;
+  font-size:15px;font-weight:700;
+  cursor:pointer;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 14px rgba(50,110,106,.25);
+}
+.submit-btn:hover{background:var(--teal-light);transform:translateY(-1px);box-shadow:0 6px 20px rgba(50,110,106,.3)}
+.submit-btn:active{transform:translateY(0)}
+
+/* ── SUCCESS STATE ── */
+#successMsg{
+  display:none;
+  background:var(--green-bg);
+  border:1px solid var(--green-border);
+  border-radius:12px;
+  padding:28px 32px;
+  text-align:center;
+  margin:24px 32px 32px;
+  animation:fadeUp .4s ease;
+}
+#successMsg h3{font-family:'Libre Baskerville',serif;font-size:18px;color:var(--green);margin-bottom:8px}
+#successMsg p{font-size:13px;color:var(--muted)}
+#successMsg .success-icon{font-size:36px;margin-bottom:12px}
+
+/* ── ERROR STATE ── */
+.field-error{
+  font-size:11px;font-weight:700;color:var(--red);
+  margin-top:5px;display:none;
+}
+.field-error.show{display:block}
+.input-error{border-color:var(--red-border)!important}
+
+/* ── REQUIRED LEGEND ── */
+.req-legend{font-size:11px;color:var(--muted);margin-bottom:20px}
+.req-legend span{color:var(--teal);font-weight:700}
+
+/* ── PRINT STYLES ── */
+@media print {
+  body { background: #fff !important; }
+  header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .form-card { box-shadow: none !important; border-radius: 0 !important; }
+  .submit-area, .print-hint, #successMsg .print-actions { display: none !important; }
+  .print-filename-banner { display: block !important; }
+  #lockScreen { display: none !important; }
+}
+.print-hint {
+  background: var(--teal-pale);
+  border: 1px solid rgba(50,110,106,.2);
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 12px;
+  color: var(--teal-mid);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.print-hint strong { color: var(--teal); }
+.print-filename-banner {
+  display: none;
+  background: var(--teal);
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+.ssn-note {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight: 400;
+}
+/* success print button */
+#successMsg .print-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#successMsg .save-pdf-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#successMsg .save-pdf-btn:hover { opacity: .9; }
+#successMsg .filing-instructions {
+  margin-top: 16px;
+  background: var(--offwhite);
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: left;
+}
+#successMsg .filing-instructions strong { color: var(--teal); }
+#successMsg .filename-display {
+  font-family: monospace;
+  background: var(--teal);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 6px 0;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">THLP</div>
+  <div class="header-text">
+    <h1>The Houston Launch Pad</h1>
+    <p>HVRP Document &amp; Forms Center</p>
+  </div>
+  <div class="header-right">
+    <span class="badge-pill">HVRP Program</span>
+  </div>
+</header>
+
+<main>
+  <div class="form-card">
+
+    <!-- FORM HEADER -->
+    <div class="form-card-header">
+      <h2>HVRP Intake Form</h2>
+      <p>Homeless Veterans Reintegration Program — Initial Participant Intake Assessment<br/>
+         Please complete all required fields. This information is used to determine program eligibility.</p>
+      <div class="form-id-row">
+        <span class="form-id-chip">Grant #23560HV000039</span>
+        <span class="form-id-chip">DOL-VETS</span>
+        <span class="form-id-chip">Confidential</span>
+      </div>
+    </div>
+
+    <!-- FORM BODY -->
+    <div class="form-body" id="formBody">
+
+      <div class="req-legend"><span>*</span> Required field</div>
+
+      <!-- ══════════════════════════════════
+           SECTION 1 — VETERAN STATUS
+      ═══════════════════════════════════ -->
+      <div class="section">
+        <div class="section-title">
+          <div class="s-icon">🎖️</div>
+          Veteran Status &amp; Military Service
+        </div>
+
+        <!-- Are you a veteran? -->
+        
+        <div class="field-row">
+          <label class="field-label">Last 4 of SSN<span class="req">*</span>
+            <span class="ssn-note">Used to match DocuShare case folder</span>
+          </label>
+          <input type="text" class="text-input" id="ssn4"
+                 placeholder="e.g. 4567"
+                 maxlength="4"
+                 pattern="[0-9]{4}"
+                 inputmode="numeric"/>
+        </div>
+        <div class="field-row" id="row-veteran">
+          <label class="field-label">Are you a U.S. military veteran?<span class="req">*</span></label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'veteran','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'veteran','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="field-error" id="err-veteran">Please select an answer.</div>
+        </div>
+
+        <!-- DD-214 -->
+        <div class="field-row" id="row-dd214">
+          <label class="field-label">Do you have a DD-214 (Certificate of Release/Discharge)?<span class="req">*</span>
+            <span class="field-hint">— Required for HVRP eligibility verification</span>
+          </label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'dd214','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'dd214','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="field-error" id="err-dd214">Please select an answer.</div>
+        </div>
+
+        <!-- One day of active duty -->
+        <div class="field-row" id="row-activeduty">
+          <label class="field-label">Did you serve at least one day of active duty?<span class="req">*</span></label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'activeduty','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'activeduty','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="field-error" id="err-activeduty">Please select an answer.</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SECTION 2 — IDENTIFICATION
+      ═══════════════════════════════════ -->
+      <div class="section">
+        <div class="section-title">
+          <div class="s-icon">🪪</div>
+          Identification Documents
+        </div>
+
+        <div class="two-col">
+          <!-- Driver's License or State ID -->
+          <div class="field-row" id="row-driverslicense">
+            <label class="field-label">Do you have a Driver's License or State ID?<span class="req">*</span></label>
+            <div class="yn-group">
+              <button type="button" class="yn-btn" onclick="selectYN(this,'driverslicense','yes')"><span class="yn-dot"></span>Yes</button>
+              <button type="button" class="yn-btn" onclick="selectYN(this,'driverslicense','no')"><span class="yn-dot"></span>No</button>
+            </div>
+            <div class="conditional-field" id="cond-driverslicense-yes">
+              <label class="field-label">ID Number <span class="field-hint">(last 4 digits only)</span></label>
+              <input type="text" class="text-input" id="dl-number" placeholder="e.g. XXXX" maxlength="4"/>
+            </div>
+            <div class="field-error" id="err-driverslicense">Please select an answer.</div>
+          </div>
+
+          <!-- Social Security Card -->
+          <div class="field-row" id="row-sscard">
+            <label class="field-label">Do you have your Social Security Card?<span class="req">*</span></label>
+            <div class="yn-group">
+              <button type="button" class="yn-btn" onclick="selectYN(this,'sscard','yes')"><span class="yn-dot"></span>Yes</button>
+              <button type="button" class="yn-btn" onclick="selectYN(this,'sscard','no')"><span class="yn-dot"></span>No</button>
+            </div>
+            <div class="field-error" id="err-sscard">Please select an answer.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SECTION 3 — HOUSING SITUATION
+      ═══════════════════════════════════ -->
+      <div class="section">
+        <div class="section-title">
+          <div class="s-icon">🏠</div>
+          Current Housing Situation
+        </div>
+
+        <div class="field-row" id="row-housing">
+          <label class="field-label">What best describes your current housing situation?<span class="req">*</span></label>
+          <div class="housing-options" id="housingOptions">
+            <div class="housing-card" onclick="selectHousing(this,'own')">
+              <div class="hc-icon">🏡</div>
+              <div><div class="hc-label">Own Home</div><div class="hc-sub">I own or lease my home</div></div>
+            </div>
+            <div class="housing-card" onclick="selectHousing(this,'living-with')">
+              <div class="hc-icon">👨‍👩‍👦</div>
+              <div><div class="hc-label">Living with Someone</div><div class="hc-sub">Family, friend, or other</div></div>
+            </div>
+            <div class="housing-card" onclick="selectHousing(this,'shelter')">
+              <div class="hc-icon">🏢</div>
+              <div><div class="hc-label">Homeless Shelter</div><div class="hc-sub">Currently in a shelter</div></div>
+            </div>
+            <div class="housing-card" onclick="selectHousing(this,'unsheltered')">
+              <div class="hc-icon">🌙</div>
+              <div><div class="hc-label">Unsheltered</div><div class="hc-sub">Street, car, or outdoors</div></div>
+            </div>
+            <div class="housing-card" onclick="selectHousing(this,'transitional')">
+              <div class="hc-icon">🔄</div>
+              <div><div class="hc-label">Transitional Housing</div><div class="hc-sub">Temporary program housing</div></div>
+            </div>
+            <div class="housing-card" onclick="selectHousing(this,'other')">
+              <div class="hc-icon">📍</div>
+              <div><div class="hc-label">Other</div><div class="hc-sub">Not listed above</div></div>
+            </div>
+          </div>
+          <div class="field-error" id="err-housing">Please select a housing situation.</div>
+        </div>
+
+        <!-- Conditional: Shelter name -->
+        <div class="conditional-field" id="cond-housing-shelter">
+          <label class="field-label">Shelter Name &amp; Address</label>
+          <input type="text" class="text-input" id="shelterName" placeholder="e.g. Star of Hope Men's Shelter, Houston TX"/>
+        </div>
+
+        <!-- Conditional: Living with who -->
+        <div class="conditional-field" id="cond-housing-living-with">
+          <label class="field-label">Relationship to Person You Are Living With</label>
+          <div class="select-wrap">
+            <select class="select-input" id="livingWithRelation">
+              <option value="">— Select —</option>
+              <option>Family member</option>
+              <option>Friend</option>
+              <option>Acquaintance</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Eviction Notice -->
+        <div class="field-row" id="row-eviction" style="margin-top:16px">
+          <label class="field-label">Have you received an eviction notice?<span class="req">*</span></label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'eviction','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'eviction','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="conditional-field" id="cond-eviction-yes">
+            <label class="field-label">Date of Eviction Notice</label>
+            <input type="date" class="text-input" id="evictionDate"/>
+          </div>
+          <div class="field-error" id="err-eviction">Please select an answer.</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════
+           SECTION 4 — REFERRAL
+      ═══════════════════════════════════ -->
+      <div class="section">
+        <div class="section-title">
+          <div class="s-icon">🔗</div>
+          Referral &amp; Outreach Information
+        </div>
+
+        <!-- Referral Source -->
+        <div class="field-row" id="row-referral">
+          <label class="field-label">How were you referred to THLP?<span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="select-input" id="referralSource" onchange="onReferralChange(this)">
+              <option value="">— Select Referral Source —</option>
+              <option value="homeless-shelter">Homeless Shelter</option>
+              <option value="outreach-provider">Outreach Provider</option>
+              <option value="va-medical">VA Medical Center</option>
+              <option value="va-vba">VA Veterans Benefits Administration</option>
+              <option value="social-worker">Social Worker / Case Manager</option>
+              <option value="self-referred">Self-Referred</option>
+              <option value="community-org">Community Organization</option>
+              <option value="court">Court / Criminal Justice</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field-error" id="err-referral">Please select a referral source.</div>
+        </div>
+
+        <!-- Conditional: Homeless Shelter Name -->
+        <div class="conditional-field" id="cond-referral-homeless-shelter">
+          <label class="field-label">Shelter Name &amp; Contact</label>
+          <input type="text" class="text-input" id="referralShelterName" placeholder="Name of the homeless shelter"/>
+        </div>
+
+        <!-- Conditional: Outreach Provider -->
+        <div class="conditional-field" id="cond-referral-outreach-provider">
+          <label class="field-label">Outreach Provider Name &amp; Contact</label>
+          <input type="text" class="text-input" id="outreachProviderName" placeholder="Name of outreach worker or organization"/>
+        </div>
+
+        <!-- Conditional: Other referral -->
+        <div class="conditional-field" id="cond-referral-other">
+          <label class="field-label">Please describe how you heard about THLP</label>
+          <input type="text" class="text-input" id="referralOther" placeholder="Describe referral source..."/>
+        </div>
+
+        <!-- Outreach Provider (standalone question) -->
+        <div class="field-row" id="row-outreach" style="margin-top:16px">
+          <label class="field-label">Are you currently working with an outreach provider?<span class="req">*</span></label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'outreach','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'outreach','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="conditional-field" id="cond-outreach-yes">
+            <label class="field-label">Outreach Provider Name</label>
+            <input type="text" class="text-input" id="outreachName" placeholder="Provider name, organization, and phone number"/>
+          </div>
+          <div class="field-error" id="err-outreach">Please select an answer.</div>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════
+           SECTION 5 — PROGRAM ELIGIBILITY
+      ═══════════════════════════════════ -->
+      <div class="section">
+        <div class="section-title">
+          <div class="s-icon">✅</div>
+          Program Eligibility Assessment
+        </div>
+
+        <!-- HUD-VASH / SSVF -->
+        <div class="field-row" id="row-hudvash">
+          <label class="field-label">Is the veteran a participant in HUD-VASH or SSVF?<span class="req">*</span>
+            <span class="field-hint" style="display:block;margin-top:2px">HUD-VASH (VA Supportive Housing) or SSVF (Supportive Services for Veteran Families)</span>
+          </label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'hudvash','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'hudvash','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="conditional-field" id="cond-hudvash-yes">
+            <label class="field-label">Which program?</label>
+            <div class="yn-group">
+              <button type="button" class="yn-btn" onclick="selectYN(this,'hudvashType','HUD-VASH')"><span class="yn-dot"></span>HUD-VASH</button>
+              <button type="button" class="yn-btn" onclick="selectYN(this,'hudvashType','SSVF')"><span class="yn-dot"></span>SSVF</button>
+              <button type="button" class="yn-btn" onclick="selectYN(this,'hudvashType','Both')"><span class="yn-dot"></span>Both</button>
+            </div>
+          </div>
+          <div class="field-error" id="err-hudvash">Please select an answer.</div>
+        </div>
+
+        <!-- At risk of homelessness -->
+        <div class="field-row" id="row-atrisk">
+          <label class="field-label">Is the veteran at risk of homelessness per the HVRP definition?<span class="req">*</span>
+            <span class="field-hint" style="display:block;margin-top:2px">At risk = facing eviction, loss of housing, or unstable living situation per DOL-VETS HVRP program guidelines</span>
+          </label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'atrisk','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'atrisk','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="field-error" id="err-atrisk">Please select an answer.</div>
+        </div>
+
+        <!-- In need of employment services -->
+        <div class="field-row" id="row-needsemployment">
+          <label class="field-label">Is the veteran in need of employment services?<span class="req">*</span></label>
+          <div class="yn-group">
+            <button type="button" class="yn-btn" onclick="selectYN(this,'needsemployment','yes')"><span class="yn-dot"></span>Yes</button>
+            <button type="button" class="yn-btn" onclick="selectYN(this,'needsemployment','no')"><span class="yn-dot"></span>No</button>
+          </div>
+          <div class="field-error" id="err-needsemployment">Please select an answer.</div>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════
+           SECTION 6 — STAFF USE
+      ═══════════════════════════════════ -->
+      <div class="section">
+        <div class="section-title">
+          <div class="s-icon">📋</div>
+          Staff Use Only
+        </div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Intake Date<span class="req">*</span></label>
+            <input type="date" class="text-input" id="intakeDate"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Case Manager<span class="req">*</span></label>
+            <div class="select-wrap">
+              <select class="select-input" id="caseManager">
+                <option value="">— Select —</option>
+                <option>Deirdre Gilbert</option>
+                <option>Renee Milo</option>
+                <option>Brandi Nicholson</option>
+                <option>Carl Poole</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Additional Notes</label>
+          <textarea class="textarea-input" id="notes" placeholder="Enter any additional observations or notes from intake interview..."></textarea>
+        </div>
+      </div>
+
+    </div><!-- end form-body -->
+
+    <!-- SUCCESS MESSAGE -->
+      <div class="print-filename-banner" id="filenameBanner"></div>
+  <div id="successMsg">
+      <div class="success-icon">✅</div>
+      <h3>Intake Form Submitted</h3>
+      <p>This participant's intake information has been recorded and an email notification has been sent to <strong>nancy.perea@houstonlaunchpad.com</strong>.</p>
+      <div class="print-actions">
+        <button class="save-pdf-btn" onclick="triggerPrint('HVRP_Intake')">💾 Save as PDF</button>
+      </div>
+      <div class="filing-instructions">
+        <strong>📁 DocuShare Filing Instructions:</strong><br/>
+        1. Click <strong>Save as PDF</strong> above<br/>
+        2. Change destination to <strong>"Save as PDF"</strong><br/>
+        3. Filename pre-filled as:<br/>
+        <span class="filename-display" id="fnDisplay">generating...</span><br/>
+        4. Save → upload to DocuShare Flex →<br/>
+        &nbsp;&nbsp;&nbsp;<strong id="filingPath">Veteran's case folder (by last 4 SSN)</strong>
+      </div>
+    </div>
+
+    <!-- SUBMIT AREA -->
+    <div class="submit-area" id="submitArea">
+      <div class="submit-note">
+        <strong>Confidentiality Notice:</strong> Information collected on this form is protected under federal privacy regulations and used solely for HVRP program administration.
+      </div>
+      <button type="button" class="submit-btn" onclick="submitForm()">
+        Submit Intake &#10148;
+      </button>
+    </div>
+
+  </div><!-- end form-card -->
+</main>
+
+<script>
+// ── State ──
+const ynState = {};
+let housingValue = '';
+
+// ── YES/NO SELECTION ──
+function selectYN(btn, field, val){
+  const group = btn.closest('.yn-group');
+  group.querySelectorAll('.yn-btn').forEach(b=>{
+    b.classList.remove('selected-yes','selected-no');
+  });
+  btn.classList.add(val==='yes'?'selected-yes':'selected-no');
+  ynState[field] = val;
+
+  // Hide/show error
+  const err = document.getElementById('err-'+field);
+  if(err) err.classList.remove('show');
+
+  // Conditional fields
+  const condYes = document.getElementById('cond-'+field+'-yes');
+  const condNo  = document.getElementById('cond-'+field+'-no');
+  if(condYes) condYes.classList.toggle('show', val==='yes');
+  if(condNo)  condNo.classList.toggle('show',  val==='no');
+}
+
+// ── HOUSING SELECTION ──
+function selectHousing(card, val){
+  document.querySelectorAll('.housing-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  housingValue = val;
+
+  // Hide all housing conditionals
+  ['shelter','living-with'].forEach(k=>{
+    const el = document.getElementById('cond-housing-'+k);
+    if(el) el.classList.remove('show');
+  });
+
+  // Show relevant
+  if(val==='shelter'){
+    document.getElementById('cond-housing-shelter').classList.add('show');
+  } else if(val==='living-with'){
+    document.getElementById('cond-housing-living-with').classList.add('show');
+  }
+
+  document.getElementById('err-housing').classList.remove('show');
+}
+
+// ── REFERRAL CHANGE ──
+function onReferralChange(sel){
+  ['homeless-shelter','outreach-provider','other'].forEach(k=>{
+    const el = document.getElementById('cond-referral-'+k);
+    if(el) el.classList.remove('show');
+  });
+  const val = sel.value;
+  if(['homeless-shelter','outreach-provider','other'].includes(val)){
+    const el = document.getElementById('cond-referral-'+val);
+    if(el) el.classList.add('show');
+  }
+  document.getElementById('err-referral').classList.remove('show');
+}
+
+// ── VALIDATION ──
+function validate(){
+  let valid = true;
+
+  const required_yn = ['veteran','dd214','activeduty','driverslicense','sscard','eviction','outreach','hudvash','atrisk','needsemployment'];
+  required_yn.forEach(field=>{
+    if(!ynState[field]){
+      document.getElementById('err-'+field).classList.add('show');
+      valid = false;
+    }
+  });
+
+  if(!housingValue){
+    document.getElementById('err-housing').classList.add('show');
+    valid = false;
+  }
+
+  if(!document.getElementById('referralSource').value){
+    document.getElementById('err-referral').classList.add('show');
+    valid = false;
+  }
+
+  return valid;
+}
+
+// ── SUBMIT ──
+const FORMSPREE_URL = 'https://formspree.io/f/myknlnvz';
+
+async function submitForm(){
+  if(!validate()){
+    const firstErr = document.querySelector('.field-error.show, .input-error');
+    if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // Gather all form data
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = '⏳ Submitting...';
+  btn.disabled = true;
+
+  const yn = (field) => ynState[field] || 'Not answered';
+  const housing = housingValue || 'Not selected';
+
+  const formPayload = {
+    _subject: `HVRP Intake Form — ${document.getElementById('vetName')?.value || 'Unknown Veteran'}`,
+    _replyto: 'nancy.perea@houstonlaunchpad.com',
+
+    // Participant
+    'Participant Name':       document.getElementById('vetName')?.value || '',
+    'Veteran ID':             document.getElementById('vetId')?.value || '',
+    'Last 4 SSN':             document.getElementById('ssn4')?.value || '',
+
+    // Veteran Status
+    'Is a U.S. Veteran':                    yn('veteran'),
+    'Has DD-214':                           yn('dd214'),
+    'Served at Least One Day Active Duty':  yn('activeduty'),
+
+    // Identification
+    'Has Driver\'s License or State ID':    yn('driverslicense'),
+    'DL/ID Number (last 4)':               document.getElementById('dl-number')?.value || '',
+    'Has Social Security Card':             yn('sscard'),
+
+    // Housing
+    'Housing Situation':                    housing,
+    'Shelter Name':                         document.getElementById('shelterName')?.value || '',
+    'Living With Relationship':             document.getElementById('livingWithRelation')?.value || '',
+    'Received Eviction Notice':             yn('eviction'),
+    'Eviction Notice Date':                 document.getElementById('evictionDate')?.value || '',
+
+    // Referral
+    'Referral Source':                      document.getElementById('referralSource')?.value || '',
+    'Referral Shelter Name':               document.getElementById('referralShelterName')?.value || '',
+    'Outreach Provider (Referral)':        document.getElementById('outreachProviderName')?.value || '',
+    'Referral Other':                      document.getElementById('referralOther')?.value || '',
+    'Working with Outreach Provider':      yn('outreach'),
+    'Outreach Provider Name':              document.getElementById('outreachName')?.value || '',
+
+    // Program Eligibility
+    'Participant in HUD-VASH or SSVF':     yn('hudvash'),
+    'Which Program (HUD-VASH/SSVF)':       ynState['hudvashType'] || '',
+    'At Risk of Homelessness (HVRP Def)':  yn('atrisk'),
+    'In Need of Employment Services':      yn('needsemployment'),
+
+    // Staff Use
+    'Intake Date':                         document.getElementById('intakeDate')?.value || '',
+    'Case Manager':                        document.getElementById('caseManager')?.value || '',
+    'Additional Notes':                    document.getElementById('notes')?.value || '',
+  };
+
+  try {
+    const res = await fetch(FORMSPREE_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      body: JSON.stringify(formPayload)
+    });
+
+    if(res.ok){
+      document.getElementById('formBody').style.display='none';
+      document.getElementById('submitArea').style.display='none';
+      document.getElementById('successMsg').style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
+      setTimeout(()=>triggerPrint('HVRP_Intake'), 500);
+    } else {
+      const data = await res.json();
+      btn.textContent = 'Submit Intake ›';
+      btn.disabled = false;
+      alert('Submission error: ' + (data?.error || 'Please try again or contact support.'));
+    }
+  } catch(err){
+    btn.textContent = 'Submit Intake ›';
+    btn.disabled = false;
+    alert('Network error. Please check your connection and try again.');
+  }
+}
+
+// ── Set today's date as default for intake date ──
+document.getElementById('intakeDate').value = new Date().toISOString().split('T')[0];
+
+// ══════════════════════════════════════════
+// AUTO-NAME PDF ON SUBMIT
+// ══════════════════════════════════════════
+function buildFileName(formType) {
+  // Try to get veteran name
+  const nameEl = document.getElementById('vetName') || document.getElementById('partName');
+  const idEl   = document.getElementById('vetId');
+  const ssnEl  = document.getElementById('ssn4');
+  const dateEl = document.getElementById('exitDate') || document.getElementById('followUpDate') ||
+                 document.getElementById('amendDate') || document.getElementById('referralDate') ||
+                 document.getElementById('letterDate') || document.getElementById('sessionDate') ||
+                 document.getElementById('periodStart');
+
+  let namePart = 'THLP';
+  if (nameEl && nameEl.value.trim()) {
+    // Format: LastFirst (reverse if "Last, First" format)
+    const raw = nameEl.value.trim();
+    const parts = raw.split(',');
+    if (parts.length >= 2) {
+      namePart = (parts[0].trim() + '_' + parts[1].trim().split(' ')[0]).replace(/\s+/g,'_');
+    } else {
+      namePart = raw.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+    }
+  }
+
+  let idPart = '';
+  if (idEl && idEl.value.trim()) idPart = '_' + idEl.value.trim().replace(/\s+/g,'');
+
+  let ssnPart = '';
+  if (ssnEl && ssnEl.value.trim()) ssnPart = '_SSN' + ssnEl.value.trim();
+
+  const today = new Date().toISOString().split('T')[0];
+  let datePart = '_' + today;
+  if (dateEl && dateEl.value) datePart = '_' + dateEl.value;
+
+  return namePart + idPart + ssnPart + '_' + formType + datePart + '.pdf';
+}
+
+function triggerPrint(formType) {
+  const fileName = buildFileName(formType);
+
+  // Show filename banner for print
+  const banner = document.getElementById('filenameBanner');
+  if (banner) {
+    banner.textContent = '📄 Save as: ' + fileName;
+    banner.style.display = 'block';
+  }
+
+  // Update success message filename display
+  const fnDisplay = document.getElementById('fnDisplay');
+  if (fnDisplay) fnDisplay.textContent = fileName;
+
+  // Update DocuShare filing path
+  const ssnEl = document.getElementById('ssn4');
+  const ssn4 = ssnEl ? ssnEl.value.trim() : '????';
+  const filingPath = document.getElementById('filingPath');
+  if (filingPath) {
+    filingPath.textContent = 'DocuShare Flex → Client Folder (last 4: ' + ssn4 + ') → ' + fileName;
+  }
+
+  // Set document title to filename so browser uses it as default save name
+  document.title = fileName;
+
+  setTimeout(() => { window.print(); }, 300);
+}
+
+</script>
+</body>
+</html>

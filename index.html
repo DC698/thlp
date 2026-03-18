@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – HVRP Document Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;
+  --gold:#326E6A;--gold-lt:#ffffff;--gold-pale:rgba(50,110,106,.08);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e5ea;--text:#1a1d23;--muted:#6b7280;--teal-pale:rgba(50,110,106,.08);
+  --shadow:0 4px 24px rgba(50,110,106,.13);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --amber:#fff3cd;--amber-border:#ffc107;--amber-text:#856404;
+  --blue:#1d4ed8;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+
+/* ── HEADER ── */
+header{background:var(--teal);border-bottom:4px solid var(--teal);padding:16px 32px;display:flex;align-items:center;gap:18px}
+.logo-badge{width:48px;height:48px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:16px;color:var(--teal);flex-shrink:0}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.header-text p{color:var(--white);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.badge-pill{background:rgba(255,255,255,.18);border:1px solid var(--teal);color:var(--white);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:20px}
+.admin-btn{background:var(--teal);color:var(--teal);border:none;border-radius:8px;padding:8px 16px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:background .2s;display:flex;align-items:center;gap:6px}
+.admin-btn:hover{background:var(--white)}
+
+/* ── PROGRESS BAR ── */
+.progress-bar-wrap{background:var(--teal-mid);padding:8px 32px;display:flex;align-items:center;gap:12px}
+.pb-label{font-size:11px;font-weight:700;color:var(--white);white-space:nowrap}
+.pb-track{flex:1;background:rgba(255,255,255,.15);border-radius:20px;height:8px;overflow:hidden}
+.pb-fill{height:100%;background:rgba(255,255,255,.65);border-radius:20px;transition:width .4s ease}
+.pb-count{font-size:11px;font-weight:700;color:#fff;white-space:nowrap}
+
+/* ── SEARCH BAR ── */
+.search-wrap{background:var(--teal-light);padding:12px 32px;display:flex;align-items:center;gap:10px}
+#searchInput{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);border-radius:6px;padding:9px 14px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:#fff;outline:none;transition:border .2s}
+#searchInput::placeholder{color:rgba(255,255,255,.4)}
+#searchInput:focus{border-color:var(--teal)}
+#clearSearch{background:none;border:none;color:rgba(255,255,255,.5);font-size:18px;cursor:pointer;padding:4px 8px;display:none}
+#searchCount{color:var(--white);font-size:12px;font-weight:600;white-space:nowrap;min-width:70px;text-align:right}
+
+/* ── TABS ── */
+.tabs-wrap{background:#fff;border-bottom:2px solid var(--gray);padding:0 32px;display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs-wrap::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:13px 16px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:6px;transition:color .2s,border-color .2s}
+.tab-count{background:var(--gray);color:var(--muted);border-radius:10px;font-size:10px;font-weight:700;padding:2px 6px;transition:background .2s,color .2s}
+.tab-btn:hover{color:var(--teal)}
+.tab-btn.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-btn.active .tab-count{background:var(--teal);color:var(--teal)}
+
+/* ── CONTENT ── */
+.content{max-width:1060px;margin:32px auto;padding:0 32px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.panel-header{display:flex;align-items:flex-end;gap:14px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--gray)}
+.panel-icon{width:42px;height:42px;border-radius:10px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.panel-header h2{font-family:'Libre Baskerville',serif;font-size:20px;color:var(--teal)}
+.panel-header p{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* ── FORM CARDS ── */
+.forms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.form-card{background:#fff;border:1px solid var(--gray);border-radius:10px;padding:18px 18px 14px;transition:box-shadow .2s,border-color .2s,transform .15s;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;text-decoration:none;color:inherit}
+.form-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--teal);opacity:0;transition:opacity .2s}
+.form-card.linked{cursor:pointer}
+.form-card.linked:hover{box-shadow:var(--shadow);border-color:var(--teal);transform:translateY(-2px)}
+.form-card.linked:hover::before{opacity:1}
+.form-card.unlinked{cursor:default;opacity:.85}
+.form-card-top{display:flex;align-items:flex-start;gap:12px}
+.form-icon{width:36px;height:36px;border-radius:8px;background:var(--offwhite);border:1px solid var(--gray);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.form-name{font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;color:var(--teal);line-height:1.35}
+.form-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.form-card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--offwhite);padding-top:9px}
+.form-tag{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.form-action-open{font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.5px;text-transform:uppercase}
+.form-action-pending{font-size:10px;color:var(--muted);font-style:italic}
+
+/* ── CLIENT FILE STYLES ── */
+.cf-controls{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.cf-label{font-size:13px;font-weight:700;color:var(--teal);white-space:nowrap}
+.cm-select-wrap{position:relative}
+.cm-select-wrap::after{content:'▾';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:14px;pointer-events:none}
+#caseManagerSelect{appearance:none;-webkit-appearance:none;background:#fff;border:2px solid var(--teal);border-radius:8px;padding:10px 40px 10px 14px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;color:var(--teal);cursor:pointer;outline:none;min-width:220px;transition:border-color .2s,box-shadow .2s}
+#caseManagerSelect:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(255,255,255,.18)}
+
+/* CM Folder Banner */
+.cm-folder-banner{display:none;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:8px;padding:10px 16px;margin-bottom:16px;align-items:center;gap:10px}
+.cm-folder-banner.show{display:flex}
+.cm-folder-banner .cfb-icon{font-size:18px;flex-shrink:0}
+.cm-folder-banner .cfb-text{font-size:12px;color:var(--blue);font-weight:600;flex:1}
+.cm-folder-banner .cfb-text span{font-weight:400;color:#4b5563}
+.cm-folder-btn{background:var(--teal);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:5px;letter-spacing:.3px}
+.cm-folder-btn:hover{background:var(--teal-mid)}
+.cm-folder-btn.pending{background:var(--muted);cursor:default}
+
+.client-search-row{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--gray);border-radius:8px;padding:8px 14px;margin-bottom:20px;transition:border-color .2s}
+.client-search-row:focus-within{border-color:var(--teal)}
+.cs-icon{color:var(--teal);font-size:16px;flex-shrink:0}
+#clientSearchInput{flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--text);background:transparent}
+#clientSearchInput::placeholder{color:var(--muted)}
+#clearClientSearch{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 6px;display:none;border-radius:4px}
+#clearClientSearch:hover{color:var(--teal)}
+#clientSearchCount{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.cf-stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.stat-card{background:#fff;border:1px solid var(--gray);border-radius:10px;padding:13px 18px;flex:1;min-width:110px;text-align:center}
+.stat-num{font-family:'Libre Baskerville',serif;font-size:26px;font-weight:700;color:var(--teal)}
+.stat-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+.cf-section{margin-bottom:28px}
+.cf-section-title{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--teal);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px}
+
+/* ── CLIENT CARD ── */
+.client-card{background:#fff;border:1px solid var(--gray);border-radius:10px;overflow:hidden;transition:box-shadow .2s,border-color .2s,transform .15s;color:inherit;display:block}
+.client-card:hover{box-shadow:var(--shadow);border-color:var(--teal);transform:translateY(-2px)}
+.client-card-header{background:var(--teal);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.client-avatar{width:34px;height:34px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-size:12px;font-weight:700;color:var(--teal);flex-shrink:0}
+.client-name{font-family:'Libre Baskerville',serif;font-size:13px;color:#fff;font-weight:700;line-height:1.3}
+.client-id{font-size:11px;color:var(--white);margin-top:1px}
+.client-card-body{padding:12px 14px}
+.client-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+.meta-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px}
+.chip-active{background:#e6f4ea;color:#1e6e3a}
+.chip-pending{background:#fff8e1;color:#8a6000}
+.chip-inactive{background:#f3f3f3;color:#666}
+.chip-program{background:rgba(50,110,106,.07);color:var(--teal)}
+.client-docs{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-bottom:10px}
+.doc-pill{background:var(--offwhite);border:1px solid var(--gray);border-radius:10px;font-size:10px;font-weight:700;color:var(--teal);padding:2px 7px}
+
+/* DocuShare button on client card */
+.client-ds-btn{display:inline-flex;align-items:center;gap:5px;background:var(--teal);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .2s;letter-spacing:.3px}
+.client-ds-btn:hover{background:var(--teal-light)}
+.client-ds-btn.ds-pending{background:var(--gray);color:var(--muted);cursor:default}
+
+.client-card-footer{padding:9px 14px;border-top:1px solid var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.client-date{font-size:11px;color:var(--muted)}
+
+.cf-empty{text-align:center;padding:48px 20px;color:var(--muted);background:#fff;border-radius:10px;border:1px dashed var(--gray)}
+.cf-empty h3{font-size:16px;margin-bottom:6px;color:var(--teal)}
+
+.no-results{text-align:center;padding:60px 20px;color:var(--muted);display:none}
+.no-results h3{font-size:18px;margin-bottom:8px}
+.search-results-header{display:none;font-family:'Libre Baskerville',serif;font-size:18px;color:var(--teal);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--gray)}
+.search-mode .tab-panel{display:block!important}
+.search-mode .panel-header{display:none}
+.search-mode .tab-panel:not(.has-results){display:none!important}
+.search-mode .search-results-header{display:block}
+mark{background:rgba(255,255,255,.28);color:var(--teal);border-radius:2px;padding:0 2px}
+
+/* ── ADMIN MODAL ── */
+#adminOverlay{display:none;position:fixed;inset:0;background:rgba(50,110,106,.72);z-index:1000;align-items:flex-start;justify-content:center;padding:32px 20px;overflow-y:auto}
+#adminOverlay.open{display:flex}
+#adminPanel{background:#fff;border-radius:14px;width:100%;max-width:820px;box-shadow:0 20px 60px rgba(50,110,106,.25);overflow:hidden}
+.ap-header{background:var(--teal);padding:20px 28px;display:flex;align-items:flex-start;justify-content:space-between}
+.ap-header h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.ap-header p{color:var(--white);font-size:12px;margin-top:3px}
+.ap-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px;transition:color .2s;flex-shrink:0}
+.ap-close:hover{color:#fff}
+.ap-tabs{display:flex;background:#f8f9fa;border-bottom:2px solid var(--gray)}
+.ap-tab{background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:12px 20px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;letter-spacing:.4px;text-transform:uppercase;transition:color .2s}
+.ap-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.ap-tab-panel{display:none}
+.ap-tab-panel.active{display:block}
+.ap-body{padding:24px 28px;max-height:65vh;overflow-y:auto}
+.ap-intro{background:var(--offwhite);border:1px solid var(--gray);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--text);line-height:1.6}
+.ap-intro strong{color:var(--teal)}
+.ap-section{margin-bottom:24px}
+.ap-section-title{font-family:'Libre Baskerville',serif;font-size:14px;color:var(--teal);margin-bottom:10px;padding-bottom:7px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:7px}
+.ap-form-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;background:var(--offwhite);border:1px solid var(--gray);border-radius:8px;padding:9px 13px}
+.ap-form-row:focus-within{border-color:var(--teal);background:#fff}
+.ap-form-label{font-size:12px;font-weight:700;color:var(--teal);min-width:200px;flex-shrink:0;line-height:1.3}
+.ap-form-label small{display:block;font-size:10px;font-weight:400;color:var(--muted);margin-top:1px}
+.ap-input{flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:12px;color:var(--text);background:transparent;min-width:0}
+.ap-input::placeholder{color:#bbb;font-style:italic}
+.ap-status{font-size:10px;font-weight:700;white-space:nowrap;padding:2px 7px;border-radius:10px}
+.ap-status.linked{background:var(--green-bg);color:var(--green)}
+.ap-status.pending{background:var(--gray);color:var(--muted)}
+
+/* CM folder rows in admin */
+.ap-cm-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:8px;padding:9px 13px}
+.ap-cm-row:focus-within{border-color:var(--blue);background:#fff}
+.ap-cm-label{font-size:12px;font-weight:700;color:var(--blue);min-width:200px;flex-shrink:0;line-height:1.3}
+.ap-cm-label small{display:block;font-size:10px;font-weight:400;color:var(--muted);margin-top:1px}
+
+.ap-footer{padding:14px 28px;border-top:1px solid var(--gray);display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--offwhite);flex-wrap:wrap}
+.ap-save-btn{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:10px 26px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.ap-save-btn:hover{background:var(--teal-mid)}
+.ap-save-confirm{font-size:12px;color:var(--green);font-weight:700;display:none}
+.ap-progress{font-size:12px;color:var(--muted)}
+.ap-progress span{font-weight:700;color:var(--teal)}
+.ap-footer-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ap-export-btn{background:var(--offwhite);color:var(--teal);border:2px solid var(--teal);border-radius:8px;padding:8px 16px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.ap-export-btn:hover{background:var(--teal-pale)}
+.ap-import-btn{background:var(--offwhite);color:var(--teal-mid);border:2px solid var(--gray);border-radius:8px;padding:8px 16px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.ap-import-btn:hover{background:var(--teal-pale);border-color:var(--teal)}
+.import-confirm{font-size:11px;color:var(--green);font-weight:700;display:none;margin-top:3px}
+
+footer{text-align:center;padding:28px;font-size:12px;color:var(--muted);border-top:1px solid var(--gray);margin-top:40px}
+footer strong{color:var(--teal)}
+
+/* ── QUICKBOOKS CARDS ── */
+.qb-notice{background:var(--teal-pale);border:1px solid rgba(50,110,106,.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
+.qb-notice-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.qb-notice-text{font-size:12px;color:var(--teal-mid);line-height:1.6}
+.qb-notice-text strong{color:var(--teal)}
+.qb-card{background:#fff;border:1px solid var(--gray);border-radius:10px;padding:18px 18px 14px;cursor:pointer;transition:box-shadow .2s,border-color .2s,transform .15s;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.qb-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--teal);opacity:0;transition:opacity .2s}
+.qb-card:hover{box-shadow:var(--shadow);border-color:var(--teal);transform:translateY(-2px)}
+.qb-card:hover::before{opacity:1}
+.qb-card.qb-linked{border-left:4px solid var(--teal)}
+.qb-card-top{display:flex;align-items:flex-start;gap:12px}
+.qb-icon{width:36px;height:36px;border-radius:8px;background:var(--offwhite);border:1px solid var(--gray);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.qb-name{font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;color:var(--teal);line-height:1.35}
+.qb-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.qb-card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--offwhite);padding-top:9px}
+.qb-tag{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.qb-action{font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.5px;text-transform:uppercase}
+.qb-action.pending{color:var(--muted);font-style:italic;text-transform:none;letter-spacing:0;font-size:10px;font-weight:400}
+.qb-help{background:var(--offwhite);border:1px solid var(--gray);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.7;margin-top:20px}
+.qb-help strong{color:var(--teal)}
+
+/* ── WAVE BANNER ── */
+.wave-banner{
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);
+  border-radius:12px;padding:18px 22px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;flex-wrap:wrap;margin-bottom:22px;
+  box-shadow:0 4px 16px rgba(50,110,106,.2);
+}
+.wave-banner-left{display:flex;align-items:center;gap:14px}
+.wave-logo{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:#fff;flex-shrink:0;
+}
+.wave-title{font-family:'Libre Baskerville',serif;font-size:15px;font-weight:700;color:#fff}
+.wave-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
+.wave-btn{
+  background:#fff;color:var(--teal);
+  border:none;border-radius:8px;
+  padding:10px 20px;
+  font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;text-decoration:none;
+  transition:background .2s,transform .15s;
+  white-space:nowrap;display:inline-flex;align-items:center;gap:6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.wave-btn:hover{background:var(--offwhite);transform:translateY(-1px)}
+.wave-btn.pending{
+  background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);
+  border:1px dashed rgba(255,255,255,.4);
+  box-shadow:none;
+}
+.wave-btn.pending:hover{background:rgba(255,255,255,.22);transform:none}
+
+/* ── PASSWORD LOCK SCREEN ── */
+#lockScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal-mid) 100%);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.lock-card{
+  background:#fff;border-radius:20px;
+  padding:44px 40px 36px;
+  width:100%;max-width:420px;
+  box-shadow:0 24px 64px rgba(0,0,0,.25);
+  text-align:center;
+  animation:lockFadeIn .5s ease both;
+}
+@keyframes lockFadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.lock-logo{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--teal);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;
+  font-family:'Libre Baskerville',serif;font-weight:700;font-size:18px;color:#fff;
+  box-shadow:0 4px 16px rgba(50,110,106,.35);
+}
+.lock-card h2{
+  font-family:'Libre Baskerville',serif;font-size:20px;color:var(--teal);margin-bottom:4px;
+}
+.lock-card .lock-sub{
+  font-size:12px;color:var(--muted);margin-bottom:6px;line-height:1.5;
+}
+.lock-card .lock-grant{
+  display:inline-block;background:var(--offwhite);border:1px solid var(--gray);
+  border-radius:20px;font-size:10px;font-weight:700;color:var(--muted);
+  letter-spacing:.8px;text-transform:uppercase;padding:3px 12px;margin-bottom:28px;
+}
+.lock-input-wrap{position:relative;margin-bottom:10px}
+#lockPassword{
+  width:100%;border:2px solid var(--gray);border-radius:10px;
+  padding:13px 44px 13px 16px;
+  font-family:'Source Sans 3',sans-serif;font-size:15px;color:var(--text);
+  outline:none;transition:border-color .2s,box-shadow .2s;
+  letter-spacing:.08em;
+}
+#lockPassword:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.14)}
+#lockPassword.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.12);animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.toggle-pw{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;
+  padding:4px;transition:color .2s;
+}
+.toggle-pw:hover{color:var(--teal)}
+.lock-error{
+  font-size:12px;font-weight:700;color:#ef4444;
+  margin-bottom:10px;min-height:18px;
+  display:none;
+}
+.lock-error.show{display:block}
+.lock-btn{
+  width:100%;background:var(--teal);color:#fff;border:none;
+  border-radius:10px;padding:14px;
+  font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:background .2s,transform .15s;
+  box-shadow:0 4px 16px rgba(50,110,106,.3);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.lock-btn:hover{background:var(--teal-mid);transform:translateY(-1px)}
+.lock-btn:active{transform:translateY(0)}
+.lock-footer{
+  margin-top:22px;padding-top:16px;border-top:1px solid var(--gray);
+  font-size:11px;color:var(--muted);line-height:1.6;
+}
+.lock-footer strong{color:var(--teal)}
+.lock-attempts{font-size:11px;color:var(--muted);margin-top:8px}
+/* Hide dashboard content until unlocked */
+body.locked > *:not(#lockScreen){display:none!important}
+</style>
+</head>
+<body class="locked">
+
+<!-- ══════════════════════════════════════════
+     PASSWORD LOCK SCREEN
+═══════════════════════════════════════════ -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-logo">THLP</div>
+    <h2>HVRP Document Center</h2>
+    <p class="lock-sub">The Houston Launch Pad — Staff Access Only</p>
+    <span class="lock-grant">Grant #23560HV000039 · DOL-VETS</span>
+
+    <div class="lock-input-wrap">
+      <input type="password" id="lockPassword"
+             placeholder="Enter access password"
+             autocomplete="off"
+             onkeydown="if(event.key==='Enter')unlock()"/>
+      <button class="toggle-pw" onclick="togglePw()" title="Show/hide password">👁️</button>
+    </div>
+    <div class="lock-error" id="lockError">Incorrect password. Please try again.</div>
+    <button class="lock-btn" onclick="unlock()">
+      🔓 Access Dashboard
+    </button>
+    <div class="lock-attempts" id="lockAttempts"></div>
+    <div class="lock-footer">
+      <strong>Authorized Staff Only</strong><br/>
+      This system contains confidential veteran participant information protected under federal privacy regulations. Unauthorized access is prohibited.
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-badge">THLP</div>
+  <div class="header-text">
+    <h1>The Houston Launch Pad</h1>
+    <p>HVRP Document &amp; Forms Center</p>
+  </div>
+  <div class="header-right">
+    <span class="badge-pill">HVRP Program</span>
+    <button class="admin-btn" onclick="openAdmin()">⚙️ Manage Links</button>
+  </div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap">
+  <span class="pb-label">Form Links Active:</span>
+  <div class="pb-track"><div class="pb-fill" id="pbFill" style="width:0%"></div></div>
+  <span class="pb-count" id="pbCount">0 / 23</span>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <span style="color:var(--teal);font-size:17px;flex-shrink:0">&#128269;</span>
+  <input type="text" id="searchInput" placeholder="Search forms by name or description..." autocomplete="off"/>
+  <button id="clearSearch" title="Clear">&#10005;</button>
+  <span id="searchCount"></span>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <button class="tab-btn active" data-tab="hvrp" onclick="switchTab('hvrp',this)">&#128203; HVRP Forms <span class="tab-count" id="cnt-hvrp">6</span></button>
+  <button class="tab-btn" data-tab="clientfile" onclick="switchTab('clientfile',this)">&#128194; Client's File <span class="tab-count" id="cnt-clientfile">&#8212;</span></button>
+  <button class="tab-btn" data-tab="application" onclick="switchTab('application',this)">&#128221; Application <span class="tab-count" id="cnt-application">1</span></button>
+  <button class="tab-btn" data-tab="jobdev" onclick="switchTab('jobdev',this)">&#128188; Job Development <span class="tab-count" id="cnt-jobdev">1</span></button>
+  <button class="tab-btn" data-tab="iep" onclick="switchTab('iep',this)">&#127919; IEP <span class="tab-count" id="cnt-iep">2</span></button>
+  <button class="tab-btn" data-tab="tracking" onclick="switchTab('tracking',this)">&#128202; Tracking <span class="tab-count" id="cnt-tracking">3</span></button>
+  <button class="tab-btn" data-tab="consent" onclick="switchTab('consent',this)">&#128737; Veteran's Consent <span class="tab-count" id="cnt-consent">1</span></button>
+  <button class="tab-btn" data-tab="employment" onclick="switchTab('employment',this)">&#127970; Employment Request <span class="tab-count" id="cnt-employment">2</span></button>
+  <button class="tab-btn" data-tab="casemanagement" onclick="switchTab('casemanagement',this)">&#128193; Case Management <span class="tab-count" id="cnt-casemanagement">2</span></button>
+  <button class="tab-btn" data-tab="receipts" onclick="switchTab('receipts',this)">🧾 Receipts <span class="tab-count" id="cnt-receipts">5</span></button>
+  <button class="tab-btn" data-tab="quickbooks" onclick="switchTab('quickbooks',this)">📒 QuickBooks <span class="tab-count" id="cnt-quickbooks">5</span></button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+  <div class="search-results-header" id="searchHeader"></div>
+  <div id="noResults" class="no-results"><h3>No forms found</h3><p>Try a different keyword or clear the search to browse by tab.</p></div>
+
+  <div class="tab-panel active" id="panel-hvrp">
+    <div class="panel-header"><div class="panel-icon">&#128203;</div><div><h2>HVRP Forms</h2><p>Homeless Veterans Reintegration Program — core program forms</p></div></div>
+    <div class="forms-grid" id="grid-hvrp"></div>
+  </div>
+
+  <!-- CLIENT FILE TAB -->
+  <div class="tab-panel" id="panel-clientfile">
+    <div class="panel-header"><div class="panel-icon">&#128194;</div><div><h2>Client's File</h2><p>Select a case manager to view their DocuShare folder and assigned veteran client files</p></div></div>
+
+    <div class="cf-controls">
+      <span class="cf-label">Case Manager:</span>
+      <div class="cm-select-wrap">
+        <select id="caseManagerSelect" onchange="onCMChange()">
+          <option value="">— Select a Case Manager —</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Case Manager DocuShare Folder Banner -->
+    <div class="cm-folder-banner" id="cmFolderBanner">
+      <div class="cfb-icon">📁</div>
+      <div class="cfb-text">
+        <span id="cmFolderName"></span> — DocuShare Folder
+        <span id="cmFolderStatus"></span>
+      </div>
+      <a id="cmFolderBtn" class="cm-folder-btn" href="#" target="_blank">
+        📂 Open CM Folder in DocuShare
+      </a>
+    </div>
+
+    <div id="clientSearchWrap" style="display:none">
+      <div class="client-search-row">
+        <span class="cs-icon">&#128269;</span>
+        <input type="text" id="clientSearchInput" placeholder="Search by name, veteran ID, program, or status..." autocomplete="off"/>
+        <button id="clearClientSearch" title="Clear">&#10005;</button>
+        <span id="clientSearchCount"></span>
+      </div>
+    </div>
+    <div id="cfStats" class="cf-stats" style="display:none">
+      <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total</div></div>
+      <div class="stat-card"><div class="stat-num" id="statActive">0</div><div class="stat-label">Active</div></div>
+      <div class="stat-card"><div class="stat-num" id="statPending">0</div><div class="stat-label">Pending</div></div>
+      <div class="stat-card"><div class="stat-num" id="statInactive">0</div><div class="stat-label">Inactive</div></div>
+      <div class="stat-card"><div class="stat-num" id="statShowing">0</div><div class="stat-label">Showing</div></div>
+    </div>
+    <div id="cfContent"><div class="cf-empty"><h3>No Case Manager Selected</h3><p>Use the dropdown above to select a case manager and view their client files.</p></div></div>
+
+  </div>
+
+  <div class="tab-panel" id="panel-application">
+    <div class="panel-header"><div class="panel-icon">&#128221;</div><div><h2>Application</h2><p>Veteran program application forms</p></div></div>
+    <div class="forms-grid" id="grid-application"></div>
+  </div>
+  <div class="tab-panel" id="panel-jobdev">
+    <div class="panel-header"><div class="panel-icon">&#128188;</div><div><h2>Job Development</h2><p>Employer outreach, referral, and placement documentation</p></div></div>
+    <div class="forms-grid" id="grid-jobdev"></div>
+  </div>
+  <div class="tab-panel" id="panel-iep">
+    <div class="panel-header"><div class="panel-icon">&#127919;</div><div><h2>Individual Employment Plan (IEP)</h2><p>Goal-setting and employment planning documents</p></div></div>
+    <div class="forms-grid" id="grid-iep"></div>
+  </div>
+  <div class="tab-panel" id="panel-tracking">
+    <div class="panel-header"><div class="panel-icon">&#128202;</div><div><h2>Tracking</h2><p>Participant progress and service tracking logs</p></div></div>
+    <div class="forms-grid" id="grid-tracking"></div>
+  </div>
+  <div class="tab-panel" id="panel-consent">
+    <div class="panel-header"><div class="panel-icon">&#128737;</div><div><h2>Veteran's Consent Form</h2><p>Authorization and release of information documents</p></div></div>
+    <div class="forms-grid" id="grid-consent"></div>
+  </div>
+  <div class="tab-panel" id="panel-employment">
+    <div class="panel-header"><div class="panel-icon">&#127970;</div><div><h2>Client's Employment Request</h2><p>Client-submitted employment requests and documentation</p></div></div>
+    <div class="forms-grid" id="grid-employment"></div>
+  </div>
+  <div class="tab-panel" id="panel-casemanagement">
+    <div class="panel-header"><div class="panel-icon">&#128193;</div><div><h2>Case Management Notes</h2><p>Case notes, progress documentation, and follow-up records</p></div></div>
+    <div class="forms-grid" id="grid-casemanagement"></div>
+  </div>
+
+  <!-- RECEIPTS TAB -->
+  <div class="tab-panel" id="panel-receipts">
+    <div class="panel-header"><div class="panel-icon">🧾</div><div><h2>Receipts</h2><p>HVRP grant expenditure receipts — access Wave Accounting and log receipts by category</p></div></div>
+
+    <!-- Wave Card -->
+    <div class="wave-banner" id="waveBanner">
+      <div class="wave-banner-left">
+        <div class="wave-logo">〜</div>
+        <div>
+          <div class="wave-title">Wave Accounting — Receipts</div>
+          <div class="wave-sub">View, upload, and manage all HVRP receipts directly in Wave</div>
+        </div>
+      </div>
+      <a id="waveLinkBtn" class="wave-btn" href="#" target="_blank" onclick="handleWaveClick(event)">
+        🌊 Open Wave Receipts
+      </a>
+    </div>
+
+    <div class="forms-grid" id="grid-receipts"></div>
+  </div>
+
+  <!-- QUICKBOOKS TAB -->
+  <div class="tab-panel" id="panel-quickbooks">
+    <div class="panel-header"><div class="panel-icon">📒</div><div><h2>QuickBooks</h2><p>Quick access to HVRP financial reports — click any card to open directly in QuickBooks Online</p></div></div>
+
+    <div class="qb-notice">
+      <div class="qb-notice-icon">🔐</div>
+      <div class="qb-notice-text">
+        <strong>QuickBooks Online — Separate Login Required.</strong>
+        Clicking any card below will open QuickBooks Online in a new tab. You will need your QuickBooks credentials to access reports. Links are managed via <strong>⚙️ Manage Links</strong> above.
+      </div>
+    </div>
+
+    <div class="forms-grid">
+
+      <div class="qb-card" id="qb-payroll" onclick="openQB('qb_payroll')">
+        <div class="qb-card-top">
+          <div class="qb-icon">💰</div>
+          <div>
+            <div class="qb-name">Payroll Reports</div>
+            <div class="qb-desc">Employee payroll summaries, PrimePay records, and HVRP salary allocations</div>
+          </div>
+        </div>
+        <div class="qb-card-footer">
+          <span class="qb-tag">Payroll</span>
+          <span class="qb-action" id="qba-payroll">⏳ Link pending</span>
+        </div>
+      </div>
+
+      <div class="qb-card" id="qb-grants" onclick="openQB('qb_grants')">
+        <div class="qb-card-top">
+          <div class="qb-icon">📊</div>
+          <div>
+            <div class="qb-name">Grant Expense Reports</div>
+            <div class="qb-desc">HVRP grant expenditures by budget category and period</div>
+          </div>
+        </div>
+        <div class="qb-card-footer">
+          <span class="qb-tag">Grant</span>
+          <span class="qb-action" id="qba-grants">⏳ Link pending</span>
+        </div>
+      </div>
+
+      <div class="qb-card" id="qb-vendors" onclick="openQB('qb_vendors')">
+        <div class="qb-card-top">
+          <div class="qb-icon">🧾</div>
+          <div>
+            <div class="qb-name">Vendor Bills &amp; Invoices</div>
+            <div class="qb-desc">Accounts payable, vendor invoices, and bill payment history</div>
+          </div>
+        </div>
+        <div class="qb-card-footer">
+          <span class="qb-tag">Vendors</span>
+          <span class="qb-action" id="qba-vendors">⏳ Link pending</span>
+        </div>
+      </div>
+
+      <div class="qb-card" id="qb-budget" onclick="openQB('qb_budget')">
+        <div class="qb-card-top">
+          <div class="qb-icon">📈</div>
+          <div>
+            <div class="qb-name">Budget vs. Actual</div>
+            <div class="qb-desc">Compare budgeted grant amounts to actual expenditures by category</div>
+          </div>
+        </div>
+        <div class="qb-card-footer">
+          <span class="qb-tag">Budget</span>
+          <span class="qb-action" id="qba-budget">⏳ Link pending</span>
+        </div>
+      </div>
+
+      <div class="qb-card" id="qb-bank" onclick="openQB('qb_bank')">
+        <div class="qb-card-top">
+          <div class="qb-icon">🏦</div>
+          <div>
+            <div class="qb-name">Bank Reconciliation</div>
+            <div class="qb-desc">Monthly bank reconciliation reports and transaction matching</div>
+          </div>
+        </div>
+        <div class="qb-card-footer">
+          <span class="qb-tag">Banking</span>
+          <span class="qb-action" id="qba-bank">⏳ Link pending</span>
+        </div>
+      </div>
+
+    </div><!-- end forms-grid -->
+
+    <div class="qb-help">
+      <strong>📌 How to get your QuickBooks report links:</strong>
+      Log into QuickBooks Online → navigate to the report → copy the URL from your browser address bar → paste it in <strong>⚙️ Manage Links → QuickBooks tab</strong>.
+    </div>
+
+  </div><!-- end panel-quickbooks -->
+
+</div>
+
+<footer><strong>The Houston Launch Pad</strong> — HVRP Document Center &nbsp;|&nbsp; 2646 S Loop W, Suite 290, Houston, TX 77054</footer>
+
+<!-- ══════════════════════════════════
+     ADMIN / LINK MANAGER MODAL
+═══════════════════════════════════ -->
+<div id="adminOverlay" onclick="overlayClick(event)">
+  <div id="adminPanel">
+    <div class="ap-header">
+      <div>
+        <h2>⚙️ Manage Links</h2>
+        <p>Paste OneDrive or DocuShare links — no Notepad needed</p>
+      </div>
+      <button class="ap-close" onclick="closeAdmin()">&#10005;</button>
+    </div>
+
+    <!-- Admin Sub-Tabs -->
+    <div class="ap-tabs">
+      <button class="ap-tab active" onclick="switchAdminTab('forms',this)">📋 Form Links</button>
+      <button class="ap-tab" onclick="switchAdminTab('cmfolders',this)">📁 CM Folders (DocuShare)</button>
+      <button class="ap-tab" onclick="switchAdminTab('vetfolders',this)">🗂️ Veteran Folders (DocuShare)</button>
+      <button class="ap-tab" onclick="switchAdminTab('quickbooks',this)">📒 QuickBooks</button>
+    </div>
+
+    <div class="ap-body">
+
+      <!-- TAB: FORM LINKS -->
+      <div class="ap-tab-panel active" id="aptab-forms">
+        <div class="ap-intro">
+          <strong>Form Links:</strong> Upload each form to OneDrive → right-click → Share → Copy Link → paste below. Click <strong>Save All Links</strong> when done.
+        </div>
+        <div id="adminFormRows"></div>
+      </div>
+
+      <!-- TAB: CM FOLDERS -->
+      <div class="ap-tab-panel" id="aptab-cmfolders">
+        <div class="ap-intro">
+          <strong>Case Manager Folders:</strong> In DocuShare Flex, navigate to each case manager's main folder → copy the URL from your browser address bar → paste below. This adds an <strong>"Open CM Folder"</strong> button when that case manager is selected.
+        </div>
+        <div class="ap-section">
+          <div class="ap-section-title">📁 Case Manager — DocuShare Main Folders</div>
+          <div id="adminCMRows"></div>
+        </div>
+      </div>
+
+      <!-- TAB: VETERAN FOLDERS -->
+      <div class="ap-tab-panel" id="aptab-vetfolders">
+        <div class="ap-intro">
+          <strong>Veteran Folders:</strong> In DocuShare Flex, open each veteran's folder inside the case manager's folder → copy the URL from your browser address bar → paste below. Each veteran card will get an <strong>"Open in DocuShare"</strong> button.
+        </div>
+        <div id="adminVetRows"></div>
+      </div>
+
+      <!-- TAB: QUICKBOOKS -->
+      <div class="ap-tab-panel" id="aptab-quickbooks">
+        <div class="ap-intro">
+          <strong>QuickBooks &amp; Wave Links:</strong> Navigate to each report or page → copy the URL from your browser address bar → paste below. Each card becomes a direct one-click link.
+        </div>
+        <div class="ap-section">
+          <div class="ap-section-title">🌊 Wave Accounting</div>
+          <div class="ap-cm-row">
+            <div class="ap-cm-label">🌊 Wave Receipts<small>Direct link to Wave Receipts page</small></div>
+            <input class="ap-input" data-id="wave_receipts" type="url" placeholder="Paste your Wave Receipts URL (e.g. https://next.waveapps.com/...)" value="" oninput="liveStatusUpdate(this)"/>
+            <span class="ap-status pending" id="apst-wave_receipts">⏳ Pending</span>
+          </div>
+        </div>
+        <div class="ap-section">
+          <div class="ap-section-title">📒 QuickBooks Online — Report Links</div>
+          <div class="ap-cm-row">
+            <div class="ap-cm-label">💰 Payroll Reports<small>Salary summaries &amp; PrimePay records</small></div>
+            <input class="ap-input" data-id="qb_payroll" type="url" placeholder="Paste QuickBooks Payroll report URL..." value="" oninput="liveStatusUpdate(this)"/>
+            <span class="ap-status pending" id="apst-qb_payroll">⏳ Pending</span>
+          </div>
+          <div class="ap-cm-row">
+            <div class="ap-cm-label">📊 Grant Expense Reports<small>HVRP expenditures by category</small></div>
+            <input class="ap-input" data-id="qb_grants" type="url" placeholder="Paste QuickBooks Grant Expense report URL..." value="" oninput="liveStatusUpdate(this)"/>
+            <span class="ap-status pending" id="apst-qb_grants">⏳ Pending</span>
+          </div>
+          <div class="ap-cm-row">
+            <div class="ap-cm-label">🧾 Vendor Bills &amp; Invoices<small>Accounts payable &amp; bill history</small></div>
+            <input class="ap-input" data-id="qb_vendors" type="url" placeholder="Paste QuickBooks Vendors URL..." value="" oninput="liveStatusUpdate(this)"/>
+            <span class="ap-status pending" id="apst-qb_vendors">⏳ Pending</span>
+          </div>
+          <div class="ap-cm-row">
+            <div class="ap-cm-label">📈 Budget vs. Actual<small>Budget to actual expenditure comparison</small></div>
+            <input class="ap-input" data-id="qb_budget" type="url" placeholder="Paste QuickBooks Budget vs. Actual URL..." value="" oninput="liveStatusUpdate(this)"/>
+            <span class="ap-status pending" id="apst-qb_budget">⏳ Pending</span>
+          </div>
+          <div class="ap-cm-row">
+            <div class="ap-cm-label">🏦 Bank Reconciliation<small>Monthly reconciliation reports</small></div>
+            <input class="ap-input" data-id="qb_bank" type="url" placeholder="Paste QuickBooks Bank Reconciliation URL..." value="" oninput="liveStatusUpdate(this)"/>
+            <span class="ap-status pending" id="apst-qb_bank">⏳ Pending</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end ap-body -->
+
+    <div class="ap-footer">
+      <div>
+        <div class="ap-progress">Active links: <span id="apProgressCount">0</span></div>
+        <div class="ap-save-confirm" id="apSaveConfirm">✅ All links saved!</div>
+        <div class="import-confirm" id="importConfirm">✅ Links imported successfully!</div>
+      </div>
+      <div class="ap-footer-btns">
+        <button class="ap-export-btn" onclick="exportLinks()" title="Download all your links as a backup file">📥 Export Links</button>
+        <label class="ap-import-btn" title="Restore links from a previously exported backup file">
+          📤 Import Links
+          <input type="file" accept=".json" style="display:none" onchange="importLinks(event)"/>
+        </label>
+        <button class="ap-save-btn" onclick="saveLinks()">💾 Save All Links</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const formData={
+  hvrp:[
+    {id:'hvrp_1',name:'HVRP Intake Form',              desc:'Initial intake assessment for new HVRP participants',                    icon:'📄',tag:'Intake'},
+    {id:'hvrp_4',name:'HVRP Exit Form',                desc:'Program exit and outcome documentation',                                icon:'🏁',tag:'Exit'},
+    {id:'hvrp_5',name:'HVRP Follow-Up Form',           desc:'Post-placement follow-up tracking (30/60/90 day)',                      icon:'🔄',tag:'Follow-Up'},
+    {id:'hvrp_6',name:'HVRP Referral Form',            desc:'Referral to partner organizations and wrap-around services',            icon:'🔗',tag:'Referral'},
+    {id:'hvrp_8',name:'HVRP Monthly Report',           desc:'Monthly participant progress and outcomes report',                      icon:'📆',tag:'Reporting'},
+    {id:'hvrp_9',name:'Valero Fuel Card Acknowledgment',desc:'Recipient acknowledgment & use agreement for Valero fuel card — 2 CFR Part 200', icon:'⛽',tag:'Supportive Svcs'},
+  ],
+  application:[
+    {id:'app_1',name:'THLP Veteran Application',  desc:'Complete program application for veteran participants',      icon:'📝',tag:'Application'},
+  ],
+  jobdev:[
+    {id:'job_2',name:'Job Placement Record',       desc:'Documentation of veteran job placement and employer details',icon:'🤝',tag:'Placement'},
+  ],
+  iep:[
+    {id:'iep_1',name:'Individual Employment Plan', desc:'Personalized employment goals, barriers, and action steps', icon:'🎯',tag:'Planning'},
+    {id:'iep_2',name:'IEP Update / Amendment',     desc:'Modification form for updating an existing IEP',           icon:'✏️',tag:'Amendment'},
+  ],
+  tracking:[
+    {id:'trk_1',name:'Participant Activity Log',   desc:'Daily/weekly log of participant program activities',        icon:'📋',tag:'Log'},
+    {id:'trk_2',name:'Training Attendance Sheet',  desc:'Record of participant attendance in training sessions',     icon:'📅',tag:'Attendance'},
+    {id:'trk_3',name:'Participant Tracking Sheet', desc:'Official DOL-VETS PY24 participant tracking — enrollment, services, exit, and follow-up', icon:'📊',tag:'PY24 Tracking'},
+  ],
+  consent:[
+    {id:'con_1',name:"Veteran's Consent Form",    desc:'Authorization to collect and share participant information', icon:'🛡️',tag:'Consent'},
+  ],
+  employment:[
+    {id:'emp_1',name:'Client Employment Request',  desc:'Client-initiated request for job placement assistance',    icon:'🏢',tag:'Request'},
+    {id:'emp_2',name:'Employer Verification Letter',desc:"Letter verifying veteran's employment for program records",icon:'✉️',tag:'Verification'},
+  ],
+  casemanagement:[
+    {id:'cm_1',name:'Case Management Notes',       desc:'Ongoing narrative case notes for participant file',        icon:'📁',tag:'Notes'},
+    {id:'cm_3',name:'Crisis Intervention Record',  desc:'Documentation of any crisis situation and response',      icon:'⚠️',tag:'Crisis'},
+  ],
+  receipts:[
+    {id:'rec_1',name:'Petty Cash Receipts',         desc:'Receipts for petty cash fund expenditures and replenishments',     icon:'💵',tag:'Petty Cash'},
+    {id:'rec_2',name:'Travel & Transportation',     desc:'Mileage logs, bus passes, gas, and transportation receipts',       icon:'🚗',tag:'Travel'},
+    {id:'rec_3',name:'Supply & Equipment',          desc:'Office supplies, tools, work equipment purchase receipts',         icon:'🛒',tag:'Supplies'},
+    {id:'rec_4',name:'Training & Workshop',         desc:'Registration fees, materials, and training-related receipts',      icon:'📚',tag:'Training'},
+    {id:'rec_5',name:'Supportive Services',         desc:'Work clothing, tools, hygiene items, and participant service receipts', icon:'🤝',tag:'Supportive Svcs'},
+  ],
+};
+
+const TAB_LABELS={hvrp:'HVRP Forms',application:'Application',jobdev:'Job Development',iep:'IEP',tracking:'Tracking',consent:"Veteran's Consent",employment:'Employment Request',casemanagement:'Case Management',receipts:'Receipts'};
+
+const caseManagers=[
+  {id:'cm1',name:'Deirdre Gilbert'},
+  {id:'cm2',name:'Renee Milo'},
+  {id:'cm3',name:'Brandi Nicholson'},
+  {id:'cm4',name:'Carl Poole'},
+];
+
+// ── Client records — add real veteran names here ──
+// Format: {id:'VET-XXXX', name:'First Last', status:'active|pending|inactive', program:'HVRP', docs:0, lastUpdate:'Mar 17, 2026'}
+const clientRecords={
+  cm1:[], // Deirdre Gilbert — add veterans here
+  cm2:[ // Renee Milo — 127 clients (alphabetical)
+    {id:'6458',name:'Adams Daymon',          status:'active',program:'HVRP',docs:0,lastUpdate:'12/08/2025'},
+    {id:'2343',name:'Anderson Christopher',  status:'active',program:'HVRP',docs:0,lastUpdate:'06/12/2025'},
+    {id:'8647',name:'Bailey LaShaun',        status:'active',program:'HVRP',docs:0,lastUpdate:'05/19/2025'},
+    {id:'3595',name:'Bass Laricia',          status:'active',program:'HVRP',docs:0,lastUpdate:'07/30/2024'},
+    {id:'9011',name:'Bell Robyne',           status:'active',program:'HVRP',docs:0,lastUpdate:'07/15/2025'},
+    {id:'4785',name:'Bolds Michele',         status:'active',program:'HVRP',docs:0,lastUpdate:'05/28/2024'},
+    {id:'9938',name:'Bouknight Treyvon',     status:'active',program:'HVRP',docs:0,lastUpdate:'07/18/2024'},
+    {id:'7752',name:'Bright Shirley',        status:'active',program:'HVRP',docs:0,lastUpdate:'04/28/2025'},
+    {id:'7186',name:'Brown Tamasha',         status:'active',program:'HVRP',docs:0,lastUpdate:'03/20/2025'},
+    {id:'5738',name:'Butler Albert',         status:'active',program:'HVRP',docs:0,lastUpdate:'09/26/2024'},
+    {id:'3502',name:'Cantrell Alexander',    status:'active',program:'HVRP',docs:0,lastUpdate:'03/27/2025'},
+    {id:'0263',name:'Carey Kevin',           status:'active',program:'HVRP',docs:0,lastUpdate:'08/19/2024'},
+    {id:'1983',name:'Carroll James',         status:'active',program:'HVRP',docs:0,lastUpdate:'05/22/2025'},
+    {id:'7820',name:'Cheatham Aaron',        status:'active',program:'HVRP',docs:0,lastUpdate:'11/12/2025'},
+    {id:'4863',name:'Coine Charles',         status:'active',program:'HVRP',docs:0,lastUpdate:'08/26/2025'},
+    {id:'4872',name:'Crawford Gerald',       status:'active',program:'HVRP',docs:0,lastUpdate:'04/23/2024'},
+    {id:'9971',name:'Crumbley Barrala',      status:'active',program:'HVRP',docs:0,lastUpdate:'04/17/2025'},
+    {id:'9771',name:'Daniels Aaron',         status:'active',program:'HVRP',docs:0,lastUpdate:'11/18/2024'},
+    {id:'6753',name:'Del Pilar Ruben',       status:'active',program:'HVRP',docs:0,lastUpdate:'02/02/2026'},
+    {id:'5667',name:'Demaris Jr Michael',    status:'active',program:'HVRP',docs:0,lastUpdate:'01/06/2026'},
+    {id:'3312',name:'Dorgan Terrence',       status:'active',program:'HVRP',docs:0,lastUpdate:'02/05/2025'},
+    {id:'6828',name:'Dupree Michael',        status:'active',program:'HVRP',docs:0,lastUpdate:'12/03/2024'},
+    {id:'3270',name:'El-Bey Zaye74',         status:'active',program:'HVRP',docs:0,lastUpdate:'07/28/2025'},
+    {id:'2347',name:'England Michael',       status:'active',program:'HVRP',docs:0,lastUpdate:'02/19/2026'},
+    {id:'6646',name:'Familuyi Theortis',     status:'active',program:'HVRP',docs:0,lastUpdate:'01/27/2026'},
+    {id:'8718',name:'Fernandes Rochelle',    status:'active',program:'HVRP',docs:0,lastUpdate:'08/26/2025'},
+    {id:'3657',name:'Flores Quinones Alfredo',status:'active',program:'HVRP',docs:0,lastUpdate:'05/21/2024'},
+    {id:'2074',name:'Fontenot William',      status:'active',program:'HVRP',docs:0,lastUpdate:'03/20/2025'},
+    {id:'8860',name:'Franco Jr Ignacio',     status:'active',program:'HVRP',docs:0,lastUpdate:'10/15/2024'},
+    {id:'0144',name:'Garrett Monika',        status:'active',program:'HVRP',docs:0,lastUpdate:'02/14/2024'},
+    {id:'5282',name:'Gholar Jason',          status:'active',program:'HVRP',docs:0,lastUpdate:'09/08/2025'},
+    {id:'2347',name:'Gilbert Deirdre',       status:'active',program:'HVRP',docs:0,lastUpdate:'02/24/2026'},
+    {id:'5667',name:'Gilbert Deirdre',       status:'active',program:'HVRP',docs:0,lastUpdate:'02/24/2026'},
+    {id:'2369',name:'Gil Marvin',            status:'active',program:'HVRP',docs:0,lastUpdate:'08/19/2024'},
+    {id:'0897',name:'Goree Maurice',         status:'active',program:'HVRP',docs:0,lastUpdate:'04/02/2025'},
+    {id:'1440',name:'Goya Obarijima',        status:'active',program:'HVRP',docs:0,lastUpdate:'08/13/2025'},
+    {id:'7997',name:'Green Dominic',         status:'active',program:'HVRP',docs:0,lastUpdate:'01/07/2026'},
+    {id:'3291',name:'Hampton Derek',         status:'active',program:'HVRP',docs:0,lastUpdate:'12/09/2025'},
+    {id:'5859',name:'Hawkins Isabelita',     status:'active',program:'HVRP',docs:0,lastUpdate:'06/02/2025'},
+    {id:'6995',name:'Haynes Sidney',         status:'active',program:'HVRP',docs:0,lastUpdate:'02/27/2025'},
+    {id:'6999',name:'Holmes Bridgette',      status:'active',program:'HVRP',docs:0,lastUpdate:'06/20/2024'},
+    {id:'3745',name:'Hosticka William',      status:'active',program:'HVRP',docs:0,lastUpdate:'05/16/2024'},
+    {id:'3797',name:'Howard Jacarra',        status:'active',program:'HVRP',docs:0,lastUpdate:'11/13/2025'},
+    {id:'2977',name:'Huggins Karen',         status:'active',program:'HVRP',docs:0,lastUpdate:'08/12/2024'},
+    {id:'0376',name:'Hutchin Riley',         status:'active',program:'HVRP',docs:0,lastUpdate:'08/13/2024'},
+    {id:'9536',name:'Iqbal Rameez',          status:'active',program:'HVRP',docs:0,lastUpdate:'01/28/2026'},
+    {id:'1849',name:'Jackson Fredrick',      status:'active',program:'HVRP',docs:0,lastUpdate:'02/18/2026'},
+    {id:'2230',name:'James Willie',          status:'active',program:'HVRP',docs:0,lastUpdate:'01/20/2026'},
+    {id:'0372',name:'Jefferson Sonia',       status:'active',program:'HVRP',docs:0,lastUpdate:'09/24/2024'},
+    {id:'3333',name:'Jesus Lord',            status:'active',program:'HVRP',docs:0,lastUpdate:'02/25/2026'},
+    {id:'8366',name:'Johnson Cordell',       status:'active',program:'HVRP',docs:0,lastUpdate:'05/07/2024'},
+    {id:'7589',name:'Johnson Darren',        status:'active',program:'HVRP',docs:0,lastUpdate:'11/19/2024'},
+    {id:'6972',name:'Johnson Karisha',       status:'active',program:'HVRP',docs:0,lastUpdate:'11/18/2025'},
+    {id:'6214',name:'Johnson Michael',       status:'active',program:'HVRP',docs:0,lastUpdate:'03/19/2024'},
+    {id:'9422',name:'Jones Christian',       status:'active',program:'HVRP',docs:0,lastUpdate:'02/12/2025'},
+    {id:'1455',name:'Jones Tomorrow',        status:'active',program:'HVRP',docs:0,lastUpdate:'09/24/2025'},
+    {id:'0084',name:'Juneman Bryan',         status:'active',program:'HVRP',docs:0,lastUpdate:'02/03/2025'},
+    {id:'8665',name:'Keeler Jeffrey',        status:'active',program:'HVRP',docs:0,lastUpdate:'04/23/2025'},
+    {id:'3761',name:'Kennedy Robert',        status:'active',program:'HVRP',docs:0,lastUpdate:'08/27/2024'},
+    {id:'7265',name:'King Dedrick',          status:'active',program:'HVRP',docs:0,lastUpdate:'12/15/2025'},
+    {id:'4540',name:'King Kelcie',           status:'active',program:'HVRP',docs:0,lastUpdate:'10/23/2024'},
+    {id:'4883',name:'Kirksey Candice',       status:'active',program:'HVRP',docs:0,lastUpdate:'01/20/2026'},
+    {id:'2022',name:'Kutch Roderick',        status:'active',program:'HVRP',docs:0,lastUpdate:'10/21/2024'},
+    {id:'7280',name:'Landry Ronald',         status:'active',program:'HVRP',docs:0,lastUpdate:'03/25/2025'},
+    {id:'8144',name:'Lane Andrew',           status:'active',program:'HVRP',docs:0,lastUpdate:'05/13/2025'},
+    {id:'7172',name:'Lang Lacy',             status:'active',program:'HVRP',docs:0,lastUpdate:'06/25/2024'},
+    {id:'0597',name:'Larry Xavier',          status:'active',program:'HVRP',docs:0,lastUpdate:'11/13/2024'},
+    {id:'3533',name:'Lewis Rickey',          status:'active',program:'HVRP',docs:0,lastUpdate:'01/12/2026'},
+    {id:'7175',name:'Lucas Fanniece',        status:'active',program:'HVRP',docs:0,lastUpdate:'04/02/2025'},
+    {id:'1455',name:'Manney Shawn',          status:'active',program:'HVRP',docs:0,lastUpdate:'01/08/2026'},
+    {id:'8364',name:'Marte Rollins Lidia',   status:'active',program:'HVRP',docs:0,lastUpdate:'02/12/2026'},
+    {id:'1927',name:'Martinez Tomas',        status:'active',program:'HVRP',docs:0,lastUpdate:'07/28/2025'},
+    {id:'9594',name:'Martin Garfield',       status:'active',program:'HVRP',docs:0,lastUpdate:'07/10/2025'},
+    {id:'1089',name:'Mccoy Louis',           status:'active',program:'HVRP',docs:0,lastUpdate:'08/19/2025'},
+    {id:'5405',name:'Mcleod Vincent',        status:'active',program:'HVRP',docs:0,lastUpdate:'11/25/2025'},
+    {id:'9990',name:'Michael Brandon',       status:'active',program:'HVRP',docs:0,lastUpdate:'09/20/2023'},
+    {id:'7757',name:'Monroe Leland',         status:'active',program:'HVRP',docs:0,lastUpdate:'06/05/2025'},
+    {id:'1002',name:'Moore Marlin',          status:'active',program:'HVRP',docs:0,lastUpdate:'03/27/2024'},
+    {id:'9978',name:'Morgan Kendrick',       status:'active',program:'HVRP',docs:0,lastUpdate:'07/07/2025'},
+    {id:'0210',name:'Morrow Andrew',         status:'active',program:'HVRP',docs:0,lastUpdate:'02/18/2026'},
+    {id:'6892',name:'Mourland Eric',         status:'active',program:'HVRP',docs:0,lastUpdate:'01/07/2025'},
+    {id:'3123',name:'Nelson Darius',         status:'active',program:'HVRP',docs:0,lastUpdate:'10/07/2025'},
+    {id:'7307',name:'Newman Charles',        status:'active',program:'HVRP',docs:0,lastUpdate:'02/25/2026'},
+    {id:'3065',name:'Norris Robert',         status:'active',program:'HVRP',docs:0,lastUpdate:'01/09/2025'},
+    {id:'4987',name:'Oates Shaunise',        status:'active',program:'HVRP',docs:0,lastUpdate:'11/19/2025'},
+    {id:'5116',name:"O'Hara Terence",        status:'active',program:'HVRP',docs:0,lastUpdate:'11/10/2025'},
+    {id:'5376',name:'Oku Nii-Nortey',        status:'active',program:'HVRP',docs:0,lastUpdate:'05/27/2025'},
+    {id:'4797',name:'Omar Jasmine',          status:'active',program:'HVRP',docs:0,lastUpdate:'09/15/2025'},
+    {id:'8154',name:'Osuji Charles',         status:'active',program:'HVRP',docs:0,lastUpdate:'11/05/2025'},
+    {id:'6204',name:'Owens Clifton',         status:'active',program:'HVRP',docs:0,lastUpdate:'06/23/2025'},
+    {id:'0847',name:'Pangeni Binita',        status:'active',program:'HVRP',docs:0,lastUpdate:'04/09/2025'},
+    {id:'9305',name:'Pauletha Young',        status:'active',program:'HVRP',docs:0,lastUpdate:'06/05/2025'},
+    {id:'6463',name:'Pharr Jr Andre',        status:'active',program:'HVRP',docs:0,lastUpdate:'08/18/2025'},
+    {id:'6241',name:'Pitts Michael',         status:'active',program:'HVRP',docs:0,lastUpdate:'07/22/2025'},
+    {id:'4996',name:'Pleasant Javana',       status:'active',program:'HVRP',docs:0,lastUpdate:'09/10/2024'},
+    {id:'8379',name:'Pleitez Erick',         status:'active',program:'HVRP',docs:0,lastUpdate:'08/13/2024'},
+    {id:'8208',name:'Prouty Noel',           status:'active',program:'HVRP',docs:0,lastUpdate:'03/26/2024'},
+    {id:'4929',name:'Ramirez Arturo',        status:'active',program:'HVRP',docs:0,lastUpdate:'10/13/2025'},
+    {id:'3807',name:'Rhem Charles',          status:'active',program:'HVRP',docs:0,lastUpdate:'09/27/2023'},
+    {id:'6093',name:'Robey DeWayne',         status:'active',program:'HVRP',docs:0,lastUpdate:'07/29/2025'},
+    {id:'0984',name:'Rogers Mitchell',       status:'active',program:'HVRP',docs:0,lastUpdate:'05/22/2024'},
+    {id:'1756',name:'Romain Michael',        status:'active',program:'HVRP',docs:0,lastUpdate:'08/21/2025'},
+    {id:'6036',name:'Scott Andrea',          status:'active',program:'HVRP',docs:0,lastUpdate:'06/17/2025'},
+    {id:'9686',name:'Scott Yvonna',          status:'active',program:'HVRP',docs:0,lastUpdate:'02/19/2024'},
+    {id:'2321',name:'Scurry Kenneth',        status:'active',program:'HVRP',docs:0,lastUpdate:'04/16/2024'},
+    {id:'7696',name:'Sheffield Linda',       status:'active',program:'HVRP',docs:0,lastUpdate:'09/25/2024'},
+    {id:'3805',name:'Tavera Evaristo',       status:'active',program:'HVRP',docs:0,lastUpdate:'09/11/2025'},
+    {id:'8350',name:'Thomas LaJuan',         status:'active',program:'HVRP',docs:0,lastUpdate:'11/19/2024'},
+    {id:'2576',name:'Thompson Shaquana',     status:'active',program:'HVRP',docs:0,lastUpdate:'03/06/2024'},
+    {id:'4602',name:'Tijerina Manuel',       status:'active',program:'HVRP',docs:0,lastUpdate:'07/03/2025'},
+    {id:'6057',name:'Turner Cherylyn',       status:'active',program:'HVRP',docs:0,lastUpdate:'01/20/2026'},
+    {id:'9581',name:'Turner Terrence',       status:'active',program:'HVRP',docs:0,lastUpdate:'10/15/2024'},
+    {id:'8637',name:'Valdez Reynaldo',       status:'active',program:'HVRP',docs:0,lastUpdate:'07/02/2024'},
+    {id:'2973',name:'Walker Christian',      status:'active',program:'HVRP',docs:0,lastUpdate:'04/08/2025'},
+    {id:'1341',name:'Walker David',          status:'active',program:'HVRP',docs:0,lastUpdate:'10/31/2024'},
+    {id:'9247',name:'Wardell James',         status:'active',program:'HVRP',docs:0,lastUpdate:'01/13/2025'},
+    {id:'3002',name:'Washington John',       status:'active',program:'HVRP',docs:0,lastUpdate:'08/20/2024'},
+    {id:'4340',name:'Watkins Belinda',       status:'active',program:'HVRP',docs:0,lastUpdate:'03/06/2025'},
+    {id:'9619',name:'West Jayla',            status:'active',program:'HVRP',docs:0,lastUpdate:'08/29/2024'},
+    {id:'5691',name:'White Michael',         status:'active',program:'HVRP',docs:0,lastUpdate:'09/19/2023'},
+    {id:'6815',name:'Wilborn Michael',       status:'active',program:'HVRP',docs:0,lastUpdate:'01/10/2024'},
+    {id:'1919',name:'Wilkins Alfrado',       status:'active',program:'HVRP',docs:0,lastUpdate:'08/12/2025'},
+    {id:'9357',name:'Williams Elizabeth',    status:'active',program:'HVRP',docs:0,lastUpdate:'09/23/2024'},
+    {id:'2683',name:'Williams Morris',       status:'active',program:'HVRP',docs:0,lastUpdate:'03/07/2024'},
+    {id:'5939',name:'Williams Zaveri',       status:'active',program:'HVRP',docs:0,lastUpdate:'03/10/2025'},
+  ],
+  cm3:[ // Brandi Nicholson — 132 clients (alphabetical)
+    {id:'6325',name:'Abron Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2675',name:'Abron Benjamin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8693',name:'Ajani Oluwasegun',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0276',name:'Alderete Ryan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2851',name:'Alexander Kameron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6247',name:'Allen Trevon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8966',name:'Anderson Damion',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4323',name:'Ardoin Deonte',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5278',name:'Armstrong Marvin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8471',name:'Arnold William',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0798',name:'Barber Fatima',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8910',name:'Barnett Tricia',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8033',name:'Batiste Green Danielle',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2683',name:'Beeghley-Washington Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2368',name:'Bell Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3803',name:'Bevans Bianca',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1023',name:'Blanton Mikal',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3899',name:'Breaux Emile',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5978',name:'Breed Shandra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4456',name:'Brooks Natasha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1947',name:'Brown Harold',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8875',name:'Brown Harrison',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5340',name:'Brown Tyrell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8793',name:'Buenavista Barton',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3153',name:'Burns Billy',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3177',name:'Calderon Edvin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8989',name:'Champs Darrell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7820',name:'Cheatham Aaron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6688',name:'Childress Robert',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0730',name:'Coleman Samuel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0354',name:'Coleman Sophia',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2634',name:'Conner Benny',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8033',name:'Cruz Kevin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7452',name:'Cunningham Fredrick',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1838',name:'Daly John',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9009',name:'Dautruche Ridley',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5295',name:'Dixon Mark',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3291',name:'Echendu Chimeniem',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9321',name:'Edwards Jamaal',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7183',name:'Elliott Cameron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2003',name:'Emeka Henry',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2461',name:'Estrada Joe',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7384',name:'Farrera Francisco',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8810',name:'Felton Derick',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8324',name:'Franks Kyle',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5571',name:'Galbert Connell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2369',name:'Garcia Daniel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6583',name:'Gilbert Kenneth',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0353',name:'Gonzales Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9673',name:'Guerra Fernando',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6971',name:'Guidry jr Earl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5950',name:'Guyton Carl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2596',name:'Harper Donald',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7400',name:'Harrington Don',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3864',name:'Harris Geneice',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7470',name:'Harris Paul',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5878',name:'Harvey Alphonso',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9384',name:'Hasley Claude',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4260',name:'Holt Elijah',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7742',name:'Jackson Lorna',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2367',name:'Jackson Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2881',name:'James Desmond',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7555',name:'Jasso Jesse',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5871',name:'Johnson Eric',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2638',name:'Johnson Keneisha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5432',name:'Johnson Ray',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8465',name:'Jordan Jon-Erick',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3746',name:'Joshua Tiffany',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5037',name:'Kearse ZseVon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8244',name:'Kiger Christina',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0363',name:'King Melvin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1356',name:'King Quadree',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1811',name:'Labbe Wilfred',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9378',name:'Latulas Joseph',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6838',name:'LeBlanc Lemuel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6769',name:'Lewis Nicolette',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0028',name:'Lewis Star',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9420',name:'Lindsay Don Alonzo',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9561',name:'McCarty Erica',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7243',name:'Mccurry Rebecca',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7980',name:'Mcdonald Allen',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1090',name:'McDow James',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6691',name:'McGahey Shelby',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4659',name:'Metheny Paul',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6685',name:'Milton Quinton',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3565',name:'Mitchell Quinnesha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2825',name:'Monroe Robin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7847',name:'Montgomery Jeffery',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0461',name:'Moore Joel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1791',name:'Mwamba Keith',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0303',name:'Nelson Jemisha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9172',name:'Nguyen Dang',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2638',name:'Nicholson Brandi',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8390',name:'Page Ebonie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2520',name:'Peoples Gary',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8212',name:'Powers Lester',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8908',name:'Randle Alexis',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9561',name:'Reid Lonzie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6252',name:'Rhines Carlton',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0414',name:'Roberson Troy',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1822',name:'Roberts Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6366',name:'Rovira Heather',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0801',name:'Rulvalcaba Angel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6034',name:'Runco Joseph',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5396',name:'Rylander Johnnie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5345',name:'Salas Phillip',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9337',name:'Sanders Sierra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3754',name:'Sandles Rachel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6381',name:'Seitzberg Robert',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2087',name:'Shepard Nicole',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3248',name:'Sims Floyd',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9875',name:'Smith Chrisean',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8467',name:'Smith Dion',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1231',name:'Smith Donice',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3072',name:'Smith Donnell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7913',name:'Smith Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5193',name:'Spencer Cautilda',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3635',name:'Tabb Sebastian',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0806',name:'Taylor Xavier',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5609',name:'Thervil Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3086',name:'Umberhind Koch Krista',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0545',name:'Vasquez Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2090',name:'Vences Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3690',name:'Waddy Kendon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1341',name:'Walker David',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2789',name:'Ward Tyrell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5801',name:'Washington Jr Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2232',name:'Waters Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7530',name:'White Rickey',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6162',name:'Wimberly Trevarius',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3282',name:'Ybarra Ybarra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6771',name:'Young Ell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+  ],
+  cm4:[ // Carl Poole — 65 clients (alphabetical)
+    {id:'6011',name:'Abrego Sanchez Alfonso',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4056',name:'Alvear Sandra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5370',name:'Ash Ell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9120',name:'Ashlie Fountain',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6393',name:'Barletta Harold',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8098',name:'Belmar Jr Eric',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8875',name:'Blackman Napoleon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2421',name:'Brooks David',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9621',name:'Butler Jonathon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9991',name:'Byrd Andrew',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9577',name:'Cabaniss Donnie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5112',name:'Carr Garielle',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0963',name:'Danso Emmanuel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9238',name:'Davis Jordan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5650',name:'Diallo Sy',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0622',name:'Dixon Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2416',name:'Ferraro Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9846',name:'Fisher Jamarian',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3522',name:'Franklin Kamaal',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8304',name:'Gambrell Tyrone',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'3936',name:'Gauthier Ronny',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1414',name:'Gilbert Deirdre',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4938',name:'Gordwin Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4309',name:'Guidry Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0541',name:'Hamboa Frank',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0360',name:'Harvey Quentin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9974',name:'Harvey-Hinds Jhanique',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9323',name:'Heiman Eddie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8866',name:'Henson Afrionlunsa',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2366',name:'Jackson Cheryl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7872',name:'Jones Paul',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9151',name:'King James',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6371',name:'Larkin Evan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'1206',name:'Lillard Jaimee',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5310',name:'Malith Kog',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6297',name:'Marcus Lee',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2021',name:'Mayo Sheldon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9704',name:'Mellott Daniel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2679',name:'Moore David',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6214',name:'Moore Eric',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6586',name:'Moore Marion',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6102',name:'Odukoya Adebola',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0254',name:'Orange Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0356',name:'Owens Adrian',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0438',name:'Payne Nathan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8798',name:'Permenter Bentley',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6200',name:'Redd DeAnna',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'5500',name:'Robinson Yasmin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2572',name:'Roman Ulises',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4249',name:'Scott Ron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0144',name:'Selvey Larry',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2517',name:'Smith Dennis',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'8279',name:'Sneed Phillip',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0353',name:'Sorenson Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'7428',name:'Spruell Gergory',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4350',name:'Taylor Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6361',name:'Temple Bentiana',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'9303',name:'Valyan Bryant',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4714',name:'Walker Vance',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0953',name:'Ward Bryan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'2949',name:'White Carl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'0096',name:'Williams Darren',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6446',name:'Williams Lindsay',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'6573',name:'Williams Torrin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+    {id:'4288',name:'Willis Dominique',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
+  ],
+};
+
+// ══════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════
+const STORAGE_KEY='thlp_links_v4';
+function loadLinks(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}catch(e){return{}}}
+
+function saveLinks(){
+  const links={};
+  document.querySelectorAll('.ap-input').forEach(inp=>{
+    const val=inp.value.trim();
+    if(val) links[inp.dataset.id]=val;
+  });
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(links));
+  updateAllCards();
+  updateCMBanner(document.getElementById('caseManagerSelect').value);
+  updateQBCards();
+  updateProgress();
+  const conf=document.getElementById('apSaveConfirm');
+  conf.style.display='block';
+  setTimeout(()=>conf.style.display='none',3000);
+}
+
+// ── EXPORT LINKS ──
+function exportLinks(){
+  const links=loadLinks();
+  const exportData={
+    exported: new Date().toISOString(),
+    source: 'THLP HVRP Document Center',
+    version: '4',
+    links: links
+  };
+  const blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  const date=new Date().toISOString().split('T')[0];
+  a.download=`THLP_Dashboard_Links_Backup_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── IMPORT LINKS ──
+function importLinks(event){
+  const file=event.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      const links=data.links||data; // support both wrapped and raw formats
+      if(typeof links!=='object') throw new Error('Invalid format');
+      // Save to localStorage
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(links));
+      // Re-populate all inputs
+      buildAdminRows();
+      updateAllCards();
+      updateCMBanner(document.getElementById('caseManagerSelect').value);
+      updateQBCards();
+      updateProgress();
+      // Show confirmation
+      const conf=document.getElementById('importConfirm');
+      conf.style.display='block';
+      setTimeout(()=>conf.style.display='none',4000);
+    } catch(err){
+      alert('Could not read the backup file. Please make sure you are using a file exported from this dashboard.');
+    }
+  };
+  reader.readAsText(file);
+  // Reset input so same file can be re-imported if needed
+  event.target.value='';
+}
+
+function getLink(id){return loadLinks()[id]||''}
+
+// ══════════════════════════════════════════
+// FORM CARDS
+// ══════════════════════════════════════════
+function renderCard(f,q){
+  const href=getLink(f.id);
+  const linked=!!href;
+  const hl=s=>{if(!q)return s;return s.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>')};
+  return `<a class="form-card ${linked?'linked':'unlinked'}" href="${linked?href:'#'}" ${linked?'target="_blank"':''}>
+    <div class="form-card-top">
+      <div class="form-icon">${f.icon}</div>
+      <div><div class="form-name">${hl(f.name)}</div><div class="form-desc">${hl(f.desc)}</div></div>
+    </div>
+    <div class="form-card-footer">
+      <span class="form-tag">${f.tag}</span>
+      <span class="${linked?'form-action-open':'form-action-pending'}">${linked?'Open →':'⏳ Link pending'}</span>
+    </div>
+  </a>`;
+}
+function populateAll(){Object.entries(formData).forEach(([k,forms])=>{const g=document.getElementById('grid-'+k);if(g)g.innerHTML=forms.map(f=>renderCard(f,'')).join('')})}
+function updateAllCards(){populateAll()}
+
+// ══════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════
+function updateProgress(){
+  const links=loadLinks();
+  const allForms=Object.values(formData).flat();
+  const total=allForms.length;
+  const active=allForms.filter(f=>links[f.id]).length;
+  const pct=total?Math.round(active/total*100):0;
+  document.getElementById('pbFill').style.width=pct+'%';
+  document.getElementById('pbCount').textContent=active+' / '+total;
+  const ap=document.getElementById('apProgressCount');
+  if(ap){
+    const totalAll=Object.keys(links).length;
+    ap.textContent=totalAll;
+  }
+}
+
+// ══════════════════════════════════════════
+// QUICKBOOKS CARDS
+// ══════════════════════════════════════════
+const qbItems=[
+  {id:'qb_payroll', label:'payroll'},
+  {id:'qb_grants',  label:'grants'},
+  {id:'qb_vendors', label:'vendors'},
+  {id:'qb_budget',  label:'budget'},
+  {id:'qb_bank',    label:'bank'},
+];
+
+function updateQBCards(){
+  const links=loadLinks();
+  qbItems.forEach(item=>{
+    const card=document.getElementById('qb-'+item.label);
+    const action=document.getElementById('qba-'+item.label);
+    if(!card||!action) return;
+    const href=links[item.id]||'';
+    if(href){
+      card.classList.add('qb-linked');
+      action.textContent='Open →';
+      action.className='qb-action';
+    } else {
+      card.classList.remove('qb-linked');
+      action.textContent='⏳ Link pending';
+      action.className='qb-action pending';
+    }
+  });
+  // Wave card
+  const waveLink = links['wave_receipts']||'';
+  const waveBtn  = document.getElementById('waveLinkBtn');
+  if(waveBtn){
+    if(waveLink){
+      waveBtn.href = waveLink;
+      waveBtn.textContent = '🌊 Open Wave Receipts';
+      waveBtn.className = 'wave-btn';
+    } else {
+      waveBtn.href = '#';
+      waveBtn.textContent = '⚙️ Add Wave Link — click to set up';
+      waveBtn.className = 'wave-btn pending';
+    }
+  }
+}
+
+function openQB(id){
+  const href=getLink(id);
+  if(href){
+    window.open(href,'_blank');
+  } else {
+    openAdmin('quickbooks');
+  }
+}
+
+function handleWaveClick(e){
+  const href=getLink('wave_receipts');
+  if(!href){
+    e.preventDefault();
+    openAdmin('quickbooks');
+  }
+}
+
+// ══════════════════════════════════════════
+// CLIENT FILE
+// ══════════════════════════════════════════
+const cmSel=document.getElementById('caseManagerSelect');
+caseManagers.forEach(cm=>{const o=document.createElement('option');o.value=cm.id;o.textContent=cm.name;cmSel.appendChild(o)});
+let currentClients=[];
+
+function updateCMBanner(id){
+  const banner=document.getElementById('cmFolderBanner');
+  if(!id){banner.classList.remove('show');return;}
+  const cm=caseManagers.find(c=>c.id===id);
+  if(!cm){banner.classList.remove('show');return;}
+  const link=getLink('cm_folder_'+id);
+  document.getElementById('cmFolderName').textContent=cm.name;
+  document.getElementById('cmFolderStatus').textContent=link?'':'— link not yet added';
+  const btn=document.getElementById('cmFolderBtn');
+  if(link){
+    btn.href=link;
+    btn.className='cm-folder-btn';
+    btn.textContent='📂 Open CM Folder in DocuShare';
+  } else {
+    btn.href='#';
+    btn.className='cm-folder-btn ds-pending';
+    btn.textContent='📂 Link not set — use ⚙️ Manage Links';
+    btn.onclick=e=>{e.preventDefault();openAdmin('cmfolders')};
+  }
+  banner.classList.add('show');
+}
+
+function onCMChange(){
+  const id=cmSel.value;
+  const sw=document.getElementById('clientSearchWrap');
+  const st=document.getElementById('cfStats');
+  document.getElementById('clientSearchInput').value='';
+  document.getElementById('clearClientSearch').style.display='none';
+  document.getElementById('clientSearchCount').textContent='';
+  updateCMBanner(id);
+  if(!id){
+    sw.style.display='none';st.style.display='none';
+    document.getElementById('cfContent').innerHTML='<div class="cf-empty"><h3>No Case Manager Selected</h3><p>Use the dropdown above to select a case manager and view their client files.</p></div>';
+    document.getElementById('cnt-clientfile').textContent='—';
+    currentClients=[];return;
+  }
+  currentClients=clientRecords[id]||[];
+  sw.style.display='block';
+  renderClientStats(currentClients,currentClients.length);
+  st.style.display='flex';
+  document.getElementById('cnt-clientfile').textContent=currentClients.length;
+  renderClientCards(currentClients,'');
+}
+
+function renderClientStats(all,showing){
+  document.getElementById('statTotal').textContent=all.length;
+  document.getElementById('statActive').textContent=all.filter(c=>c.status==='active').length;
+  document.getElementById('statPending').textContent=all.filter(c=>c.status==='pending').length;
+  document.getElementById('statInactive').textContent=all.filter(c=>c.status==='inactive').length;
+  document.getElementById('statShowing').textContent=showing;
+}
+
+function renderClientCards(clients,q){
+  const el=document.getElementById('cfContent');
+  if(!clients.length){
+    el.innerHTML=q?'<div class="cf-empty"><h3>No clients match your search</h3></div>':'<div class="cf-empty"><h3>No veterans added yet</h3><p>Veteran names for this case manager have not been entered yet. Please provide the names to update this dashboard.</p></div>';
+    return;
+  }
+  const hl=s=>{if(!q)return s;return s.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>')};
+  const groups=[
+    {label:'Active Clients',icon:'✅',key:'active',chip:'chip-active'},
+    {label:'Pending Clients',icon:'⏳',key:'pending',chip:'chip-pending'},
+    {label:'Inactive Clients',icon:'📂',key:'inactive',chip:'chip-inactive'},
+  ];
+  let html='';
+  groups.forEach(g=>{
+    const grp=clients.filter(c=>c.status===g.key);
+    if(!grp.length)return;
+    html+=`<div class="cf-section"><div class="cf-section-title"><span>${g.icon}</span>${g.label} (${grp.length})</div><div class="forms-grid">`;
+    grp.forEach(c=>{
+      const ini=c.name.split(' ').filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join('');
+      const dsLink=getLink('vet_'+c.id);
+      const dsBtnHtml=dsLink
+        ?`<a class="client-ds-btn" href="${dsLink}" target="_blank">📂 Open in DocuShare</a>`
+        :`<button class="client-ds-btn ds-pending" onclick="openAdmin('vetfolders')">📂 Add DocuShare Link</button>`;
+      html+=`<div class="client-card">
+        <div class="client-card-header">
+          <div class="client-avatar">${ini}</div>
+          <div><div class="client-name">${hl(c.name)}</div><div class="client-id">${hl(c.id)}</div></div>
+        </div>
+        <div class="client-card-body">
+          <div class="client-meta">
+            <span class="meta-chip ${g.chip}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span>
+            <span class="meta-chip chip-program">${hl(c.program)}</span>
+          </div>
+          <div class="client-docs">📎 Documents on file: <span class="doc-pill">${c.docs}</span></div>
+        </div>
+        <div class="client-card-footer">
+          <span class="client-date">Updated: ${c.lastUpdate}</span>
+          ${dsBtnHtml}
+        </div>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  el.innerHTML=html;
+}
+
+const csi=document.getElementById('clientSearchInput');
+const ccb=document.getElementById('clearClientSearch');
+const csc=document.getElementById('clientSearchCount');
+csi.addEventListener('input',doClientSearch);
+ccb.addEventListener('click',clearClientSearch);
+function doClientSearch(){
+  const q=csi.value.trim();
+  ccb.style.display=q?'block':'none';
+  if(!currentClients.length)return;
+  const matched=q?currentClients.filter(c=>
+    c.name.toLowerCase().includes(q.toLowerCase())||
+    c.id.toLowerCase().includes(q.toLowerCase())||
+    c.program.toLowerCase().includes(q.toLowerCase())||
+    c.status.toLowerCase().includes(q.toLowerCase())
+  ):currentClients;
+  csc.textContent=q?matched.length+' found':'';
+  renderClientStats(currentClients,matched.length);
+  renderClientCards(matched,q);
+}
+function clearClientSearch(){csi.value='';ccb.style.display='none';csc.textContent='';renderClientStats(currentClients,currentClients.length);renderClientCards(currentClients,'')}
+
+// ══════════════════════════════════════════
+// ADMIN PANEL
+// ══════════════════════════════════════════
+function buildAdminRows(){
+  const links=loadLinks();
+
+  // ── FORM ROWS ──
+  let fHtml='';
+  Object.entries(formData).forEach(([key,forms])=>{
+    fHtml+=`<div class="ap-section"><div class="ap-section-title">${TAB_LABELS[key]}</div>`;
+    forms.forEach(f=>{
+      const val=links[f.id]||'';
+      const linked=!!val;
+      fHtml+=`<div class="ap-form-row">
+        <div class="ap-form-label">${f.icon} ${f.name}<small>${f.tag}</small></div>
+        <input class="ap-input" data-id="${f.id}" type="url" placeholder="Paste OneDrive link here..." value="${val}" oninput="liveStatusUpdate(this)"/>
+        <span class="ap-status ${linked?'linked':'pending'}" id="apst-${f.id}">${linked?'✅ Linked':'⏳ Pending'}</span>
+      </div>`;
+    });
+    fHtml+='</div>';
+  });
+  document.getElementById('adminFormRows').innerHTML=fHtml;
+
+  // ── CM FOLDER ROWS ──
+  let cmHtml='';
+  caseManagers.forEach(cm=>{
+    const val=links['cm_folder_'+cm.id]||'';
+    const linked=!!val;
+    cmHtml+=`<div class="ap-cm-row">
+      <div class="ap-cm-label">📁 ${cm.name}<small>Main DocuShare Folder</small></div>
+      <input class="ap-input" data-id="cm_folder_${cm.id}" type="url" placeholder="Paste DocuShare folder URL from browser address bar..." value="${val}" oninput="liveStatusUpdate(this)"/>
+      <span class="ap-status ${linked?'linked':'pending'}" id="apst-cm_folder_${cm.id}">${linked?'✅ Linked':'⏳ Pending'}</span>
+    </div>`;
+  });
+  document.getElementById('adminCMRows').innerHTML=cmHtml;
+
+  // ── VETERAN FOLDER ROWS ──
+  let vHtml='';
+  caseManagers.forEach(cm=>{
+    const vets=clientRecords[cm.id]||[];
+    if(!vets.length)return;
+    vHtml+=`<div class="ap-section"><div class="ap-section-title">📁 ${cm.name}'s Veterans</div>`;
+    vets.forEach(v=>{
+      const val=links['vet_'+v.id]||'';
+      const linked=!!val;
+      vHtml+=`<div class="ap-form-row">
+        <div class="ap-form-label">🗂️ ${v.name}<small>${v.id} · ${v.status.charAt(0).toUpperCase()+v.status.slice(1)}</small></div>
+        <input class="ap-input" data-id="vet_${v.id}" type="url" placeholder="Paste DocuShare veteran folder URL..." value="${val}" oninput="liveStatusUpdate(this)"/>
+        <span class="ap-status ${linked?'linked':'pending'}" id="apst-vet_${v.id}">${linked?'✅ Linked':'⏳ Pending'}</span>
+      </div>`;
+    });
+    vHtml+='</div>';
+  });
+  document.getElementById('adminVetRows').innerHTML=vHtml;
+
+  // ── QB & WAVE ROWS — pre-fill from saved links ──
+  const links2=loadLinks();
+  [...qbItems,{id:'wave_receipts',label:'wave_receipts'}].forEach(item=>{
+    const inp=document.querySelector(`.ap-input[data-id="${item.id}"]`);
+    if(inp) inp.value=links2[item.id]||'';
+    const st=document.getElementById('apst-'+item.id);
+    if(st){
+      const linked=!!(links2[item.id]);
+      st.textContent=linked?'✅ Linked':'⏳ Pending';
+      st.className='ap-status '+(linked?'linked':'pending');
+    }
+  });
+
+  updateProgress();
+}
+
+function liveStatusUpdate(inp){
+  const val=inp.value.trim();
+  const statusEl=document.getElementById('apst-'+inp.dataset.id);
+  if(statusEl){
+    statusEl.textContent=val?'✅ Linked':'⏳ Pending';
+    statusEl.className='ap-status '+(val?'linked':'pending');
+  }
+}
+
+let currentAdminTab='forms';
+function switchAdminTab(tab,btn){
+  document.querySelectorAll('.ap-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.ap-tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('aptab-'+tab).classList.add('active');
+  currentAdminTab=tab;
+}
+
+function openAdmin(tab){
+  buildAdminRows();
+  if(tab){
+    const btn=document.querySelector(`.ap-tab[onclick*="${tab}"]`);
+    if(btn) switchAdminTab(tab,btn);
+  }
+  document.getElementById('adminOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAdmin(){document.getElementById('adminOverlay').classList.remove('open');document.body.style.overflow=''}
+function overlayClick(e){if(e.target===document.getElementById('adminOverlay'))closeAdmin()}
+
+// ══════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════
+const si=document.getElementById('searchInput');
+const cb=document.getElementById('clearSearch');
+const sc=document.getElementById('searchCount');
+const nr=document.getElementById('noResults');
+const ct=document.querySelector('.content');
+const sh=document.getElementById('searchHeader');
+si.addEventListener('input',doSearch);
+cb.addEventListener('click',clearSearch);
+const searchableTabs=['hvrp','application','jobdev','iep','tracking','consent','employment','casemanagement','receipts'];
+function doSearch(){
+  const q=si.value.trim();
+  cb.style.display=q?'block':'none';
+  if(!q){clearSearch();return;}
+  ct.classList.add('search-mode');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  let total=0;
+  searchableTabs.forEach(key=>{
+    const panel=document.getElementById('panel-'+key);
+    const grid=document.getElementById('grid-'+key);
+    const forms=formData[key]||[];
+    const matched=forms.filter(f=>f.name.toLowerCase().includes(q.toLowerCase())||f.desc.toLowerCase().includes(q.toLowerCase())||f.tag.toLowerCase().includes(q.toLowerCase()));
+    if(matched.length>0){panel.classList.add('has-results','active');grid.innerHTML=matched.map(f=>renderCard(f,q)).join('');total+=matched.length;}
+    else{panel.classList.remove('has-results','active');}
+    document.getElementById('cnt-'+key).textContent=matched.length;
+  });
+  document.getElementById('panel-clientfile').classList.remove('has-results','active');
+  sh.textContent=total===0?'No results found':total+' form'+(total!==1?'s':'')+' matching "'+q+'"';
+  nr.style.display=total===0?'block':'none';
+  sc.textContent=total>0?total+' found':'';
+}
+function clearSearch(){
+  si.value='';cb.style.display='none';sc.textContent='';nr.style.display='none';
+  ct.classList.remove('search-mode');
+  searchableTabs.forEach(key=>{
+    document.getElementById('cnt-'+key).textContent=(formData[key]||[]).length;
+    document.getElementById('grid-'+key).innerHTML=(formData[key]||[]).map(f=>renderCard(f,'')).join('');
+    document.getElementById('panel-'+key).classList.remove('has-results','active');
+  });
+  document.getElementById('panel-clientfile').classList.remove('has-results','active');
+  document.getElementById('panel-'+activeTab).classList.add('active');
+  document.querySelector('[data-tab="'+activeTab+'"]').classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════
+let activeTab='hvrp';
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  activeTab=id;
+  if(id!=='clientfile')clearSearch();
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+populateAll();
+updateProgress();
+updateQBCards();
+
+// ══════════════════════════════════════════
+// PASSWORD LOCK
+// ══════════════════════════════════════════
+const PASS = 'Thlp031726$!';
+const SESSION_KEY = 'thlp_unlocked';
+const MAX_ATTEMPTS = 5;
+let attempts = 0;
+
+// Check if already unlocked this session
+if(sessionStorage.getItem(SESSION_KEY) === 'true'){
+  document.body.classList.remove('locked');
+  document.getElementById('lockScreen').style.display = 'none';
+}
+
+function unlock(){
+  const input = document.getElementById('lockPassword').value;
+  const errEl = document.getElementById('lockError');
+  const attEl = document.getElementById('lockAttempts');
+  const pwEl  = document.getElementById('lockPassword');
+
+  if(input === PASS){
+    sessionStorage.setItem(SESSION_KEY,'true');
+    document.getElementById('lockScreen').style.display='none';
+    document.body.classList.remove('locked');
+    attempts = 0;
+  } else {
+    attempts++;
+    pwEl.value = '';
+    pwEl.classList.add('error');
+    setTimeout(()=>pwEl.classList.remove('error'), 400);
+    errEl.classList.add('show');
+    const remaining = MAX_ATTEMPTS - attempts;
+    if(remaining <= 0){
+      pwEl.disabled = true;
+      document.querySelector('.lock-btn').disabled = true;
+      errEl.textContent = 'Too many failed attempts. Please close and reopen the file.';
+      attEl.textContent = '';
+    } else {
+      attEl.textContent = remaining + ' attempt' + (remaining !== 1 ? 's' : '') + ' remaining';
+    }
+  }
+}
+
+function togglePw(){
+  const pw = document.getElementById('lockPassword');
+  pw.type = pw.type === 'password' ? 'text' : 'password';
+}
+
+// Auto-focus password field
+window.addEventListener('load', ()=>{
+  const pw = document.getElementById('lockPassword');
+  if(pw && !pw.disabled) pw.focus();
+});
+</script>
+</body>
+</html>
