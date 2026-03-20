@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – Participant Tracking Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;--teal-pale:rgba(50,110,106,.08);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e8e8;--text:#1a2424;--muted:#5a7070;
+  --shadow:0 4px 24px rgba(50,110,106,.13);--shadow-lg:0 12px 48px rgba(50,110,106,.18);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fca5a5;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 0% 0%,rgba(50,110,106,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+header{background:var(--teal);border-bottom:4px solid rgba(255,255,255,.3);padding:18px 32px;display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+.logo-badge{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.header-text p{color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.header-right{margin-left:auto}
+.badge-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:20px}
+
+main{max-width:820px;margin:36px auto 60px;padding:0 20px;position:relative;z-index:1}
+
+/* PROGRESS INDICATOR */
+.progress-wrap{background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.prog-label{font-size:12px;font-weight:700;color:var(--teal);white-space:nowrap}
+.prog-track{flex:1;background:var(--gray);border-radius:20px;height:8px;min-width:120px}
+.prog-fill{height:100%;background:var(--teal);border-radius:20px;transition:width .4s ease;width:0%}
+.prog-count{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.section-nav{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;width:100%}
+.nav-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray);background:var(--offwhite);cursor:pointer;font-size:10px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .18s}
+.nav-dot.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.nav-dot.done{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+
+.form-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.form-card-header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);padding:26px 30px;border-bottom:3px solid rgba(255,255,255,.25)}
+.form-card-header h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:21px;margin-bottom:5px}
+.form-card-header p{color:rgba(255,255,255,.65);font-size:13px;line-height:1.5}
+.chip-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:12px}
+
+.print-hint{background:var(--teal-pale);border:1px solid rgba(50,110,106,.2);border-radius:8px;padding:11px 16px;font-size:12px;color:var(--teal-mid);margin:20px 30px 0;display:flex;align-items:center;gap:8px;line-height:1.5}
+.print-hint strong{color:var(--teal)}
+
+/* FORM PAGES */
+.form-page{display:none;padding:28px 30px;animation:fadeUp .3s ease both}
+.form-page.active{display:block}
+.page-title{font-family:'Libre Baskerville',serif;font-size:16px;color:var(--teal);margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:10px}
+.page-num{background:var(--teal);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+
+.section{margin-bottom:22px}
+.section-title{font-family:'Libre Baskerville',serif;font-size:13px;color:var(--teal);margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid var(--gray);display:flex;align-items:center;gap:7px}
+.s-icon{width:22px;height:22px;border-radius:5px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+@media(max-width:580px){.two-col,.three-col,.four-col{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.two-col,.three-col,.four-col{grid-template-columns:1fr}}
+
+.field-row{margin-bottom:13px}
+.field-label{display:block;font-size:12px;font-weight:700;color:var(--teal);margin-bottom:5px;line-height:1.4}
+.field-label .req{opacity:.7;margin-left:2px}
+.field-hint{font-size:10px;font-weight:400;color:var(--muted);display:block;margin-top:2px;line-height:1.4}
+.ssn-note{font-size:10px;color:var(--muted);margin-top:3px;font-weight:400;display:block}
+
+.text-input,.select-input,.textarea-input{width:100%;border:2px solid var(--gray);border-radius:8px;padding:9px 12px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
+.text-input:focus,.select-input:focus,.textarea-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.12)}
+.text-input::placeholder,.textarea-input::placeholder{color:#bbb}
+.textarea-input{resize:vertical;min-height:72px}
+.select-wrap{position:relative}
+.select-wrap::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:13px;pointer-events:none}
+.select-input{padding-right:30px;cursor:pointer}
+
+/* RADIO / CHECK GROUPS */
+.radio-group,.check-group{display:flex;flex-wrap:wrap;gap:8px}
+.radio-group.vertical,.check-group.vertical{flex-direction:column;gap:6px}
+.radio-item,.check-item-sm{display:flex;align-items:center;gap:7px;padding:7px 12px;border:2px solid var(--gray);border-radius:7px;cursor:pointer;background:var(--offwhite);transition:all .18s;user-select:none;font-size:12px;font-weight:600;color:var(--muted)}
+.radio-item:hover,.check-item-sm:hover{border-color:var(--teal);color:var(--teal);background:#fff}
+.radio-item.selected{border-color:var(--teal);background:var(--teal-pale);color:var(--teal)}
+.check-item-sm.checked{border-color:var(--teal);background:var(--teal-pale);color:var(--teal)}
+.ri-dot{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s}
+.radio-item.selected .ri-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);display:block}
+.ci-box{width:14px;height:14px;border-radius:3px;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:700}
+.check-item-sm.checked .ci-box::after{content:'✓'}
+
+/* QUARTER SELECTOR */
+.quarter-row{display:flex;gap:8px;flex-wrap:wrap}
+.q-btn{border:2px solid var(--gray);border-radius:8px;padding:8px 14px;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;background:var(--offwhite);transition:all .18s;user-select:none}
+.q-btn:hover{border-color:var(--teal);color:var(--teal)}
+.q-btn.selected{border-color:var(--teal);background:var(--teal-pale);color:var(--teal)}
+
+/* TRAINING TABLE */
+.training-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px}
+.training-table th{background:var(--teal);color:#fff;padding:8px 10px;text-align:left;font-weight:700;font-size:10px;letter-spacing:.4px;text-transform:uppercase}
+.training-table tr:nth-child(even){background:var(--offwhite)}
+.training-table td{padding:6px 8px;border-bottom:1px solid var(--gray);vertical-align:middle}
+.training-table td input{border:1px solid var(--gray);border-radius:5px;padding:5px 7px;font-family:'Source Sans 3',sans-serif;font-size:11px;width:100%;outline:none;background:#fff;transition:border-color .2s}
+.training-table td input:focus{border-color:var(--teal)}
+.training-table td input::placeholder{color:#ccc}
+
+/* SERVICES TABLE */
+.services-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px}
+.services-table th{background:var(--teal);color:#fff;padding:8px 10px;text-align:left;font-weight:700;font-size:10px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.services-table tr:nth-child(even){background:var(--offwhite)}
+.services-table td{padding:6px 8px;border-bottom:1px solid var(--gray);vertical-align:middle}
+.services-table td:first-child{font-weight:600;color:var(--text);font-size:11px;min-width:180px}
+.services-table td input[type=date]{border:1px solid var(--gray);border-radius:5px;padding:4px 6px;font-family:'Source Sans 3',sans-serif;font-size:10px;width:100%;min-width:100px;outline:none;background:#fff}
+.services-table td input:focus{border-color:var(--teal)}
+
+/* OCCUPATION SELECT */
+.occ-select{width:100%;border:2px solid var(--gray);border-radius:8px;padding:9px 30px 9px 12px;font-family:'Source Sans 3',sans-serif;font-size:12px;color:var(--text);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23326E6A'/%3E%3C/svg%3E") no-repeat right 10px center;outline:none;appearance:none;transition:border-color .2s}
+.occ-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.12)}
+
+/* FOLLOW-UP QUARTER BOX */
+.fup-box{background:var(--offwhite);border:1px solid var(--gray);border-radius:10px;padding:16px;margin-bottom:14px}
+.fup-box-title{font-family:'Libre Baskerville',serif;font-size:13px;color:var(--teal);margin-bottom:12px;font-weight:700}
+
+/* PAGE NAVIGATION */
+.page-nav{padding:18px 30px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.nav-btn{border:none;border-radius:9px;padding:11px 24px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:6px}
+.nav-btn.prev{background:var(--offwhite);color:var(--teal);border:2px solid var(--teal)}
+.nav-btn.prev:hover{background:var(--teal-pale)}
+.nav-btn.next{background:var(--teal);color:#fff;box-shadow:0 4px 12px rgba(50,110,106,.25)}
+.nav-btn.next:hover{background:var(--teal-mid);transform:translateY(-1px)}
+.nav-btn.submit{background:var(--teal);color:#fff;box-shadow:0 4px 12px rgba(50,110,106,.25);padding:11px 28px}
+.nav-btn.submit:hover{background:var(--teal-mid)}
+.page-indicator{font-size:12px;font-weight:700;color:var(--muted)}
+
+/* PRINT */
+@media print{
+  body{background:#fff!important}
+  header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .form-card{box-shadow:none!important}
+  .page-nav,.progress-wrap,.print-hint{display:none!important}
+  .form-page{display:block!important}
+  .print-filename-banner{display:block!important}
+  .form-page{page-break-before:always}
+  .form-page:first-of-type{page-break-before:avoid}
+}
+.print-filename-banner{display:none;background:var(--teal);color:#fff;padding:8px 30px;font-size:12px;font-weight:700;font-family:'Source Sans 3',sans-serif}
+
+/* SUCCESS */
+#successMsg{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:28px;text-align:center;margin:20px 30px 30px}
+#successMsg .si{font-size:34px;margin-bottom:10px}
+#successMsg h3{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--green);margin-bottom:6px}
+#successMsg p{font-size:13px;color:var(--muted)}
+#successMsg .print-actions{margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#successMsg .save-pdf-btn{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:11px 24px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+#successMsg .filing-instructions{margin-top:16px;background:var(--offwhite);border:1px solid var(--gray);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.7;text-align:left}
+#successMsg .filing-instructions strong{color:var(--teal)}
+#successMsg .filename-display{font-family:monospace;background:var(--teal);color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;display:inline-block;margin:6px 0}
+
+.field-error{font-size:11px;font-weight:700;color:var(--red);margin-top:4px;display:none}
+.field-error.show{display:block}
+
+.print-btn{background:var(--offwhite);color:var(--teal);border:2px solid var(--teal);border-radius:10px;padding:11px 20px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.print-btn:hover{background:var(--teal-pale,rgba(50,110,106,.08))}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">THLP</div>
+  <div class="header-text"><h1>The Houston Launch Pad</h1><p>HVRP Document &amp; Forms Center</p></div>
+  <div class="header-right"><span class="badge-pill">HVRP / VSTAGP</span></div>
+</header>
+
+<main>
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <span class="prog-label">Progress:</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+    <span class="prog-count" id="progCount">Page 1 of 7</span>
+    <div class="section-nav" id="sectionNav"></div>
+  </div>
+
+  <div class="print-hint">💡 <span>After submitting, you will be prompted to <strong>Save as PDF</strong>. The filename will be auto-filled with the veteran's name and last 4 SSN digits for DocuShare filing.</span></div>
+
+  <div class="form-card" style="margin-top:16px">
+    <div class="form-card-header">
+      <h2>Participant Tracking Sheet</h2>
+      <p>
+        Program Year
+        <select id="programYearSelect" onchange="updateProgramYear(this.value)" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:6px;padding:3px 8px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;outline:none;appearance:none;margin:0 4px">
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+          <option value="2029">2029</option>
+          <option value="2030">2030</option>
+        </select>
+        — Official DOL-VETS participant tracking form for the Homeless Veterans Reintegration Program and Veterans &amp; Spouse Transition Assistance Grant Program.
+      </p>
+      <div class="chip-row">
+        <span class="chip">Grant #23560HV000039</span>
+        <span class="chip">DOL-VETS</span>
+        <span class="chip" id="pyChip">PY2026</span>
+        <span class="chip">HVRP / VSTAGP</span>
+        <span class="chip">Confidential</span>
+      </div>
+    </div>
+
+    <div class="print-filename-banner" id="filenameBanner"></div>
+
+    <!-- ══════════════════════════════════
+         PAGE 1 — PARTICIPANT INFORMATION
+    ═══════════════════════════════════ -->
+    <div class="form-page active" id="page-1">
+      <div class="page-title"><div class="page-num">1</div> Participant Information</div>
+
+      <div class="section">
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Participant Name<span class="req">*</span></label>
+            <input type="text" class="text-input" id="vetName" placeholder="Last, First Middle"/>
+            <div class="field-error" id="err-vetName">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Last 4 of SSN<span class="req">*</span>
+              <span class="ssn-note">Used to match DocuShare case folder</span>
+            </label>
+            <input type="text" class="text-input" id="ssn4" placeholder="e.g. 4567" maxlength="4" inputmode="numeric"/>
+            <div class="field-error" id="err-ssn4">Required.</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Grantee Participant ID <span class="field-hint">(Optional)</span></label>
+            <input type="text" class="text-input" id="granteeId" placeholder="Organizational or system identifier"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Birth Date</label>
+            <input type="date" class="text-input" id="birthDate"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">🎓</div> Highest Education Level at Enrollment</div>
+        <div class="select-wrap">
+          <select class="select-input" id="education">
+            <option value="">— Select Education Level —</option>
+            <option value="1">1 — Attained secondary school diploma</option>
+            <option value="2">2 — Attained a secondary school equivalency</option>
+            <option value="3">3 — Completed one or more years of postsecondary education</option>
+            <option value="4">4 — Attained a postsecondary technical or vocational certificate (non-degree)</option>
+            <option value="5">5 — Attained an Associate degree</option>
+            <option value="6">6 — Attained a Bachelor's degree</option>
+            <option value="7">7 — Attained a degree beyond a Bachelor's degree</option>
+            <option value="8">8 — No educational level completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">👤</div> Demographics</div>
+        <div class="field-row">
+          <label class="field-label">Sex (Assigned at Birth)</label>
+          <div class="radio-group" id="rg-sex">
+            <div class="radio-item" onclick="selectRadio('sex',this,'Male')"><div class="ri-dot"></div>Male</div>
+            <div class="radio-item" onclick="selectRadio('sex',this,'Female')"><div class="ri-dot"></div>Female</div>
+            <div class="radio-item" onclick="selectRadio('sex',this,'Intersex')"><div class="ri-dot"></div>Intersex</div>
+            <div class="radio-item" onclick="selectRadio('sex',this,'Did Not Identify')"><div class="ri-dot"></div>Did Not Identify</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Gender Identity</label>
+          <div class="radio-group" id="rg-gender">
+            <div class="radio-item" onclick="selectRadio('gender',this,'Female')"><div class="ri-dot"></div>Female</div>
+            <div class="radio-item" onclick="selectRadio('gender',this,'Male Non-Binary')"><div class="ri-dot"></div>Male Non-Binary</div>
+            <div class="radio-item" onclick="selectRadio('gender',this,'Transgender')"><div class="ri-dot"></div>Transgender</div>
+            <div class="radio-item" onclick="selectRadio('gender',this,'Another Gender Identity')"><div class="ri-dot"></div>Another Gender Identity</div>
+            <div class="radio-item" onclick="selectRadio('gender',this,'Did Not Identify')"><div class="ri-dot"></div>Did Not Identify</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Sexual Orientation</label>
+          <div class="radio-group" id="rg-orientation">
+            <div class="radio-item" onclick="selectRadio('orientation',this,'Straight/Heterosexual')"><div class="ri-dot"></div>Straight/Heterosexual</div>
+            <div class="radio-item" onclick="selectRadio('orientation',this,'Gay or Lesbian')"><div class="ri-dot"></div>Gay or Lesbian</div>
+            <div class="radio-item" onclick="selectRadio('orientation',this,'Bisexual')"><div class="ri-dot"></div>Bisexual</div>
+            <div class="radio-item" onclick="selectRadio('orientation',this,'Another Sexual Orientation')"><div class="ri-dot"></div>Another Sexual Orientation</div>
+            <div class="radio-item" onclick="selectRadio('orientation',this,'Did Not Identify')"><div class="ri-dot"></div>Did Not Identify</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Ethnicity</label>
+          <div class="radio-group" id="rg-ethnicity">
+            <div class="radio-item" onclick="selectRadio('ethnicity',this,'Hispanic or Latino')"><div class="ri-dot"></div>Hispanic or Latino</div>
+            <div class="radio-item" onclick="selectRadio('ethnicity',this,'Not Hispanic or Latino')"><div class="ri-dot"></div>Not Hispanic or Latino</div>
+            <div class="radio-item" onclick="selectRadio('ethnicity',this,'Did Not Identify')"><div class="ri-dot"></div>Did Not Identify</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Race (Select all that apply)</label>
+          <div class="radio-group" id="rg-race">
+            <div class="check-item-sm" onclick="toggleCheck(this,'race','Asian')"><div class="ci-box"></div>Asian</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'race','Black or African American')"><div class="ci-box"></div>Black or African American</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'race','Native Hawaiian or Pacific Islander')"><div class="ci-box"></div>Native Hawaiian or Pacific Islander</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'race','American Indian or Alaskan Native')"><div class="ci-box"></div>American Indian or Alaskan Native</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'race','White')"><div class="ci-box"></div>White</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'race','Did Not Identify')"><div class="ci-box"></div>Did Not Identify</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Disability Status</label>
+          <div class="radio-group" id="rg-disability">
+            <div class="radio-item" onclick="selectRadio('disability',this,'Special Disabled')"><div class="ri-dot"></div>Special Disabled</div>
+            <div class="radio-item" onclick="selectRadio('disability',this,'Disabled')"><div class="ri-dot"></div>Disabled</div>
+            <div class="radio-item" onclick="selectRadio('disability',this,'Not Disabled')"><div class="ri-dot"></div>Not Disabled</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 2 — MILITARY SERVICE
+    ═══════════════════════════════════ -->
+    <div class="form-page" id="page-2">
+      <div class="page-title"><div class="page-num">2</div> Military Service</div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">🎖️</div> Branch &amp; Component</div>
+        <div class="field-row">
+          <label class="field-label">Last Branch of Military Service</label>
+          <div class="radio-group" id="rg-branch">
+            <div class="radio-item" onclick="selectRadio('branch',this,'Air Force')"><div class="ri-dot"></div>Air Force</div>
+            <div class="radio-item" onclick="selectRadio('branch',this,'Army')"><div class="ri-dot"></div>Army</div>
+            <div class="radio-item" onclick="selectRadio('branch',this,'Coast Guard')"><div class="ri-dot"></div>Coast Guard</div>
+            <div class="radio-item" onclick="selectRadio('branch',this,'Navy')"><div class="ri-dot"></div>Navy</div>
+            <div class="radio-item" onclick="selectRadio('branch',this,'Marines')"><div class="ri-dot"></div>Marines</div>
+            <div class="radio-item" onclick="selectRadio('branch',this,'Military Spouse')"><div class="ri-dot"></div>Military Spouse</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Military Service Component</label>
+          <div class="radio-group" id="rg-component">
+            <div class="radio-item" onclick="selectRadio('component',this,'Active Duty')"><div class="ri-dot"></div>Active Duty</div>
+            <div class="radio-item" onclick="selectRadio('component',this,'Guard')"><div class="ri-dot"></div>Guard</div>
+            <div class="radio-item" onclick="selectRadio('component',this,'Reserve')"><div class="ri-dot"></div>Reserve</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Military Entry Date</label>
+            <input type="date" class="text-input" id="militaryEntry"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Military Discharge Date</label>
+            <input type="date" class="text-input" id="militaryDischarge"/>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Military Discharge Status</label>
+          <div class="radio-group" id="rg-discharge">
+            <div class="radio-item" onclick="selectRadio('discharge',this,'Entry Level or Non-Characterized')"><div class="ri-dot"></div>Entry Level or Non-Characterized</div>
+            <div class="radio-item" onclick="selectRadio('discharge',this,'Honorable')"><div class="ri-dot"></div>Honorable</div>
+            <div class="radio-item" onclick="selectRadio('discharge',this,'General')"><div class="ri-dot"></div>General</div>
+            <div class="radio-item" onclick="selectRadio('discharge',this,'Bad Conduct')"><div class="ri-dot"></div>Bad Conduct</div>
+            <div class="radio-item" onclick="selectRadio('discharge',this,'Other than Honorable')"><div class="ri-dot"></div>Other than Honorable</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">📅</div> Period of Military Service</div>
+        <div class="radio-group" id="rg-period" style="flex-direction:column;gap:6px">
+          <div class="radio-item" onclick="selectRadio('period',this,'Gulf War Era II (Sep 2001 – present)')"><div class="ri-dot"></div>Gulf War Era II (Sep 2001 – present)</div>
+          <div class="radio-item" onclick="selectRadio('period',this,'Gulf War Era I (Aug 1990 – Aug 2001)')"><div class="ri-dot"></div>Gulf War Era I (Aug 1990 – Aug 2001)</div>
+          <div class="radio-item" onclick="selectRadio('period',this,'Other Service Period: after Vietnam Era and before Gulf War Era I (May 1975 – Jul 1990)')"><div class="ri-dot"></div>Other Service Period: after Vietnam Era and before Gulf War Era I (May 1975 – Jul 1990)</div>
+          <div class="radio-item" onclick="selectRadio('period',this,'Vietnam Era (Aug 1964 – Apr 1975)')"><div class="ri-dot"></div>Vietnam Era (Aug 1964 – Apr 1975)</div>
+          <div class="radio-item" onclick="selectRadio('period',this,'Other Service Period: after Korean War and before Vietnam Era (Feb 1955 – Jul 1964)')"><div class="ri-dot"></div>Other Service Period: after Korean War and before Vietnam Era (Feb 1955 – Jul 1964)</div>
+          <div class="radio-item" onclick="selectRadio('period',this,'Korean War (Jul 1950 – Jan 1955)')"><div class="ri-dot"></div>Korean War (Jul 1950 – Jan 1955)</div>
+          <div class="radio-item" onclick="selectRadio('period',this,'Mexican Border')"><div class="ri-dot"></div>Mexican Border</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 3 — ENROLLMENT
+    ═══════════════════════════════════ -->
+    <div class="form-page" id="page-3">
+      <div class="page-title"><div class="page-num">3</div> Enrollment</div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">📋</div> Enrollment Details</div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Service Start Date<span class="req">*</span></label>
+            <input type="date" class="text-input" id="serviceStart"/>
+            <div class="field-error" id="err-serviceStart">Required.</div>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Enrollment Quarter</label>
+            <div class="quarter-row" id="qr-enrollment">
+              <div class="q-btn" onclick="selectQuarter('enrollment',this,'Q1: Jul-Sep')">Q1: Jul–Sep</div>
+              <div class="q-btn" onclick="selectQuarter('enrollment',this,'Q2: Oct-Dec')">Q2: Oct–Dec</div>
+              <div class="q-btn" onclick="selectQuarter('enrollment',this,'Q3: Jan-Mar')">Q3: Jan–Mar</div>
+              <div class="q-btn" onclick="selectQuarter('enrollment',this,'Q4: Apr-Jun')">Q4: Apr–Jun</div>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Co-Enrolled in American Job Center (AJC)?</label>
+          <div class="radio-group" id="rg-ajc">
+            <div class="radio-item" onclick="selectRadio('ajc',this,'Yes')"><div class="ri-dot"></div>Yes</div>
+            <div class="radio-item" onclick="selectRadio('ajc',this,'No')"><div class="ri-dot"></div>No</div>
+            <div class="radio-item" onclick="selectRadio('ajc',this,'Participant Declined')"><div class="ri-dot"></div>Participant Declined</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Date Received First Service with AJC</label>
+          <input type="date" class="text-input" id="ajcFirstService" style="max-width:220px"/>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">🏠</div> Eligibility &amp; Population</div>
+        <div class="field-row">
+          <label class="field-label">Eligibility</label>
+          <div class="radio-group" id="rg-eligibility">
+            <div class="radio-item" onclick="selectRadio('eligibility',this,'At Risk of Homelessness')"><div class="ri-dot"></div>At Risk of Homelessness</div>
+            <div class="radio-item" onclick="selectRadio('eligibility',this,'Homeless/VSTAGP')"><div class="ri-dot"></div>Homeless/VSTAGP</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Population Served (select all that apply)</label>
+          <div class="radio-group" id="rg-population">
+            <div class="check-item-sm" onclick="toggleCheck(this,'pop','Incarcerated Veteran')"><div class="ci-box"></div>Incarcerated Veteran</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'pop','Episodic Homeless')"><div class="ci-box"></div>Episodic Homeless</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'pop','Homeless with Children')"><div class="ci-box"></div>Homeless with Children</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'pop','Transitioning Program (IVTP) Eligible')"><div class="ci-box"></div>Transitioning Program (IVTP) Eligible</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Housing Status at Enrollment</label>
+          <div class="radio-group" id="rg-housingEnroll">
+            <div class="radio-item" onclick="selectRadio('housingEnroll',this,'Unsheltered Homeless')"><div class="ri-dot"></div>Unsheltered Homeless</div>
+            <div class="radio-item" onclick="selectRadio('housingEnroll',this,'Sheltered Homeless/Temporary Supportive Housing')"><div class="ri-dot"></div>Sheltered Homeless / Temporary Supportive Housing</div>
+            <div class="radio-item" onclick="selectRadio('housingEnroll',this,'Permanent Supportive Housing')"><div class="ri-dot"></div>Permanent Supportive Housing</div>
+            <div class="radio-item" onclick="selectRadio('housingEnroll',this,'Permanent Housing')"><div class="ri-dot"></div>Permanent Housing</div>
+            <div class="radio-item" onclick="selectRadio('housingEnroll',this,'Other')"><div class="ri-dot"></div>Other</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Additional Financial Assistance Programs (select all that apply)</label>
+          <div class="radio-group" id="rg-finAssist">
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','FEMA')"><div class="ci-box"></div>FEMA</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','VA GPD/Transitional Housing')"><div class="ci-box"></div>VA GPD/Transitional Housing</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','SSVF')"><div class="ci-box"></div>SSVF</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','TANF')"><div class="ci-box"></div>TANF</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','SSVF-Shallow Subsidy')"><div class="ci-box"></div>SSVF-Shallow Subsidy</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','NAHASDA')"><div class="ci-box"></div>NAHASDA</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','VASH')"><div class="ci-box"></div>VA Supportive Housing (VASH)</div>
+            <div class="check-item-sm" onclick="toggleCheck(this,'fin','SNAP')"><div class="ci-box"></div>SNAP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">📍</div> Service Delivery Area</div>
+        <div class="four-col">
+          <div class="field-row">
+            <label class="field-label">State</label>
+            <input type="text" class="text-input" id="sdaState" placeholder="TX" maxlength="2"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">County</label>
+            <input type="text" class="text-input" id="sdaCounty" placeholder="Harris"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">City</label>
+            <input type="text" class="text-input" id="sdaCity" placeholder="Houston"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">ZIP Code</label>
+            <input type="text" class="text-input" id="sdaZip" placeholder="77054" maxlength="5"/>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Living Wage — Hourly Rate
+              <span class="field-hint">From MIT Living Wage Calculator (livingwage.mit.edu)</span>
+            </label>
+            <input type="text" class="text-input" id="livingWage" placeholder="e.g. $18.50"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">SDA Exception?</label>
+            <div class="radio-group" id="rg-sdaException">
+              <div class="radio-item" onclick="selectRadio('sdaException',this,'Yes')"><div class="ri-dot"></div>Yes — SDA Exception applies</div>
+              <div class="radio-item" onclick="selectRadio('sdaException',this,'No')"><div class="ri-dot"></div>No</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><div class="s-icon">💼</div> Employment History (90 days prior to enrollment)</div>
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Days Unemployed
+              <span class="field-hint">Non-consecutive days unemployed in the 90 days prior to enrollment</span>
+            </label>
+            <input type="number" class="text-input" id="daysUnemployed" placeholder="0" min="0" max="90"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Days Employed Below Living Wage
+              <span class="field-hint">Non-consecutive days employed below county living wage in the 90 days prior to enrollment</span>
+            </label>
+            <input type="number" class="text-input" id="daysBelowWage" placeholder="0" min="0" max="90"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 4 — TRAINING
+    ═══════════════════════════════════ -->
+    <div class="form-page" id="page-4">
+      <div class="page-title"><div class="page-num">4</div> Training</div>
+      <div class="field-row">
+        <label class="field-label">Date of First Training</label>
+        <input type="date" class="text-input" id="firstTraining" style="max-width:220px"/>
+      </div>
+      <div class="section">
+        <div class="section-title"><div class="s-icon">📚</div> Training Log — Date &amp; Hours by Type</div>
+        <div style="overflow-x:auto">
+          <table class="training-table">
+            <thead>
+              <tr>
+                <th>Training Type</th>
+                <th>Date 1</th><th>Hrs 1</th>
+                <th>Date 2</th><th>Hrs 2</th>
+                <th>Date 3</th><th>Hrs 3</th>
+                <th>Date 4</th><th>Hrs 4</th>
+              </tr>
+            </thead>
+            <tbody id="trainingBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 5 — SERVICES
+    ═══════════════════════════════════ -->
+    <div class="form-page" id="page-5">
+      <div class="page-title"><div class="page-num">5</div> Services Delivered</div>
+      <div style="overflow-x:auto">
+        <table class="services-table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Date 1</th><th>Date 2</th><th>Date 3</th><th>Date 4</th><th>Date 5</th>
+            </tr>
+          </thead>
+          <tbody id="servicesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 6 — EXIT
+    ═══════════════════════════════════ -->
+    <div class="form-page" id="page-6">
+      <div class="page-title"><div class="page-num">6</div> Exit</div>
+
+      <div class="section">
+        <div class="two-col">
+          <div class="field-row">
+            <label class="field-label">Service End Date</label>
+            <input type="date" class="text-input" id="serviceEnd"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Exit Quarter</label>
+            <div class="quarter-row" id="qr-exit">
+              <div class="q-btn" onclick="selectQuarter('exit',this,'Q1: Jul-Sep')">Q1: Jul–Sep</div>
+              <div class="q-btn" onclick="selectQuarter('exit',this,'Q2: Oct-Dec')">Q2: Oct–Dec</div>
+              <div class="q-btn" onclick="selectQuarter('exit',this,'Q3: Jan-Mar')">Q3: Jan–Mar</div>
+              <div class="q-btn" onclick="selectQuarter('exit',this,'Q4: Apr-Jun')">Q4: Apr–Jun</div>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Housing Status at Exit</label>
+          <div class="radio-group" id="rg-housingExit">
+            <div class="radio-item" onclick="selectRadio('housingExit',this,'Unsheltered Homeless')"><div class="ri-dot"></div>Unsheltered Homeless</div>
+            <div class="radio-item" onclick="selectRadio('housingExit',this,'Sheltered Homeless/Temporary Supportive Housing')"><div class="ri-dot"></div>Sheltered Homeless / Temporary Supportive Housing</div>
+            <div class="radio-item" onclick="selectRadio('housingExit',this,'Permanent Supportive Housing')"><div class="ri-dot"></div>Permanent Supportive Housing</div>
+            <div class="radio-item" onclick="selectRadio('housingExit',this,'Permanent Housing')"><div class="ri-dot"></div>Permanent Housing</div>
+            <div class="radio-item" onclick="selectRadio('housingExit',this,'Unknown')"><div class="ri-dot"></div>Unknown</div>
+            <div class="radio-item" onclick="selectRadio('housingExit',this,'Other')"><div class="ri-dot"></div>Other</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Placed into Employment?</label>
+          <div class="radio-group" id="rg-placed">
+            <div class="radio-item" onclick="selectRadio('placed',this,'Yes');togglePlacement(true)"><div class="ri-dot"></div>Yes</div>
+            <div class="radio-item" onclick="selectRadio('placed',this,'No');togglePlacement(false)"><div class="ri-dot"></div>No</div>
+          </div>
+        </div>
+        <div id="otherExitWrap">
+          <div class="field-row">
+            <label class="field-label">If no placement, reason for exit</label>
+            <div class="radio-group" id="rg-exitReason" style="flex-direction:column;gap:5px">
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Deceased')"><div class="ri-dot"></div>Deceased</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'End of Grant')"><div class="ri-dot"></div>End of Grant</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Grantee Discretion')"><div class="ri-dot"></div>Grantee Discretion</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Health/Medical')"><div class="ri-dot"></div>Health/Medical</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Incarcerated')"><div class="ri-dot"></div>Incarcerated</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Relapse/Institutionalized')"><div class="ri-dot"></div>Relapse/Institutionalized</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Reserve Forces called to Active Duty')"><div class="ri-dot"></div>Reserve Forces called to Active Duty</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Unresponsive')"><div class="ri-dot"></div>Unresponsive</div>
+              <div class="radio-item" onclick="selectRadio('exitReason',this,'Other')"><div class="ri-dot"></div>Other</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLACEMENT -->
+      <div id="placementWrap" style="display:none">
+        <div class="section">
+          <div class="section-title"><div class="s-icon">💼</div> Placement Details</div>
+          <div class="field-row">
+            <label class="field-label">Occupation at Placement</label>
+            <select class="occ-select" id="occPlacement">
+              <option value="">— Select Occupation Code —</option>
+              <option value="11">11 – Management</option>
+              <option value="13">13 – Business and Financial Operations</option>
+              <option value="15">15 – Computer and Mathematical</option>
+              <option value="17">17 – Architecture and Engineering</option>
+              <option value="19">19 – Life, Physical, and Social Science</option>
+              <option value="21">21 – Community and Social Services</option>
+              <option value="23">23 – Legal</option>
+              <option value="25">25 – Education, Training, and Library</option>
+              <option value="27">27 – Arts, Design, Entertainment, Sports, &amp; Media</option>
+              <option value="29">29 – Health Care Practitioners and Technical</option>
+              <option value="31">31 – Health Care Support</option>
+              <option value="33">33 – Protective Service</option>
+              <option value="35">35 – Food Preparation and Serving Related</option>
+              <option value="37">37 – Building and Grounds Cleaning and Maintenance</option>
+              <option value="39">39 – Personal Care and Service</option>
+              <option value="41">41 – Sales and Related</option>
+              <option value="43">43 – Office and Administrative Support</option>
+              <option value="45">45 – Farming, Fishing, and Forestry</option>
+              <option value="47">47 – Construction and Extraction</option>
+              <option value="49">49 – Installation, Maintenance, Repair</option>
+              <option value="51">51 – Production</option>
+              <option value="53">53 – Transportation and Material Moving</option>
+              <option value="55">55 – Military Specific</option>
+              <option value="00">00 – Other</option>
+            </select>
+          </div>
+          <div class="two-col">
+            <div class="field-row">
+              <label class="field-label">Employment Placement Type</label>
+              <div class="radio-group" id="rg-empType">
+                <div class="radio-item" onclick="selectRadio('empType',this,'Full Time')"><div class="ri-dot"></div>Full Time</div>
+                <div class="radio-item" onclick="selectRadio('empType',this,'Part Time')"><div class="ri-dot"></div>Part Time</div>
+                <div class="radio-item" onclick="selectRadio('empType',this,'Remote/Gig Work')"><div class="ri-dot"></div>Remote/Gig Work</div>
+                <div class="radio-item" onclick="selectRadio('empType',this,'Unknown')"><div class="ri-dot"></div>Unknown</div>
+              </div>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Hourly Wage at Placement</label>
+              <input type="text" class="text-input" id="wagePlacement" placeholder="e.g. $18.50"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 7 — FOLLOW-UP
+    ═══════════════════════════════════ -->
+    <div class="form-page" id="page-7">
+      <div class="page-title"><div class="page-num">7</div> Follow-Up After Exit</div>
+
+      <!-- 1st Quarter -->
+      <div class="fup-box">
+        <div class="fup-box-title">1st Quarter After Exit</div>
+        <div class="three-col">
+          <div class="field-row">
+            <label class="field-label">Data Collection Date</label>
+            <input type="date" class="text-input" id="fup1Date"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Total Hours Worked</label>
+            <input type="number" class="text-input" id="fup1Hours" placeholder="0" min="0"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Hourly Wage</label>
+            <input type="text" class="text-input" id="fup1Wage" placeholder="e.g. $18.50"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2nd Quarter -->
+      <div class="fup-box">
+        <div class="fup-box-title">2nd Quarter After Exit</div>
+        <div class="three-col">
+          <div class="field-row">
+            <label class="field-label">Data Collection Date</label>
+            <input type="date" class="text-input" id="fup2Date"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Total Hours Worked</label>
+            <input type="number" class="text-input" id="fup2Hours" placeholder="0" min="0"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Hourly Wage</label>
+            <input type="text" class="text-input" id="fup2Wage" placeholder="e.g. $18.50"/>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Occupation at Placement (2nd Quarter)</label>
+          <select class="occ-select" id="occ2q"><option value="">— Select Occupation Code —</option><option value="11">11 – Management</option><option value="13">13 – Business and Financial Operations</option><option value="15">15 – Computer and Mathematical</option><option value="17">17 – Architecture and Engineering</option><option value="19">19 – Life, Physical, and Social Science</option><option value="21">21 – Community and Social Services</option><option value="23">23 – Legal</option><option value="25">25 – Education, Training, and Library</option><option value="27">27 – Arts, Design, Entertainment, Sports, &amp; Media</option><option value="29">29 – Health Care Practitioners and Technical</option><option value="31">31 – Health Care Support</option><option value="33">33 – Protective Service</option><option value="35">35 – Food Preparation and Serving Related</option><option value="37">37 – Building and Grounds Cleaning and Maintenance</option><option value="39">39 – Personal Care and Service</option><option value="41">41 – Sales and Related</option><option value="43">43 – Office and Administrative Support</option><option value="45">45 – Farming, Fishing, and Forestry</option><option value="47">47 – Construction and Extraction</option><option value="49">49 – Installation, Maintenance, Repair</option><option value="51">51 – Production</option><option value="53">53 – Transportation and Material Moving</option><option value="55">55 – Military Specific</option><option value="00">00 – Other</option></select>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Follow-Up 2nd Quarter After Exit</label>
+          <div class="quarter-row" id="qr-fup2">
+            <div class="q-btn" onclick="selectQuarter('fup2',this,'Q3: Jan-Mar')">Q3: Jan–Mar</div>
+            <div class="q-btn" onclick="selectQuarter('fup2',this,'Q4: Apr-Jun')">Q4: Apr–Jun</div>
+            <div class="q-btn" onclick="selectQuarter('fup2',this,'Q5: Jul-Sep')">Q5: Jul–Sep</div>
+            <div class="q-btn" onclick="selectQuarter('fup2',this,'Q6: Oct-Dec')">Q6: Oct–Dec</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3rd Quarter -->
+      <div class="fup-box">
+        <div class="fup-box-title">3rd Quarter After Exit</div>
+        <div class="three-col">
+          <div class="field-row">
+            <label class="field-label">Data Collection Date</label>
+            <input type="date" class="text-input" id="fup3Date"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Total Hours Worked</label>
+            <input type="number" class="text-input" id="fup3Hours" placeholder="0" min="0"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Hourly Wage</label>
+            <input type="text" class="text-input" id="fup3Wage" placeholder="e.g. $18.50"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4th Quarter -->
+      <div class="fup-box">
+        <div class="fup-box-title">4th Quarter After Exit</div>
+        <div class="three-col">
+          <div class="field-row">
+            <label class="field-label">Data Collection Date</label>
+            <input type="date" class="text-input" id="fup4Date"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Total Hours Worked</label>
+            <input type="number" class="text-input" id="fup4Hours" placeholder="0" min="0"/>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Hourly Wage</label>
+            <input type="text" class="text-input" id="fup4Wage" placeholder="e.g. $18.50"/>
+          </div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Occupation in 4th Quarter After Exit</label>
+          <select class="occ-select" id="occ4q"><option value="">— Select Occupation Code —</option><option value="11">11 – Management</option><option value="13">13 – Business and Financial Operations</option><option value="15">15 – Computer and Mathematical</option><option value="17">17 – Architecture and Engineering</option><option value="19">19 – Life, Physical, and Social Science</option><option value="21">21 – Community and Social Services</option><option value="23">23 – Legal</option><option value="25">25 – Education, Training, and Library</option><option value="27">27 – Arts, Design, Entertainment, Sports, &amp; Media</option><option value="29">29 – Health Care Practitioners and Technical</option><option value="31">31 – Health Care Support</option><option value="33">33 – Protective Service</option><option value="35">35 – Food Preparation and Serving Related</option><option value="37">37 – Building and Grounds Cleaning and Maintenance</option><option value="39">39 – Personal Care and Service</option><option value="41">41 – Sales and Related</option><option value="43">43 – Office and Administrative Support</option><option value="45">45 – Farming, Fishing, and Forestry</option><option value="47">47 – Construction and Extraction</option><option value="49">49 – Installation, Maintenance, Repair</option><option value="51">51 – Production</option><option value="53">53 – Transportation and Material Moving</option><option value="55">55 – Military Specific</option><option value="00">00 – Other</option></select>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Follow-Up 4th Quarter After Exit</label>
+          <div class="quarter-row" id="qr-fup4">
+            <div class="q-btn" onclick="selectQuarter('fup4',this,'Q5: Jul-Sep')">Q5: Jul–Sep</div>
+            <div class="q-btn" onclick="selectQuarter('fup4',this,'Q6: Oct-Dec')">Q6: Oct–Dec</div>
+            <div class="q-btn" onclick="selectQuarter('fup4',this,'Q7: Jan-Mar')">Q7: Jan–Mar</div>
+            <div class="q-btn" onclick="selectQuarter('fup4',this,'Q8: Apr-Jun')">Q8: Apr–Jun</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="successMsg">
+      <div class="si">✅</div>
+      <h3>Participant Tracking Sheet Submitted</h3>
+      <p>The participant tracking record has been completed. Save as PDF and file in the veteran's DocuShare Flex case folder.</p>
+      <div class="print-actions">
+        <button class="save-pdf-btn" onclick="triggerPrint('PY'+selectedYear+'_Tracking_Sheet')">💾 Save as PDF</button>
+      </div>
+      <div class="filing-instructions">
+        <strong>📁 DocuShare Filing Instructions:</strong><br/>
+        1. Click <strong>Save as PDF</strong> above<br/>
+        2. Change destination to <strong>"Save as PDF"</strong><br/>
+        3. Filename pre-filled as:<br/>
+        <span class="filename-display" id="fnDisplay">generating...</span><br/>
+        4. Save → upload to DocuShare Flex →<br/>
+        &nbsp;&nbsp;&nbsp;<strong id="filingPath">Veteran's case folder (by last 4 SSN)</strong>
+      </div>
+    </div>
+
+    <!-- PAGE NAV -->
+    <div class="page-nav" id="pageNav">
+    <button class="nav-btn prev" style="visibility:visible;background:var(--offwhite);color:var(--teal);border:2px solid var(--teal)" onclick="window.print()">🖨️ Print</button>
+      <button class="nav-btn prev" id="btnPrev" onclick="changePage(-1)" style="visibility:hidden">← Previous</button>
+      <span class="page-indicator" id="pageIndicator">Page 1 of 7</span>
+      <button class="nav-btn next" id="btnNext"  onclick="changePage(1)">Next →</button>
+    </div>
+
+  </div><!-- end form-card -->
+</main>
+
+<script>
+// ══════════════════════════════════════════
+// PROGRAM YEAR
+// ══════════════════════════════════════════
+let selectedYear = '2026';
+function updateProgramYear(year){
+  selectedYear = year;
+  document.getElementById('pyChip').textContent = 'PY' + year;
+  document.title = 'THLP – PY' + year + ' Participant Tracking Sheet';
+}
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const TOTAL_PAGES = 7;
+let currentPage = 1;
+
+const trainingTypes = ['Apprenticeship','Career Technical','Customized','Entrepreneurial','Occupational Skills','On-the-Job (OJT)','Other'];
+const servicesList = [
+  'Accommodations for Persons with Disabilities','Child/Dependent Care','Drug and Alcohol Counseling',
+  'Educational Supplies and Fees','Employment Adjustment Services','Financial Counseling',
+  'Health Care Service','Job Placement Services','Job Search Assistance','Legal Aid Services',
+  'Temporary Shelter','Transitional Job','Transportation','Work Attire/Tools/Equipment','Other Service'
+];
+
+// Radio state
+const radioState = {};
+// Check state
+const checkState = {};
+// Quarter state
+const quarterState = {};
+
+// ══════════════════════════════════════════
+// INIT TABLES
+// ══════════════════════════════════════════
+function buildTrainingTable(){
+  const tbody = document.getElementById('trainingBody');
+  trainingTypes.forEach(type => {
+    const tr = document.createElement('tr');
+    let cells = `<td>${type}</td>`;
+    for(let i=1;i<=4;i++){
+      const id = `tr_${type.replace(/\s+/g,'_')}_d${i}`;
+      const hid = `tr_${type.replace(/\s+/g,'_')}_h${i}`;
+      cells += `<td><input type="date" id="${id}"/></td><td><input type="number" placeholder="0" min="0" id="${hid}" style="width:50px"/></td>`;
+    }
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildServicesTable(){
+  const tbody = document.getElementById('servicesBody');
+  servicesList.forEach(svc => {
+    const tr = document.createElement('tr');
+    let cells = `<td>${svc}</td>`;
+    for(let i=1;i<=5;i++){
+      const id = `svc_${svc.replace(/\s+/g,'_')}_d${i}`;
+      cells += `<td><input type="date" id="${id}"/></td>`;
+    }
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+}
+
+// ══════════════════════════════════════════
+// INTERACTIVE CONTROLS
+// ══════════════════════════════════════════
+function selectRadio(group, el, val){
+  document.querySelectorAll(`#rg-${group} .radio-item`).forEach(r=>r.classList.remove('selected'));
+  el.classList.add('selected');
+  radioState[group] = val;
+}
+
+function toggleCheck(el, group, val){
+  el.classList.toggle('checked');
+  el.querySelector('.ci-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  if(!checkState[group]) checkState[group] = new Set();
+  if(el.classList.contains('checked')) checkState[group].add(val);
+  else checkState[group].delete(val);
+}
+
+function selectQuarter(group, el, val){
+  el.closest('.quarter-row').querySelectorAll('.q-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  quarterState[group] = val;
+}
+
+function togglePlacement(show){
+  document.getElementById('placementWrap').style.display = show ? 'block' : 'none';
+  document.getElementById('otherExitWrap').style.display = show ? 'none' : 'block';
+}
+
+// ══════════════════════════════════════════
+// PAGE NAVIGATION
+// ══════════════════════════════════════════
+function buildNav(){
+  const nav = document.getElementById('sectionNav');
+  const labels = ['Info','Military','Enroll','Training','Services','Exit','Follow-Up'];
+  nav.innerHTML = '';
+  for(let i=1;i<=TOTAL_PAGES;i++){
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i===currentPage?' active':'') + (i<currentPage?' done':'');
+    dot.textContent = i;
+    dot.title = labels[i-1];
+    dot.onclick = ()=>goToPage(i);
+    nav.appendChild(dot);
+  }
+}
+
+function updateProgress(){
+  const pct = Math.round((currentPage/TOTAL_PAGES)*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progCount').textContent = `Page ${currentPage} of ${TOTAL_PAGES}`;
+  document.getElementById('pageIndicator').textContent = `Page ${currentPage} of ${TOTAL_PAGES}`;
+  document.getElementById('btnPrev').style.visibility = currentPage===1 ? 'hidden' : 'visible';
+  const btnNext = document.getElementById('btnNext');
+  if(currentPage===TOTAL_PAGES){
+    btnNext.textContent = 'Submit ✓';
+    btnNext.className = 'nav-btn submit';
+    btnNext.onclick = submitForm;
+  } else {
+    btnNext.textContent = 'Next →';
+    btnNext.className = 'nav-btn next';
+    btnNext.onclick = ()=>changePage(1);
+  }
+  buildNav();
+}
+
+function goToPage(n){
+  document.getElementById('page-'+currentPage).classList.remove('active');
+  currentPage = n;
+  document.getElementById('page-'+currentPage).classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>triggerPrint('PY24_Tracking_Sheet'), 500);
+}
+
+function changePage(dir){
+  if(dir===1 && currentPage===TOTAL_PAGES){ submitForm(); return; }
+  const next = currentPage + dir;
+  if(next<1||next>TOTAL_PAGES) return;
+  goToPage(next);
+}
+
+// ══════════════════════════════════════════
+// VALIDATION (required fields only)
+// ══════════════════════════════════════════
+function validate(){
+  let valid = true;
+  [['vetName','err-vetName'],['ssn4','err-ssn4'],['serviceStart','err-serviceStart']].forEach(([id,err])=>{
+    const el=document.getElementById(id);
+    if(!el||!el.value.trim()){
+      const e=document.getElementById(err);
+      if(e) e.classList.add('show');
+      valid=false;
+    }
+  });
+  const ssn=document.getElementById('ssn4')?.value.trim();
+  if(ssn && !/^\d{4}$/.test(ssn)){
+    document.getElementById('err-ssn4')?.classList.add('show');
+    valid=false;
+  }
+  return valid;
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+function submitForm(){
+  if(!validate()){
+    goToPage(1);
+    setTimeout(()=>document.querySelector('.field-error.show')?.scrollIntoView({behavior:'smooth',block:'center'}),300);
+    return;
+  }
+  document.querySelectorAll('.form-page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pageNav').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>triggerPrint('PY'+selectedYear+'_Tracking_Sheet'),500);
+}
+
+// ══════════════════════════════════════════
+// AUTO-NAME PDF
+// ══════════════════════════════════════════
+function buildFileName(formType){
+  const nameEl=document.getElementById('vetName');
+  const ssnEl=document.getElementById('ssn4');
+  let namePart='THLP';
+  if(nameEl&&nameEl.value.trim()){
+    const raw=nameEl.value.trim();
+    const parts=raw.split(',');
+    if(parts.length>=2){namePart=(parts[0].trim()+'_'+parts[1].trim().split(' ')[0]).replace(/\s+/g,'_');}
+    else{namePart=raw.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');}
+  }
+  const ssnPart=ssnEl&&ssnEl.value.trim()?'_SSN'+ssnEl.value.trim():'';
+  const today=new Date().toISOString().split('T')[0];
+  return namePart+ssnPart+'_PY'+selectedYear+'_'+formType+'_'+today+'.pdf';
+}
+
+function triggerPrint(formType){
+  const fileName=buildFileName(formType);
+  const banner=document.getElementById('filenameBanner');
+  if(banner){banner.textContent='📄 Save as: '+fileName;banner.style.display='block';}
+  const fnDisplay=document.getElementById('fnDisplay');
+  if(fnDisplay) fnDisplay.textContent=fileName;
+  const ssn4=document.getElementById('ssn4')?.value.trim()||'????';
+  const fp=document.getElementById('filingPath');
+  if(fp) fp.textContent='DocuShare Flex → Client Folder (last 4: '+ssn4+') → '+fileName;
+  document.title=fileName;
+  setTimeout(()=>window.print(),300);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+buildTrainingTable();
+buildServicesTable();
+updateProgress();
+</script>
+</body>
+</html>

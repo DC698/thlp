@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – HVRP Monthly Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;--teal-pale:rgba(50,110,106,.08);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e8e8;--text:#1a2424;--muted:#5a7070;
+  --shadow:0 4px 24px rgba(50,110,106,.13);--shadow-lg:0 12px 48px rgba(50,110,106,.18);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;--red-bg:#fef2f2;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 0% 0%,rgba(50,110,106,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{background:var(--teal);border-bottom:4px solid rgba(255,255,255,.3);padding:18px 32px;display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+.logo-badge{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:15px;color:var(--white);flex-shrink:0}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.header-text p{color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.header-right{margin-left:auto}
+.badge-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:20px}
+main{max-width:700px;margin:36px auto 60px;padding:0 20px;position:relative;z-index:1}
+.form-card{background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.form-card-header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);padding:26px 30px;border-bottom:3px solid rgba(255,255,255,.25)}
+.form-card-header h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:21px;margin-bottom:5px}
+.form-card-header p{color:rgba(255,255,255,.65);font-size:13px;line-height:1.5}
+.chip-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:12px}
+.form-body{padding:28px 30px}
+.req-legend{font-size:11px;color:var(--muted);margin-bottom:18px}
+.req-legend span{color:var(--teal);font-weight:700}
+.section{margin-bottom:26px}
+.section-title{font-family:'Libre Baskerville',serif;font-size:13px;color:var(--teal);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:8px}
+.s-icon{width:26px;height:26px;border-radius:6px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:520px){.two-col,.three-col{grid-template-columns:1fr}}
+.field-row{margin-bottom:14px}
+.field-label{display:block;font-size:12px;font-weight:700;color:var(--teal);margin-bottom:5px;line-height:1.4}
+.field-label .req{color:var(--teal);margin-left:2px;opacity:.7}
+.field-hint{font-size:10px;font-weight:400;color:var(--muted);margin-left:3px}
+.text-input,.select-input,.textarea-input{width:100%;border:2px solid var(--gray);border-radius:8px;padding:10px 13px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;appearance:none}
+.text-input:focus,.select-input:focus,.textarea-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.12)}
+.text-input::placeholder,.textarea-input::placeholder{color:#bbb}
+.textarea-input{resize:vertical;min-height:72px}
+.select-wrap{position:relative}
+.select-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:14px;pointer-events:none}
+.select-input{padding-right:34px;cursor:pointer}
+/* STAT INPUTS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:4px}
+.stat-box{background:var(--offwhite);border:2px solid var(--gray);border-radius:10px;padding:12px 14px;transition:border-color .2s}
+.stat-box:focus-within{border-color:var(--teal)}
+.stat-box label{display:block;font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.stat-box input{width:100%;border:none;outline:none;font-family:'Libre Baskerville',serif;font-size:22px;font-weight:700;color:var(--teal);background:transparent;text-align:center}
+.stat-box input::placeholder{color:#ccc;font-size:18px}
+/* SIG */
+.sig-area{background:var(--offwhite);border:2px dashed var(--gray);border-radius:10px;padding:14px;text-align:center;color:var(--muted);font-size:12px;margin-top:6px}
+.sig-area strong{display:block;color:var(--teal);font-size:13px;margin-bottom:3px}
+.field-error{font-size:11px;font-weight:700;color:var(--red);margin-top:4px;display:none}
+.field-error.show{display:block}
+.submit-area{padding:20px 30px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.submit-note{font-size:11px;color:var(--muted);line-height:1.5;max-width:320px}
+.submit-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:13px 32px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;box-shadow:0 4px 14px rgba(50,110,106,.3)}
+.submit-btn:hover{background:var(--teal-mid);transform:translateY(-1px)}
+#successMsg{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:28px;text-align:center;margin:20px 30px 30px;animation:fadeUp .4s ease}
+#successMsg .si{font-size:34px;margin-bottom:10px}
+#successMsg h3{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--green);margin-bottom:6px}
+#successMsg p{font-size:13px;color:var(--muted)}
+
+/* ── PRINT STYLES ── */
+@media print {
+  body { background: #fff !important; }
+  header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .form-card { box-shadow: none !important; border-radius: 0 !important; }
+  .submit-area, .print-hint, #successMsg .print-actions { display: none !important; }
+  .print-filename-banner { display: block !important; }
+  #lockScreen { display: none !important; }
+}
+.print-hint {
+  background: var(--teal-pale);
+  border: 1px solid rgba(50,110,106,.2);
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 12px;
+  color: var(--teal-mid);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.print-hint strong { color: var(--teal); }
+.print-filename-banner {
+  display: none;
+  background: var(--teal);
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+.ssn-note {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight: 400;
+}
+/* success print button */
+#successMsg .print-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#successMsg .save-pdf-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#successMsg .save-pdf-btn:hover { opacity: .9; }
+#successMsg .filing-instructions {
+  margin-top: 16px;
+  background: var(--offwhite);
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  text-align: left;
+}
+#successMsg .filing-instructions strong { color: var(--teal); }
+#successMsg .filename-display {
+  font-family: monospace;
+  background: var(--teal);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 6px 0;
+}
+
+
+.print-btn{background:var(--offwhite);color:var(--teal);border:2px solid var(--teal);border-radius:10px;padding:11px 20px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.print-btn:hover{background:var(--teal-pale,rgba(50,110,106,.08))}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">THLP</div>
+  <div class="header-text"><h1>The Houston Launch Pad</h1><p>HVRP Document &amp; Forms Center</p></div>
+  <div class="header-right"><span class="badge-pill">HVRP Program</span></div>
+</header>
+<main>
+<div class="form-card">
+  <div class="form-card-header">
+    <h2>HVRP Monthly Report</h2>
+    <p>Homeless Veterans Reintegration Program — Monthly Participant Progress &amp; Outcomes Report</p>
+    <div class="chip-row"><span class="chip">Grant #23560HV000039</span><span class="chip">DOL-VETS</span><span class="chip">Monthly Reporting</span></div>
+  </div>
+  <div class="form-body" id="formBody">
+    <div class="req-legend"><span>*</span> Required field</div>
+
+    <!-- SECTION 1: REPORT INFO -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">📅</div> Report Information</div>
+      <div class="three-col">
+        <div class="field-row">
+          <label class="field-label">Reporting Month<span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="select-input" id="reportMonth">
+              <option value="">— Month —</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+            </select>
+          </div>
+          <div class="field-error" id="err-reportMonth">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Year<span class="req">*</span></label>
+          <input type="number" class="text-input" id="reportYear" placeholder="2026" min="2020" max="2030"/>
+          <div class="field-error" id="err-reportYear">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Submitted By<span class="req">*</span></label>
+          <div class="select-wrap">
+            <select class="select-input" id="submittedBy">
+              <option value="">— Select —</option>
+              <option>Deirdre Gilbert</option>
+              <option>Renee Milo</option>
+              <option>Brandi Nicholson</option>
+              <option>Carl Poole</option>
+            </select>
+          </div>
+          <div class="field-error" id="err-submittedBy">Required.</div>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Last 4 of SSN<span class="req">*</span>
+            <span class="ssn-note">Used to match DocuShare case folder</span>
+          </label>
+          <input type="text" class="text-input" id="ssn4"
+                 placeholder="e.g. 4567"
+                 maxlength="4"
+                 pattern="[0-9]{4}"
+                 inputmode="numeric"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: PARTICIPATION STATS -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">📊</div> Participation Statistics</div>
+      <div class="stat-grid">
+        <div class="stat-box"><label>Active Participants</label><input type="number" id="statActive" placeholder="0" min="0"/></div>
+        <div class="stat-box"><label>New Enrollments</label><input type="number" id="statNew" placeholder="0" min="0"/></div>
+        <div class="stat-box"><label>Exits This Month</label><input type="number" id="statExits" placeholder="0" min="0"/></div>
+        <div class="stat-box"><label>Jobs Obtained</label><input type="number" id="statJobs" placeholder="0" min="0"/></div>
+        <div class="stat-box"><label>Training Enrolled</label><input type="number" id="statTraining" placeholder="0" min="0"/></div>
+        <div class="stat-box"><label>Housing Placements</label><input type="number" id="statHousing" placeholder="0" min="0"/></div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: EMPLOYMENT OUTCOMES -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">💼</div> Employment Outcomes</div>
+      <div class="two-col">
+        <div class="field-row">
+          <label class="field-label">Average Hourly Wage at Placement</label>
+          <input type="text" class="text-input" id="avgWage" placeholder="e.g. $18.50"/>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Full-Time Placements</label>
+          <input type="number" class="text-input" id="fullTime" placeholder="0" min="0"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Employment Summary<span class="field-hint">— Notable placements or employer partnerships this month</span></label>
+        <textarea class="textarea-input" id="empSummary" placeholder="Describe key employment outcomes, employer partnerships, job fairs attended..."></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 4: SERVICES DELIVERED -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">🔗</div> Services Delivered This Month</div>
+      <div class="two-col">
+        <div class="field-row">
+          <label class="field-label">Case Management Sessions</label>
+          <input type="number" class="text-input" id="cmSessions" placeholder="0" min="0"/>
+        </div>
+        <div class="field-row">
+          <label class="field-label">Job Development Contacts</label>
+          <input type="number" class="text-input" id="jobDevContacts" placeholder="0" min="0"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Supportive Services Provided<span class="field-hint">— List types and totals (e.g. transportation x5, work clothes x3)</span></label>
+        <textarea class="textarea-input" id="supportServices" placeholder="e.g. Transportation assistance x8, Work clothing x4, Tools/equipment x2..."></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 5: CHALLENGES & NOTES -->
+    <div class="section">
+      <div class="section-title"><div class="s-icon">📋</div> Challenges &amp; Notes</div>
+      <div class="field-row">
+        <label class="field-label">Challenges or Barriers Encountered</label>
+        <textarea class="textarea-input" id="challenges" placeholder="Describe any program barriers, participant challenges, or issues encountered this month..."></textarea>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Goals for Next Month</label>
+        <textarea class="textarea-input" id="nextGoals" placeholder="Planned activities, targets, or focus areas for the upcoming month..."></textarea>
+      </div>
+      <div class="sig-area">
+        <strong>Supervisor Review Required</strong>
+        Submit to Program Director (Prentice Goods) for review. File in program records and submit copy per VGRS reporting schedule.
+      </div>
+    </div>
+  </div>
+    <div class="print-filename-banner" id="filenameBanner"></div>
+  <div id="successMsg"><div class="si">✅</div><h3>Monthly Report Submitted</h3><p>Report has been recorded. Please submit to Program Director and file per VGRS reporting schedule.</p></div>
+  <div class="submit-area" id="submitArea">
+    <div class="submit-note"><strong>Note:</strong> Monthly reports support DOL-VETS VGRS reporting and grant compliance documentation requirements.</div>
+    <button type="button" class="print-btn" onclick="window.print()">🖨️ Print</button>
+      <button class="submit-btn" onclick="submitForm()">Submit Report &#10148;</button>
+  </div>
+</div>
+</main>
+<script>
+function validate(){
+  let v=true;
+  [['reportMonth','err-reportMonth'],['reportYear','err-reportYear'],['submittedBy','err-submittedBy']].forEach(([id,err])=>{
+    const el=document.getElementById(id);
+    if(!el.value.trim()){document.getElementById(err).classList.add('show');v=false;}
+    else document.getElementById(err).classList.remove('show');
+  });
+  return v;
+}
+function submitForm(){
+  if(!validate()){document.querySelector('.field-error.show')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.getElementById('formBody').style.display='none';
+  document.getElementById('submitArea').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>triggerPrint('HVRP_Monthly_Report'), 500);
+}
+document.getElementById('reportYear').value=new Date().getFullYear();
+
+// ══════════════════════════════════════════
+// AUTO-NAME PDF ON SUBMIT
+// ══════════════════════════════════════════
+function buildFileName(formType) {
+  // Try to get veteran name
+  const nameEl = document.getElementById('vetName') || document.getElementById('partName');
+  const idEl   = document.getElementById('vetId');
+  const ssnEl  = document.getElementById('ssn4');
+  const dateEl = document.getElementById('exitDate') || document.getElementById('followUpDate') ||
+                 document.getElementById('amendDate') || document.getElementById('referralDate') ||
+                 document.getElementById('letterDate') || document.getElementById('sessionDate') ||
+                 document.getElementById('periodStart');
+
+  let namePart = 'THLP';
+  if (nameEl && nameEl.value.trim()) {
+    // Format: LastFirst (reverse if "Last, First" format)
+    const raw = nameEl.value.trim();
+    const parts = raw.split(',');
+    if (parts.length >= 2) {
+      namePart = (parts[0].trim() + '_' + parts[1].trim().split(' ')[0]).replace(/\s+/g,'_');
+    } else {
+      namePart = raw.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+    }
+  }
+
+  let idPart = '';
+  if (idEl && idEl.value.trim()) idPart = '_' + idEl.value.trim().replace(/\s+/g,'');
+
+  let ssnPart = '';
+  if (ssnEl && ssnEl.value.trim()) ssnPart = '_SSN' + ssnEl.value.trim();
+
+  const today = new Date().toISOString().split('T')[0];
+  let datePart = '_' + today;
+  if (dateEl && dateEl.value) datePart = '_' + dateEl.value;
+
+  return namePart + idPart + ssnPart + '_' + formType + datePart + '.pdf';
+}
+
+function triggerPrint(formType) {
+  const fileName = buildFileName(formType);
+
+  // Show filename banner for print
+  const banner = document.getElementById('filenameBanner');
+  if (banner) {
+    banner.textContent = '📄 Save as: ' + fileName;
+    banner.style.display = 'block';
+  }
+
+  // Update success message filename display
+  const fnDisplay = document.getElementById('fnDisplay');
+  if (fnDisplay) fnDisplay.textContent = fileName;
+
+  // Update DocuShare filing path
+  const ssnEl = document.getElementById('ssn4');
+  const ssn4 = ssnEl ? ssnEl.value.trim() : '????';
+  const filingPath = document.getElementById('filingPath');
+  if (filingPath) {
+    filingPath.textContent = 'DocuShare Flex → Client Folder (last 4: ' + ssn4 + ') → ' + fileName;
+  }
+
+  // Set document title to filename so browser uses it as default save name
+  document.title = fileName;
+
+  setTimeout(() => { window.print(); }, 300);
+}
+
+</script>
+</body>
+</html>
