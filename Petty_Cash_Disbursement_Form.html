@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP – Petty Cash Disbursement Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;--teal-pale:rgba(50,110,106,.08);
+  --offwhite:#f4f7f7;--gray:#e2e8e8;--text:#1a2424;--muted:#5a7070;
+  --shadow-lg:0 12px 48px rgba(50,110,106,.18);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;--red-bg:#fef2f2;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 0% 0%,rgba(50,110,106,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+header{background:var(--teal);padding:16px 28px;display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+.logo{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+.header-text h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:17px}
+.header-text p{color:rgba(255,255,255,.7);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;margin-top:2px}
+.badge{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:16px}
+
+main{max-width:600px;margin:28px auto 50px;padding:0 16px;position:relative;z-index:1}
+
+.form-card{background:#fff;border-radius:14px;box-shadow:var(--shadow-lg);overflow:hidden;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.card-header{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);padding:22px 26px}
+.card-header h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:19px;margin-bottom:4px}
+.card-header p{color:rgba(255,255,255,.65);font-size:12px}
+.chip-row{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:10px}
+
+.print-hint{background:var(--teal-pale);border:1px solid rgba(50,110,106,.2);border-radius:7px;padding:10px 14px;font-size:11px;color:var(--teal-mid);margin:16px 24px 0;display:flex;align-items:center;gap:7px;line-height:1.5}
+.print-hint strong{color:var(--teal)}
+
+.form-body{padding:22px 26px}
+.req-note{font-size:11px;color:var(--muted);margin-bottom:16px}
+.req-note span{color:var(--teal);font-weight:700}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.two-col{grid-template-columns:1fr}}
+
+.field{margin-bottom:13px}
+.label{display:block;font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.ssn-note{font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;display:block}
+.input,.select-el{width:100%;border:2px solid var(--gray);border-radius:7px;padding:9px 12px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .2s;appearance:none}
+.input:focus,.select-el:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.1)}
+.input::placeholder{color:#bbb}
+.sel-wrap{position:relative}
+.sel-wrap::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:13px;pointer-events:none}
+.select-el{padding-right:32px;cursor:pointer}
+
+/* AMOUNT BOX */
+.amount-box{background:var(--teal-pale);border:2px solid rgba(50,110,106,.25);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+.amount-label{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.amount-input{flex:1;border:2px solid rgba(50,110,106,.3);border-radius:7px;padding:10px 14px;font-family:'Source Sans 3',sans-serif;font-size:20px;font-weight:700;color:var(--teal);background:#fff;outline:none;text-align:center;transition:border-color .2s}
+.amount-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(50,110,106,.12)}
+.amount-input::placeholder{color:#bbb;font-size:14px;font-weight:400}
+
+/* PURPOSE PILLS */
+.purpose-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:6px}
+.purpose-pill{border:2px solid var(--gray);border-radius:8px;padding:9px 12px;cursor:pointer;transition:all .18s;background:var(--offwhite);user-select:none;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted)}
+.purpose-pill:hover{border-color:var(--teal);color:var(--teal);background:#fff}
+.purpose-pill.selected{border-color:var(--teal);background:var(--teal-pale);color:var(--teal)}
+.pill-dot{width:12px;height:12px;border-radius:3px;border:2px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700}
+.purpose-pill.selected .pill-dot::after{content:'✓'}
+
+/* RECEIPT CHECKBOX */
+.receipt-row{display:flex;align-items:center;gap:10px;background:var(--offwhite);border:1px solid var(--gray);border-radius:8px;padding:11px 14px;cursor:pointer;user-select:none;margin-bottom:16px;transition:all .18s}
+.receipt-row:hover{border-color:var(--teal)}
+.receipt-row.checked{border-color:var(--teal);background:var(--teal-pale)}
+.receipt-box{width:18px;height:18px;border-radius:4px;border:2px solid #c8cdd6;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:all .18s}
+.receipt-row.checked .receipt-box{background:var(--teal);border-color:var(--teal);color:#fff}
+.receipt-text{font-size:12px;font-weight:600;color:var(--text)}
+
+/* SIG */
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.sig-grid{grid-template-columns:1fr}}
+.sig-box{border:2px solid var(--gray);border-radius:9px;padding:12px;background:var(--offwhite)}
+.sig-title{font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.sig-wrap{position:relative;background:#fff;border:1px solid var(--gray);border-radius:6px;overflow:hidden;margin-bottom:6px}
+canvas{display:block;width:100%;touch-action:none}
+.sig-ph{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:11px;color:#ccc;pointer-events:none;font-style:italic}
+.sig-clear{background:none;border:1px solid var(--gray);border-radius:5px;padding:3px 10px;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer}
+.sig-clear:hover{border-color:var(--teal);color:var(--teal)}
+
+.err{font-size:11px;font-weight:700;color:var(--red);margin-top:3px;display:none}
+.err.show{display:block}
+
+/* COMPLIANCE NOTE */
+.compliance{background:#fff8e7;border:1px solid #f0c040;border-left:4px solid #f0c040;border-radius:7px;padding:11px 14px;font-size:11px;color:#5a4a00;line-height:1.7;margin-bottom:16px}
+.compliance strong{color:#3a3000}
+
+/* SUBMIT */
+.submit-area{padding:16px 26px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.submit-note{font-size:11px;color:var(--muted);line-height:1.5}
+.submit-note strong{color:var(--teal)}
+.btn-row{display:flex;gap:8px}
+.print-btn{background:var(--offwhite);color:var(--teal);border:2px solid var(--teal);border-radius:9px;padding:10px 18px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+.submit-btn{background:var(--teal);color:#fff;border:none;border-radius:9px;padding:10px 24px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(50,110,106,.3)}
+.submit-btn:hover{background:var(--teal-mid)}
+
+/* SUCCESS */
+#successMsg{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:10px;padding:24px;text-align:center;margin:16px 26px 24px}
+#successMsg .si{font-size:30px;margin-bottom:8px}
+#successMsg h3{font-family:'Libre Baskerville',serif;font-size:16px;color:var(--green);margin-bottom:5px}
+#successMsg p{font-size:12px;color:var(--muted)}
+#successMsg .print-actions{margin-top:14px;display:flex;gap:8px;justify-content:center}
+#successMsg .save-pdf-btn{background:var(--teal);color:#fff;border:none;border-radius:7px;padding:10px 22px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+#successMsg .filing-instructions{margin-top:14px;background:var(--offwhite);border:1px solid var(--gray);border-radius:7px;padding:11px 14px;font-size:11px;color:var(--muted);line-height:1.7;text-align:left}
+#successMsg .filing-instructions strong{color:var(--teal)}
+#successMsg .filename-display{font-family:monospace;background:var(--teal);color:#fff;padding:3px 9px;border-radius:5px;font-size:11px;display:inline-block;margin:4px 0}
+
+/* PRINT */
+@media print{
+  body{background:#fff!important}
+  header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .form-card{box-shadow:none!important}
+  .submit-area,.print-hint{display:none!important}
+  .print-filename-banner{display:block!important}
+  .sig-clear{display:none!important}
+}
+.print-filename-banner{display:none;background:var(--teal);color:#fff;padding:7px 26px;font-size:11px;font-weight:700}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">THLP</div>
+  <div class="header-text">
+    <h1>The Houston Launch Pad</h1>
+    <p>HVRP Document &amp; Forms Center</p>
+  </div>
+  <span class="badge">HVRP Program</span>
+</header>
+
+<main>
+  <div class="form-card">
+
+    <div class="card-header">
+      <h2>💵 Petty Cash Disbursement</h2>
+      <p>Participant petty cash receipt — must be signed by participant and case manager at time of disbursement.</p>
+      <div class="chip-row">
+        <span class="chip">Grant #23560HV000039</span>
+        <span class="chip">DOL-VETS</span>
+        <span class="chip">Supportive Services</span>
+        <span class="chip">2 CFR Part 200</span>
+      </div>
+    </div>
+
+    <div class="print-hint">💡 <span>After submitting, click <strong>Save as PDF</strong>. The filename will be auto-filled with the veteran's name and last 4 SSN for DocuShare filing.</span></div>
+
+    <div class="form-body" id="formBody">
+      <div class="req-note"><span>*</span> Required field</div>
+
+      <!-- PARTICIPANT INFO -->
+      <div class="two-col">
+        <div class="field">
+          <label class="label">Participant Name<span style="opacity:.7">*</span></label>
+          <input type="text" class="input" id="vetName" placeholder="Last, First"/>
+          <div class="err" id="err-vetName">Required.</div>
+        </div>
+        <div class="field">
+          <label class="label">Last 4 of SSN<span style="opacity:.7">*</span>
+            <span class="ssn-note">For DocuShare folder match</span>
+          </label>
+          <input type="text" class="input" id="ssn4" placeholder="e.g. 4567" maxlength="4" inputmode="numeric"/>
+          <div class="err" id="err-ssn4">Required — 4 digits.</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label class="label">Case Manager<span style="opacity:.7">*</span></label>
+          <div class="sel-wrap">
+            <select class="select-el" id="caseManager">
+              <option value="">— Select —</option>
+              <option>Renee Milo</option>
+              <option>Brandi Nicholson</option>
+              <option>Carl Poole</option>
+            </select>
+          </div>
+          <div class="err" id="err-caseManager">Required.</div>
+        </div>
+        <div class="field">
+          <label class="label">Date of Disbursement<span style="opacity:.7">*</span></label>
+          <input type="date" class="input" id="disbDate"/>
+          <div class="err" id="err-disbDate">Required.</div>
+        </div>
+      </div>
+
+      <!-- AMOUNT -->
+      <div class="amount-box">
+        <span class="amount-label">💵 Amount</span>
+        <input type="text" class="amount-input" id="amount" placeholder="$ 0.00" oninput="formatAmount(this)"/>
+        <div class="err" id="err-amount" style="display:none">Required.</div>
+      </div>
+
+      <!-- PURPOSE -->
+      <div class="field" style="margin-bottom:16px">
+        <label class="label">Purpose / Category<span style="opacity:.7">*</span></label>
+        <div class="purpose-grid" id="purposeGrid">
+          <div class="purpose-pill" onclick="selectPurpose(this,'Transportation')"><div class="pill-dot"></div>Transportation</div>
+          <div class="purpose-pill" onclick="selectPurpose(this,'Work Attire')"><div class="pill-dot"></div>Work Attire</div>
+          <div class="purpose-pill" onclick="selectPurpose(this,'Tools/Equipment')"><div class="pill-dot"></div>Tools / Equipment</div>
+          <div class="purpose-pill" onclick="selectPurpose(this,'Food/Hygiene')"><div class="pill-dot"></div>Food / Hygiene</div>
+          <div class="purpose-pill" onclick="selectPurpose(this,'ID/Documents')"><div class="pill-dot"></div>ID / Documents</div>
+          <div class="purpose-pill" onclick="selectPurpose(this,'Emergency')"><div class="pill-dot"></div>Emergency</div>
+          <div class="purpose-pill" onclick="selectPurpose(this,'Other')"><div class="pill-dot"></div>Other</div>
+        </div>
+        <input type="hidden" id="purposeVal"/>
+        <div class="err" id="err-purpose">Please select a purpose.</div>
+        <div id="otherWrap" style="display:none;margin-top:8px">
+          <input type="text" class="input" id="otherPurpose" placeholder="Describe purpose..."/>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="field">
+        <label class="label">Brief Description<span style="opacity:.7">*</span></label>
+        <input type="text" class="input" id="description" placeholder="e.g. Bus pass for job interview at downtown location"/>
+        <div class="err" id="err-description">Required.</div>
+      </div>
+
+      <!-- RECEIPT -->
+      <div class="receipt-row" id="receiptRow" onclick="toggleReceipt()">
+        <div class="receipt-box" id="receiptBox"></div>
+        <div class="receipt-text">✅ Receipt / documentation attached to this disbursement</div>
+      </div>
+
+      <!-- COMPLIANCE NOTE -->
+      <div class="compliance">
+        <strong>⚠️ Grant Compliance — 2 CFR Part 200:</strong> Petty cash disbursements must be for authorized program purposes only. A receipt or supporting documentation is required for all transactions. This form must be retained in the participant's case file for federal audit purposes.
+      </div>
+
+      <!-- SIGNATURES -->
+      <div class="sig-grid">
+        <div class="sig-box">
+          <div class="sig-title">✍️ Participant Signature</div>
+          <div class="sig-wrap">
+            <canvas id="sigCanvas" height="80"></canvas>
+            <div class="sig-ph" id="ph1">Sign here</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <button type="button" class="sig-clear" onclick="clearSig('sigCanvas','ph1','sd1')">Clear</button>
+            <span style="font-size:10px;color:var(--muted)" id="sd1"></span>
+          </div>
+          <div class="err" id="err-sig">Participant signature required.</div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-title">✍️ Case Manager (Witness)</div>
+          <div class="sig-wrap">
+            <canvas id="cmCanvas" height="80"></canvas>
+            <div class="sig-ph" id="ph2">Sign here</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <button type="button" class="sig-clear" onclick="clearSig('cmCanvas','ph2','sd2')">Clear</button>
+            <span style="font-size:10px;color:var(--muted)" id="sd2"></span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end form-body -->
+
+    <div class="print-filename-banner" id="filenameBanner"></div>
+
+    <div id="successMsg">
+      <div class="si">✅</div>
+      <h3>Petty Cash Disbursement Recorded</h3>
+      <p>Save as PDF and file in the participant's DocuShare case folder.</p>
+      <div class="print-actions">
+        <button class="save-pdf-btn" onclick="triggerPrint('Petty_Cash_Disbursement')">💾 Save as PDF</button>
+      </div>
+      <div class="filing-instructions">
+        <strong>📁 DocuShare Filing Instructions:</strong><br/>
+        1. Click <strong>Save as PDF</strong> → change destination to <strong>"Save as PDF"</strong><br/>
+        2. Filename pre-filled as:<br/>
+        <span class="filename-display" id="fnDisplay">generating...</span><br/>
+        3. Save → upload to DocuShare Flex →<br/>
+        &nbsp;&nbsp;&nbsp;<strong id="filingPath">Veteran's case folder (by last 4 SSN)</strong>
+      </div>
+    </div>
+
+    <div class="submit-area" id="submitArea">
+      <div class="submit-note">
+        <strong>Retention Required:</strong> File in participant's case folder immediately. Attach original receipt.
+      </div>
+      <div class="btn-row">
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+        <button class="submit-btn" onclick="submitForm()">Submit &amp; Save ›</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ── PURPOSE ──
+let selectedPurpose = '';
+function selectPurpose(el, val){
+  document.querySelectorAll('.purpose-pill').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPurpose = val;
+  document.getElementById('purposeVal').value = val;
+  document.getElementById('err-purpose').classList.remove('show');
+  document.getElementById('otherWrap').style.display = val === 'Other' ? 'block' : 'none';
+}
+
+// ── RECEIPT CHECKBOX ──
+let receiptChecked = false;
+function toggleReceipt(){
+  receiptChecked = !receiptChecked;
+  document.getElementById('receiptRow').classList.toggle('checked', receiptChecked);
+  document.getElementById('receiptBox').textContent = receiptChecked ? '✓' : '';
+}
+
+// ── AMOUNT FORMAT ──
+function formatAmount(el){
+  let v = el.value.replace(/[^0-9.]/g,'');
+  el.value = v;
+}
+
+// ── SIGNATURES ──
+function initSig(id, phId, dateId){
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  function resize(){
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width; canvas.height = 80;
+    ctx.strokeStyle = '#1a2424'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  }
+  resize();
+  function pos(e){
+    const r = canvas.getBoundingClientRect();
+    const sx = canvas.width/r.width, sy = canvas.height/r.height;
+    if(e.touches) return{x:(e.touches[0].clientX-r.left)*sx,y:(e.touches[0].clientY-r.top)*sy};
+    return{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};
+  }
+  canvas.addEventListener('mousedown',e=>{drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);document.getElementById(phId).style.display='none';document.getElementById(dateId).textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});});
+  canvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();});
+  canvas.addEventListener('mouseup',()=>drawing=false);
+  canvas.addEventListener('mouseleave',()=>drawing=false);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);document.getElementById(phId).style.display='none';document.getElementById(dateId).textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();},{passive:false});
+  canvas.addEventListener('touchend',()=>drawing=false);
+  canvas._hasSig=()=>{const d=ctx.getImageData(0,0,canvas.width,canvas.height).data;return d.some(v=>v!==0);};
+  window.addEventListener('resize',resize);
+}
+
+function clearSig(id, phId, dateId){
+  const c = document.getElementById(id);
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
+  document.getElementById(phId).style.display='block';
+  document.getElementById(dateId).textContent='';
+}
+
+// ── VALIDATION ──
+function validate(){
+  let valid = true;
+  [['vetName','err-vetName'],['ssn4','err-ssn4'],['caseManager','err-caseManager'],
+   ['disbDate','err-disbDate'],['description','err-description']].forEach(([id,err])=>{
+    const el = document.getElementById(id);
+    if(!el.value.trim()){document.getElementById(err).classList.add('show');valid=false;}
+    else document.getElementById(err).classList.remove('show');
+  });
+  const ssn = document.getElementById('ssn4').value.trim();
+  if(ssn && !/^\d{4}$/.test(ssn)){document.getElementById('err-ssn4').classList.add('show');valid=false;}
+  const amt = document.getElementById('amount').value.trim();
+  if(!amt || parseFloat(amt) <= 0){
+    document.getElementById('err-amount').style.display='block';valid=false;
+  } else {
+    document.getElementById('err-amount').style.display='none';
+  }
+  if(!selectedPurpose){document.getElementById('err-purpose').classList.add('show');valid=false;}
+  if(!document.getElementById('sigCanvas')._hasSig()){
+    document.getElementById('err-sig').classList.add('show');valid=false;
+  } else {
+    document.getElementById('err-sig').classList.remove('show');
+  }
+  return valid;
+}
+
+// ── SUBMIT ──
+function submitForm(){
+  if(!validate()){
+    document.querySelector('.err.show')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  document.getElementById('formBody').style.display='none';
+  document.getElementById('submitArea').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>triggerPrint('Petty_Cash_Disbursement'),500);
+}
+
+// ── AUTO-NAME PDF ──
+function buildFileName(formType){
+  const nameEl = document.getElementById('vetName');
+  const ssnEl = document.getElementById('ssn4');
+  let namePart = 'THLP';
+  if(nameEl && nameEl.value.trim()){
+    const raw = nameEl.value.trim();
+    const parts = raw.split(',');
+    if(parts.length >= 2) namePart = (parts[0].trim()+'_'+parts[1].trim().split(' ')[0]).replace(/\s+/g,'_');
+    else namePart = raw.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+  }
+  const ssnPart = ssnEl && ssnEl.value.trim() ? '_SSN'+ssnEl.value.trim() : '';
+  const today = new Date().toISOString().split('T')[0];
+  return namePart+ssnPart+'_'+formType+'_'+today+'.pdf';
+}
+
+function triggerPrint(formType){
+  const fileName = buildFileName(formType);
+  const banner = document.getElementById('filenameBanner');
+  if(banner){banner.textContent='📄 Save as: '+fileName;banner.style.display='block';}
+  const fnDisplay = document.getElementById('fnDisplay');
+  if(fnDisplay) fnDisplay.textContent = fileName;
+  const ssn4 = document.getElementById('ssn4')?.value.trim()||'????';
+  const fp = document.getElementById('filingPath');
+  if(fp) fp.textContent = 'DocuShare Flex → Client Folder (last 4: '+ssn4+') → '+fileName;
+  document.title = fileName;
+  setTimeout(()=>window.print(), 300);
+}
+
+// ── INIT ──
+initSig('sigCanvas','ph1','sd1');
+initSig('cmCanvas','ph2','sd2');
+document.getElementById('disbDate').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
