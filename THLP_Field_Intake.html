@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>THLP — Veteran Intake</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-dark:#274f4c;--teal-light:#3d8a85;
+  --teal-pale:rgba(50,110,106,.08);--teal-bubble:rgba(50,110,106,.12);
+  --white:#fff;--offwhite:#f4f7f7;--gray:#e2e8e8;
+  --text:#1a2424;--muted:#5a7070;
+  --user-bubble:#326E6A;--ai-bubble:#fff;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);display:flex;flex-direction:column;color:var(--text)}
+
+/* ── HEADER ── */
+.header{
+  background:var(--teal);padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;border-bottom:3px solid rgba(255,255,255,.2);
+  position:relative;z-index:10;
+}
+.hlogo{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.htitle{font-weight:700;color:#fff;font-size:15px;line-height:1.2}
+.hsub{font-size:10px;color:rgba(255,255,255,.65);margin-top:1px;letter-spacing:.8px;text-transform:uppercase}
+.hpill{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:4px 12px;border-radius:12px;flex-shrink:0}
+
+/* PROGRESS */
+.progress-bar{height:3px;background:rgba(255,255,255,.2);flex-shrink:0}
+.progress-fill{height:100%;background:var(--white);transition:width .5s ease;width:0%}
+
+/* ── CHAT ── */
+.chat-wrap{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px;background:var(--offwhite)}
+.chat-wrap::-webkit-scrollbar{width:4px}
+.chat-wrap::-webkit-scrollbar-thumb{background:var(--gray);border-radius:2px}
+
+/* BUBBLES */
+.bubble-row{display:flex;align-items:flex-end;gap:8px;animation:bubbleIn .3s ease}
+@keyframes bubbleIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.bubble-row.ai{align-self:flex-start;max-width:88%}
+.bubble-row.user{align-self:flex-end;flex-direction:row-reverse;max-width:80%}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:#fff;font-weight:700}
+.bubble{padding:11px 15px;border-radius:18px;font-size:14px;line-height:1.6;position:relative}
+.bubble.ai{background:var(--white);border:1px solid var(--gray);border-bottom-left-radius:4px;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.bubble.user{background:var(--user-bubble);color:#fff;border-bottom-right-radius:4px}
+.bubble strong{font-weight:700}
+.bubble em{font-style:italic;opacity:.8}
+
+/* TYPING INDICATOR */
+.typing{display:flex;gap:4px;padding:14px 18px;align-items:center}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--teal);opacity:.4;animation:typeBounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typeBounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+
+/* OPTIONS */
+.options-wrap{display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 8px;animation:bubbleIn .3s ease}
+.opt-btn{background:#fff;border:2px solid var(--teal);color:var(--teal);border-radius:20px;padding:8px 18px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;flex-shrink:0}
+.opt-btn:hover,.opt-btn:active{background:var(--teal);color:#fff}
+
+/* INPUT AREA */
+.input-area{
+  padding:12px 14px;background:#fff;border-top:1px solid var(--gray);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.chat-input{
+  flex:1;border:2px solid var(--gray);border-radius:24px;
+  padding:11px 16px;font-family:'Source Sans 3',sans-serif;
+  font-size:14px;color:var(--text);outline:none;
+  transition:border-color .2s;background:#fff;
+  resize:none;line-height:1.4;max-height:100px;
+}
+.chat-input:focus{border-color:var(--teal)}
+.chat-input::placeholder{color:#bbb}
+.send-btn{
+  width:44px;height:44px;border-radius:50%;background:var(--teal);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .2s;
+}
+.send-btn:hover{background:var(--teal-dark)}
+.send-btn svg{width:18px;height:18px;fill:#fff}
+.send-btn:disabled{background:var(--gray);cursor:not-allowed}
+
+/* SUCCESS */
+#successScreen{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  flex:1;padding:32px 24px;text-align:center;background:var(--offwhite);
+}
+.success-icon{font-size:64px;margin-bottom:18px;animation:popIn .5s ease}
+@keyframes popIn{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+.success-title{font-weight:700;font-size:22px;color:var(--teal);margin-bottom:10px}
+.success-sub{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
+.success-card{background:#fff;border:1.5px solid var(--gray);border-radius:14px;padding:20px;width:100%;max-width:360px;text-align:left;margin-bottom:20px}
+.success-card h4{font-size:12px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.success-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--gray)}
+.success-row:last-child{border-bottom:none}
+.success-row .sk{color:var(--muted);font-weight:600}
+.success-row .sv{color:var(--text);font-weight:700;text-align:right;max-width:60%}
+.start-again{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
+.start-again:hover{background:var(--teal-dark)}
+
+/* PHONE NUMBER FORMAT NOTE */
+.format-hint{font-size:11px;color:var(--muted);padding:0 14px 8px;font-style:italic}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hlogo">TLP</div>
+  <div>
+    <div class="htitle">The Houston Launch Pad</div>
+    <div class="hsub">HVRP Veteran Intake</div>
+  </div>
+  <div class="hpill">Confidential</div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- CHAT -->
+<div class="chat-wrap" id="chatWrap"></div>
+<div class="options-wrap" id="optionsWrap" style="display:none"></div>
+<div class="format-hint" id="formatHint" style="display:none"></div>
+<div class="input-area" id="inputArea">
+  <textarea class="chat-input" id="chatInput" placeholder="Type your answer here..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+  <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+    <svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2v7z"/></svg>
+  </button>
+</div>
+
+<!-- SUCCESS -->
+<div id="successScreen">
+  <div class="success-icon">🎖️</div>
+  <div class="success-title">You're In Our System!</div>
+  <div class="success-sub">Thank you for your service. A THLP case manager will contact you within <strong>24 hours</strong> to schedule your first appointment.</div>
+  <div class="success-card" id="summaryCard">
+    <h4>Your Information</h4>
+  </div>
+  <div style="background:var(--teal-pale);border:1px solid rgba(50,110,106,.2);border-radius:12px;padding:18px;width:100%;max-width:360px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:6px">📋 Next Step — Complete Your Application</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px">To enroll in the HVRP program, please complete the full application. It only takes a few minutes and a case manager will follow up within 24 hours.</div>
+    <a href="https://www.houstonlaunchpad.com" target="_blank" style="display:block;background:var(--teal);color:#fff;text-decoration:none;border-radius:10px;padding:13px;text-align:center;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:700">Apply Now at houstonlaunchpad.com →</a>
+  </div>
+  <div style="font-size:13px;color:var(--muted);margin-bottom:16px">📞 Questions? Call us: <strong style="color:var(--teal)">(713) 637-4174</strong></div>
+  <button class="start-again" onclick="resetChat()">Start New Intake</button>
+</div>
+
+<script>
+// ── INTAKE QUESTIONS ──
+const QUESTIONS = [
+  // ── SCREENING QUESTIONS FIRST ──
+  {
+    key: 'isVeteran',
+    ask: "👋 Hello! Welcome to The Houston Launch Pad.\n\nWe provide <strong>free housing and employment services</strong> for veterans. Let me ask you a few quick questions to see if we can help.\n\n<strong>Are you a U.S. Military Veteran?</strong>",
+    type: 'options',
+    options: ['Yes, I am a veteran', 'No, I am not a veteran'],
+    validate: (v) => v === 'Yes, I am a veteran' ? null : 'STOP',
+    stopMsg: "Thank you for reaching out. Our HVRP program is specifically for U.S. Military Veterans.\n\nPlease call us at (713) 637-4174 and we can help connect you with other community resources. 🙏",
+  },
+  {
+    key: 'hasDD214',
+    ask: "Great! 🎖️\n\nDo you have your <strong>DD-214</strong> (discharge papers)?",
+    type: 'options',
+    options: ['Yes, I have my DD-214', 'No, I don\'t have it right now', 'I\'m not sure what that is'],
+    validate: (v) => v ? null : "Please select an option.",
+  },
+  {
+    key: 'dischargeStatus',
+    ask: "What was your <strong>discharge status</strong>?",
+    type: 'options',
+    options: ['Honorable discharge', 'General (Under Honorable Conditions)', 'Other Than Honorable', 'Not sure / prefer not to say'],
+    validate: (v) => v ? null : "Please select an option.",
+  },
+  {
+    key: 'seekingEmployment',
+    ask: "Are you <strong>seeking employment</strong>?",
+    type: 'options',
+    options: ['Yes, I am looking for work', 'I have a job but need a better one', 'Not currently — but open to it', 'No, not at this time'],
+    validate: (v) => v ? null : "Please select an option.",
+  },
+  {
+    key: 'housingStatus',
+    ask: "What is your current <strong>housing status</strong>?",
+    type: 'options',
+    options: ['Currently homeless / no fixed address', 'Staying with family or friends', 'In a shelter or transitional housing', 'At risk of losing housing', 'Have stable housing'],
+    validate: (v) => v ? null : "Please select an option.",
+  },
+  // ── PERSONAL INFO ──
+  {
+    key: 'firstName',
+    ask: "You may qualify for our services! 🙌\n\nLet's get your information so a case manager can contact you.\n\nWhat is your <strong>first name</strong>?",
+    type: 'text',
+    placeholder: 'Type your first name...',
+    validate: (v) => v.trim().length < 2 ? "Please enter your first name." : null,
+  },
+  {
+    key: 'lastName',
+    ask: (data) => `Nice to meet you, ${data.firstName}! 👋\n\nWhat is your <strong>last name</strong>?`,
+    type: 'text',
+    placeholder: 'Type your last name...',
+    validate: (v) => v.trim().length < 2 ? "Please enter your last name." : null,
+  },
+  {
+    key: 'phone',
+    ask: "What is the best <strong>phone number</strong> to reach you?\n\n<em>A case manager will call you within 24 hours.</em>",
+    type: 'tel',
+    placeholder: '(713) 000-0000',
+    hint: 'Include area code',
+    validate: (v) => v.replace(/\D/g,'').length < 10 ? "Please enter a valid 10-digit phone number." : null,
+  },
+  {
+    key: 'email',
+    ask: "Do you have an <strong>email address</strong>?\n\n<em>(Type 'skip' if you don't have one)</em>",
+    type: 'text',
+    placeholder: 'your@email.com or skip',
+    validate: (v) => {
+      if(v.toLowerCase()==='skip') return null;
+      return v.includes('@') ? null : "Please enter a valid email or type 'skip'.";
+    },
+  },
+  {
+    key: 'serviceBranch',
+    ask: "Which <strong>branch of the military</strong> did you serve in?",
+    type: 'options',
+    options: ['Army', 'Navy', 'Marine Corps', 'Air Force', 'Coast Guard', 'Space Force', 'National Guard / Reserve'],
+    validate: (v) => v ? null : "Please select your branch.",
+  },
+  {
+    key: 'primaryNeed',
+    ask: "What do you need help with <strong>most right now</strong>?",
+    type: 'options',
+    options: ['Housing / shelter', 'Finding a job', 'Job training / certifications', 'Transportation', 'Food / basic needs', 'Mental health support', 'Multiple things'],
+    validate: (v) => v ? null : "Please select an option.",
+  },
+  {
+    key: 'hearAboutUs',
+    ask: "Last question! 🙌\n\nHow did you hear about The Houston Launch Pad?",
+    type: 'options',
+    options: ['Outreach staff met me in person', 'VA / VA Hospital', 'Another veteran', 'Social media', 'Flyer or brochure', 'Other organization', 'Other'],
+    validate: (v) => v ? null : "Please select an option.",
+  },
+];
+
+// ── STATE ──
+let step = 0;
+let data = {};
+let waitingForInput = false;
+let currentQ = null;
+
+// ── RENDER BUBBLE ──
+function addBubble(text, type='ai', delay=0){
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      const chat = document.getElementById('chatWrap');
+      const row = document.createElement('div');
+      row.className = `bubble-row ${type}`;
+
+      if(type === 'ai'){
+        row.innerHTML = `
+          <div class="avatar">🎖️</div>
+          <div class="bubble ai">${text.replace(/\n/g,'<br/>')}</div>`;
+      } else {
+        row.innerHTML = `<div class="bubble user">${text}</div>`;
+      }
+
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
+      resolve();
+    }, delay);
+  });
+}
+
+// ── TYPING INDICATOR ──
+function showTyping(duration=800){
+  return new Promise(resolve=>{
+    const chat = document.getElementById('chatWrap');
+    const row = document.createElement('div');
+    row.className = 'bubble-row ai';
+    row.id = 'typingIndicator';
+    row.innerHTML = `<div class="avatar">🎖️</div><div class="bubble ai"><div class="typing"><span></span><span></span><span></span></div></div>`;
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+    setTimeout(()=>{ row.remove(); resolve(); }, duration);
+  });
+}
+
+// ── SHOW OPTIONS ──
+function showOptions(options){
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  wrap.style.display = 'flex';
+  document.getElementById('inputArea').style.display = 'none';
+  options.forEach(opt=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => handleOptionSelect(opt);
+    wrap.appendChild(btn);
+  });
+}
+
+function hideOptions(){
+  document.getElementById('optionsWrap').style.display = 'none';
+  document.getElementById('inputArea').style.display = 'flex';
+  document.getElementById('formatHint').style.display = 'none';
+}
+
+// ── ASK QUESTION ──
+async function askQuestion(q){
+  currentQ = q;
+  waitingForInput = true;
+  const askText = typeof q.ask === 'function' ? q.ask(data) : q.ask;
+
+  await showTyping(600 + Math.random()*400);
+  await addBubble(askText, 'ai');
+
+  if(q.type === 'options'){
+    showOptions(q.options);
+  } else {
+    hideOptions();
+    const input = document.getElementById('chatInput');
+    input.placeholder = q.placeholder || 'Type your answer...';
+    if(q.hint){
+      document.getElementById('formatHint').textContent = '💡 ' + q.hint;
+      document.getElementById('formatHint').style.display = 'block';
+    }
+    setTimeout(()=>input.focus(), 300);
+  }
+
+  updateProgress();
+}
+
+// ── HANDLE OPTION SELECT ──
+async function handleOptionSelect(value){
+  hideOptions();
+  await addBubble(value, 'user');
+
+  const q = currentQ;
+  const err = q.validate ? q.validate(value) : null;
+
+  if(err === 'STOP'){
+    await showTyping(600);
+    await addBubble(q.stopMsg, 'ai');
+    document.getElementById('inputArea').style.display = 'none';
+    return;
+  }
+
+  data[q.key] = value;
+  step++;
+  await nextStep();
+}
+
+// ── HANDLE TEXT INPUT ──
+async function sendMessage(){
+  const input = document.getElementById('chatInput');
+  const value = input.value.trim();
+  if(!value || !waitingForInput) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  await addBubble(value, 'user');
+
+  const q = currentQ;
+  const err = q.validate ? q.validate(value) : null;
+
+  if(err){
+    await showTyping(400);
+    await addBubble(`⚠️ ${err} Please try again.`, 'ai');
+    setTimeout(()=>input.focus(), 300);
+    return;
+  }
+
+  data[q.key] = value;
+  step++;
+  await nextStep();
+}
+
+// ── NEXT STEP ──
+async function nextStep(){
+  if(step >= QUESTIONS.length){
+    await completeIntake();
+    return;
+  }
+  await askQuestion(QUESTIONS[step]);
+}
+
+// ── COMPLETE INTAKE ──
+async function completeIntake(){
+  waitingForInput = false;
+  document.getElementById('inputArea').style.display = 'none';
+  document.getElementById('optionsWrap').style.display = 'none';
+
+  await showTyping(800);
+  await addBubble(`Thank you, <strong>${data.firstName}!</strong> 🙏\n\nWe have everything we need. A THLP case manager will contact you at <strong>${data.phone}</strong> within <strong>24 hours</strong> to schedule your first appointment.\n\n<em>Your information has been recorded and is confidential.</em>`, 'ai');
+
+  await showTyping(800);
+  await addBubble(`📋 <strong>One more step!</strong>\n\nPlease complete your full application at:\n\n<a href="https://www.houstonlaunchpad.com" target="_blank" style="color:var(--teal);font-weight:700;text-decoration:underline">www.houstonlaunchpad.com</a>\n\nClick <strong>"Application for Services"</strong> on the website. It takes just a few minutes and ensures you are fully enrolled in our program. 🎖️`, 'ai');
+
+  // Send to Formspree (Nancy's email)
+  await submitToFormspree();
+
+  setTimeout(()=>{
+    showSuccessScreen();
+  }, 2000);
+}
+
+// ── SUBMIT TO FORMSPREE ──
+async function submitToFormspree(){
+  try{
+    const needs = mapNeeds(data.primaryNeed);
+    await fetch('https://formspree.io/f/myknlnvz', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      body: JSON.stringify({
+        subject: `🎖️ FIELD INTAKE — ${data.firstName} ${data.lastName} — ${new Date().toLocaleDateString()}`,
+        name: `${data.firstName} ${data.lastName}`,
+        phone: data.phone,
+        email: data.email === 'skip' ? 'Not provided' : data.email,
+        is_veteran: data.isVeteran,
+        has_dd214: data.hasDD214,
+        discharge_status: data.dischargeStatus,
+        seeking_employment: data.seekingEmployment,
+        housing_status: data.housingStatus,
+        service_branch: data.serviceBranch,
+        primary_needs: data.primaryNeed,
+        heard_about: data.hearAboutUs,
+        intake_date: new Date().toLocaleString(),
+        intake_method: 'Mobile Field Intake Agent',
+        field_site: 'The Houston Launch Pad — Field Outreach',
+      })
+    });
+  }catch(e){ console.log('Formspree error:', e); }
+}
+
+function mapNeeds(raw){
+  const map = {'1':'Housing/Shelter','2':'Finding a Job','3':'Job Training','4':'Transportation','5':'Food/Basic Needs','6':'Mental Health','7':'Substance Abuse Support','8':'Other'};
+  if(!raw) return raw;
+  const nums = raw.match(/\d/g);
+  if(!nums) return raw;
+  return nums.map(n=>map[n]).filter(Boolean).join(', ') || raw;
+}
+
+// ── SUCCESS SCREEN ──
+function showSuccessScreen(){
+  document.getElementById('chatWrap').style.display = 'none';
+  document.getElementById('inputArea').style.display = 'none';
+  document.getElementById('optionsWrap').style.display = 'none';
+  document.getElementById('formatHint').style.display = 'none';
+
+  const screen = document.getElementById('successScreen');
+  screen.style.display = 'flex';
+
+  const card = document.getElementById('summaryCard');
+  const needs = mapNeeds(data.primaryNeed);
+  card.innerHTML = `<h4>Your Information</h4>
+    <div class="success-row"><span class="sk">Name</span><span class="sv">${data.firstName} ${data.lastName}</span></div>
+    <div class="success-row"><span class="sk">Phone</span><span class="sv">${data.phone}</span></div>
+    <div class="success-row"><span class="sk">Email</span><span class="sv">${data.email==='skip'?'Not provided':data.email}</span></div>
+    <div class="success-row"><span class="sk">DD-214</span><span class="sv">${data.hasDD214}</span></div>
+    <div class="success-row"><span class="sk">Discharge</span><span class="sv">${data.dischargeStatus}</span></div>
+    <div class="success-row"><span class="sk">Seeking Work</span><span class="sv">${data.seekingEmployment}</span></div>
+    <div class="success-row"><span class="sk">Housing</span><span class="sv">${data.housingStatus}</span></div>
+    <div class="success-row"><span class="sk">Branch</span><span class="sv">${data.serviceBranch}</span></div>
+    <div class="success-row"><span class="sk">Primary Need</span><span class="sv">${data.primaryNeed}</span></div>`;
+
+  document.getElementById('progressFill').style.width = '100%';
+}
+
+// ── UPDATE PROGRESS ──
+function updateProgress(){
+  const pct = Math.round((step / QUESTIONS.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ── KEY HANDLER ──
+function handleKey(e){
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ── RESET ──
+function resetChat(){
+  step = 0; data = {}; currentQ = null; waitingForInput = false;
+  document.getElementById('chatWrap').innerHTML = '';
+  document.getElementById('chatWrap').style.display = 'flex';
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('inputArea').style.display = 'flex';
+  document.getElementById('progressFill').style.width = '0%';
+  startChat();
+}
+
+// ── START ──
+async function startChat(){
+  await askQuestion(QUESTIONS[0]);
+}
+
+startChat();
+</script>
+</body>
+</html>
