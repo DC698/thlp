@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>THLP — IEP to Clinical Note Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#326E6A;--teal-mid:#274f4c;--teal-light:#3d8a85;
+  --teal-pale:rgba(50,110,106,.08);--offwhite:#f4f7f7;
+  --gray:#e2e8e8;--text:#1a2424;--muted:#5a7070;
+  --shadow:0 12px 48px rgba(50,110,106,.18);
+  --green:#1e6e3a;--green-bg:#e6f4ea;--green-border:#a8d5b5;
+  --red:#b91c1c;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--offwhite);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 0% 0%,rgba(50,110,106,.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+header{background:var(--teal);padding:18px 28px;display:flex;align-items:center;gap:16px;z-index:1;position:relative;border-bottom:3px solid rgba(255,255,255,.2)}
+.logo{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+.htxt h1{font-family:'Libre Baskerville',serif;color:#fff;font-size:17px}
+.htxt p{color:rgba(255,255,255,.65);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.badge{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:16px}
+main{max-width:760px;margin:28px auto 60px;padding:0 16px;position:relative;z-index:1}
+
+/* STEPS */
+.steps{display:flex;align-items:center;margin-bottom:22px;background:#fff;border-radius:12px;padding:14px 20px;box-shadow:0 2px 12px rgba(50,110,106,.08);border:1px solid var(--gray)}
+.step{display:flex;align-items:center;gap:8px;flex:1}
+.sn{width:26px;height:26px;border-radius:50%;background:var(--gray);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;transition:all .3s}
+.step.active .sn{background:var(--teal);color:#fff}
+.step.done .sn{background:var(--green);color:#fff}
+.sl{font-size:12px;font-weight:600;color:var(--muted)}
+.step.active .sl{color:var(--teal)}
+.step.done .sl{color:var(--green)}
+.sline{flex:1;height:2px;background:var(--gray);margin:0 8px;max-width:40px}
+
+/* CARD */
+.card{background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.ch{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);padding:22px 28px}
+.ch h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:20px;margin-bottom:4px}
+.ch p{color:rgba(255,255,255,.65);font-size:12px;line-height:1.6}
+
+/* UPLOAD */
+.drop-zone{border:2.5px dashed rgba(50,110,106,.3);border-radius:12px;padding:52px 28px;text-align:center;cursor:pointer;transition:all .2s;background:var(--teal-pale);margin:24px}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--teal);background:rgba(50,110,106,.12)}
+.drop-zone.has-file{border-color:var(--green-border);border-style:solid;background:var(--green-bg)}
+.dz-icon{font-size:52px;margin-bottom:14px}
+.drop-zone h3{font-family:'Libre Baskerville',serif;font-size:19px;color:var(--teal);margin-bottom:8px}
+.drop-zone p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.browse-btn{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:11px 26px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.browse-btn:hover{background:var(--teal-mid)}
+.ftypes{font-size:11px;color:var(--muted);margin-top:10px}
+#fileInput{display:none}
+
+/* FILE ROW */
+.file-row{display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid var(--green-border);border-radius:10px;padding:14px 18px;margin:0 24px 20px}
+.fi-icon{font-size:28px;flex-shrink:0}
+.fi-name{font-size:14px;font-weight:700;color:var(--text)}
+.fi-size{font-size:12px;color:var(--muted)}
+.fi-remove{margin-left:auto;background:none;border:1px solid var(--gray);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Source Sans 3',sans-serif;flex-shrink:0}
+.fi-remove:hover{border-color:var(--red);color:var(--red)}
+
+/* OPTIONS */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 24px 20px}
+@media(max-width:480px){.opts{grid-template-columns:1fr}}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--teal);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+.sel-wrap{position:relative}
+.sel-wrap::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:13px;pointer-events:none}
+.sel{width:100%;border:2px solid var(--gray);border-radius:8px;padding:10px 13px 10px 13px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .2s;appearance:none;cursor:pointer;padding-right:32px}
+.sel:focus{border-color:var(--teal)}
+
+/* FOOTER */
+.card-footer{padding:18px 24px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fn{font-size:11px;color:var(--muted);line-height:1.5;max-width:360px}
+.fn strong{color:var(--teal)}
+.btn-gen{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(50,110,106,.3)}
+.btn-gen:hover{background:var(--teal-mid);transform:translateY(-1px)}
+.btn-gen:disabled{background:var(--muted);cursor:not-allowed;transform:none;box-shadow:none;opacity:.7}
+
+/* LOADING */
+.load-body{padding:52px 28px;text-align:center}
+.spin{width:44px;height:44px;border:3px solid var(--gray);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-steps{display:flex;flex-direction:column;gap:10px;margin-top:22px;text-align:left;max-width:280px;margin-left:auto;margin-right:auto}
+.ls{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.ls.done{color:var(--green)}
+.ls.active{color:var(--teal);font-weight:600}
+.ld{width:8px;height:8px;border-radius:50%;background:var(--gray);flex-shrink:0}
+.ls.done .ld{background:var(--green)}
+.ls.active .ld{background:var(--teal);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* OUTPUT */
+.out-head{background:linear-gradient(135deg,var(--teal-mid) 0%,var(--teal) 100%);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.out-head h2{font-family:'Libre Baskerville',serif;color:#fff;font-size:18px}
+.out-head p{color:rgba(255,255,255,.65);font-size:12px;margin-top:2px}
+.out-acts{display:flex;gap:8px}
+.btn-pdf{background:#fff;color:var(--teal);border:none;border-radius:8px;padding:9px 20px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+.btn-pdf:hover{background:var(--offwhite)}
+.btn-new{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:9px 18px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+.btn-new:hover{background:rgba(255,255,255,.25)}
+
+.note-body{padding:26px 28px}
+.note-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:var(--teal-pale);border:1px solid rgba(50,110,106,.15);border-radius:10px;padding:16px 18px;margin-bottom:22px}
+@media(max-width:480px){.note-meta{grid-template-columns:1fr 1fr}}
+.mk{font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.mv{font-size:13px;font-weight:600;color:var(--text)}
+.nsec{margin-bottom:20px}
+.nst{font-family:'Libre Baskerville',serif;font-size:13px;color:var(--teal);font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1.5px solid var(--teal)}
+.nc{background:var(--offwhite);border:1.5px solid var(--gray);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--text);line-height:1.85;min-height:70px;white-space:pre-wrap;outline:none;cursor:text;transition:border-color .2s,background .2s}
+.nc:focus{border-color:var(--teal);background:#fff}
+.eh{font-size:10px;color:var(--muted);margin-top:3px;font-style:italic}
+
+.comp{background:#fff8e7;border:1px solid #f0c040;border-left:4px solid #f0c040;border-radius:8px;padding:12px 16px;font-size:12px;color:#5a4a00;line-height:1.7;margin-top:18px}
+.comp strong{color:#3a3000}
+
+.out-foot{padding:16px 28px;border-top:1px solid var(--gray);background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.of-note{font-size:11px;color:var(--muted);line-height:1.5}
+.of-note strong{color:var(--teal)}
+
+.print-banner{display:none;background:var(--teal);color:#fff;padding:8px 28px;font-size:12px;font-weight:700}
+@media print{
+  body{background:#fff!important}
+  header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card{box-shadow:none!important}
+  #uploadCard,#loadingCard,.out-acts,.out-foot,.eh,.steps{display:none!important}
+  .print-banner{display:block!important}
+  .nc{background:#fff!important;border-color:#ddd!important}
+  .note-meta{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">THLP</div>
+  <div class="htxt">
+    <h1>IEP → Clinical Note Agent</h1>
+    <p>Upload IEP · AI Reads It · Clinical Note Drafted</p>
+  </div>
+  <span class="badge">AI Powered</span>
+</header>
+
+<main>
+
+  <div class="steps">
+    <div class="step active" id="step1"><div class="sn">1</div><div class="sl">Upload IEP</div></div>
+    <div class="sline"></div>
+    <div class="step" id="step2"><div class="sn">2</div><div class="sl">AI Reads IEP</div></div>
+    <div class="sline"></div>
+    <div class="step" id="step3"><div class="sn">3</div><div class="sl">Review &amp; Edit</div></div>
+    <div class="sline"></div>
+    <div class="step" id="step4"><div class="sn">4</div><div class="sl">Save to DocuShare</div></div>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="card" id="uploadCard">
+    <div class="ch">
+      <h2>📂 Upload Completed IEP</h2>
+      <p>Upload the veteran's completed IEP — AI reads every field and automatically drafts a professional clinical case note in the THLP HVRP format. No re-entering data.</p>
+    </div>
+
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="onDrag(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)">
+      <div class="dz-icon" id="dzIcon">📄</div>
+      <h3 id="dzTitle">Drop IEP here</h3>
+      <p id="dzDesc">Drag and drop the completed IEP PDF or Word document, or click to browse</p>
+      <button class="browse-btn" type="button">Browse Files</button>
+      <div class="ftypes">Accepts PDF · DOC · DOCX</div>
+    </div>
+    <input type="file" id="fileInput" accept=".pdf,.doc,.docx" onchange="onFileSelect(event)"/>
+
+    <div id="fileRow" style="display:none">
+      <div class="file-row">
+        <div class="fi-icon" id="fiIcon">📕</div>
+        <div>
+          <div class="fi-name" id="fiName">—</div>
+          <div class="fi-size" id="fiSize">—</div>
+        </div>
+        <button class="fi-remove" onclick="removeFile()">✕ Remove</button>
+      </div>
+    </div>
+
+    <div class="opts">
+      <div>
+        <label class="fl">HVRP Staff Member</label>
+        <div class="sel-wrap">
+          <select class="sel" id="staffMember">
+            <option value="">— Select —</option>
+            <option>Renee Milo</option>
+            <option>Brandi Nicholson</option>
+            <option>Carl Poole</option>
+            <option>Nancy Perea</option>
+            <option>Deirdre Gilbert</option>
+            <option>Prentice Goods</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="fl">Session Type</label>
+        <div class="sel-wrap">
+          <select class="sel" id="sessionType">
+            <option>Initial Intake</option>
+            <option>Follow-Up Session</option>
+            <option>IEP Review</option>
+            <option>Employment Check-In</option>
+            <option>30-Day Follow-Up</option>
+            <option>60-Day Follow-Up</option>
+            <option>90-Day Follow-Up</option>
+            <option>Crisis Intervention</option>
+            <option>Exit Session</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <div class="fn"><strong>One step:</strong> Upload IEP → AI reads it → Clinical note drafted automatically. Review, edit, save as PDF, file in DocuShare.</div>
+      <button class="btn-gen" id="genBtn" onclick="generateNote()" disabled>✨ Generate Clinical Note</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="card" id="loadingCard" style="display:none">
+    <div class="load-body">
+      <div class="spin"></div>
+      <p style="font-size:15px;font-weight:700;color:var(--teal)">Reading IEP &amp; Drafting Clinical Note...</p>
+      <div class="load-steps">
+        <div class="ls done" id="ls1"><div class="ld"></div>IEP document received</div>
+        <div class="ls active" id="ls2"><div class="ld"></div>Extracting participant data</div>
+        <div class="ls" id="ls3"><div class="ld"></div>Drafting all 5 note sections</div>
+        <div class="ls" id="ls4"><div class="ld"></div>Formatting for HVRP compliance</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card" id="outputCard" style="display:none">
+    <div class="print-banner" id="printBanner"></div>
+    <div class="out-head">
+      <div>
+        <h2>📋 Clinical Case Note — Draft</h2>
+        <p>Review and edit any section. Click directly on text to make changes.</p>
+      </div>
+      <div class="out-acts">
+        <button class="btn-pdf" onclick="savePDF()">💾 Save as PDF</button>
+        <button class="btn-new" onclick="startNew()">+ New Note</button>
+      </div>
+    </div>
+
+    <div class="note-body">
+      <div class="note-meta">
+        <div><div class="mk">Participant</div><div class="mv" id="outName">—</div></div>
+        <div><div class="mk">SSN (Last 4)</div><div class="mv" id="outSSN">—</div></div>
+        <div><div class="mk">Date</div><div class="mv" id="outDate">—</div></div>
+        <div><div class="mk">HVRP Staff</div><div class="mv" id="outStaff">—</div></div>
+        <div><div class="mk">Field Site</div><div class="mv">The Houston Launch Pad</div></div>
+        <div><div class="mk">Session Type</div><div class="mv" id="outSession">—</div></div>
+      </div>
+
+      <div class="nsec"><div class="nst">🗣️ Initial Consultation</div><div class="nc" id="outInitial" contenteditable="true"></div><div class="eh">✏️ Click to edit</div></div>
+      <div class="nsec"><div class="nst">🏚️ Socioeconomic Barriers</div><div class="nc" id="outSocio" contenteditable="true"></div><div class="eh">✏️ Click to edit</div></div>
+      <div class="nsec"><div class="nst">💼 Employment Barriers</div><div class="nc" id="outEmpBarriers" contenteditable="true"></div><div class="eh">✏️ Click to edit</div></div>
+      <div class="nsec"><div class="nst">🎯 Employment Plan</div><div class="nc" id="outEmpPlan" contenteditable="true"></div><div class="eh">✏️ Click to edit</div></div>
+      <div class="nsec"><div class="nst">📌 Action Plan</div><div class="nc" id="outAction" contenteditable="true"></div><div class="eh">✏️ Click to edit</div></div>
+
+      <div class="comp"><strong>⚠️ HVRP Documentation:</strong> Review and edit this note as needed. Save as PDF and upload to the veteran's DocuShare case folder within 24 hours. Subject to federal audit under DOL-VETS Grant #23560HV000039 and 2 CFR Part 200.</div>
+    </div>
+
+    <div class="out-foot">
+      <div class="of-note"><strong>DocuShare:</strong> Save as PDF → veteran's case folder by last 4 SSN</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-new" style="color:var(--teal);border-color:var(--teal);background:#fff" onclick="startNew()">← New Note</button>
+        <button class="btn-gen" onclick="savePDF()">💾 Save as PDF</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+let selectedFile=null, fileB64='', fileMime='';
+
+function onDrag(e){e.preventDefault();document.getElementById('dropZone').classList.add('drag')}
+function onDragLeave(){document.getElementById('dropZone').classList.remove('drag')}
+function onDrop(e){e.preventDefault();document.getElementById('dropZone').classList.remove('drag');if(e.dataTransfer.files[0])processFile(e.dataTransfer.files[0])}
+function onFileSelect(e){if(e.target.files[0])processFile(e.target.files[0])}
+
+function processFile(file){
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(!['pdf','doc','docx'].includes(ext)){alert('Please upload a PDF, DOC, or DOCX file.');return;}
+  selectedFile=file;
+  fileMime=ext==='pdf'?'application/pdf':'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const sz=file.size<1048576?Math.round(file.size/1024)+'KB':(file.size/1048576).toFixed(1)+'MB';
+  document.getElementById('fiIcon').textContent=ext==='pdf'?'📕':'📘';
+  document.getElementById('fiName').textContent=file.name;
+  document.getElementById('fiSize').textContent=sz+' · '+ext.toUpperCase();
+  document.getElementById('fileRow').style.display='block';
+  document.getElementById('dropZone').classList.add('has-file');
+  document.getElementById('dzIcon').textContent='✅';
+  document.getElementById('dzTitle').textContent='IEP Ready';
+  document.getElementById('dzDesc').textContent='File loaded — select staff member and click Generate';
+  document.getElementById('genBtn').disabled=false;
+  const r=new FileReader();
+  r.onload=e=>{fileB64=e.target.result.split(',')[1];};
+  r.readAsDataURL(file);
+}
+
+function removeFile(){
+  selectedFile=null;fileB64='';
+  document.getElementById('fileRow').style.display='none';
+  document.getElementById('dropZone').classList.remove('has-file');
+  document.getElementById('dzIcon').textContent='📄';
+  document.getElementById('dzTitle').textContent='Drop IEP here';
+  document.getElementById('dzDesc').textContent='Drag and drop the completed IEP PDF or Word document, or click to browse';
+  document.getElementById('genBtn').disabled=true;
+  document.getElementById('fileInput').value='';
+}
+
+function setStep(n){
+  [1,2,3,4].forEach(i=>{
+    const s=document.getElementById('step'+i);
+    s.classList.remove('active','done');
+    if(i<n)s.classList.add('done');
+    else if(i===n)s.classList.add('active');
+  });
+}
+
+function animateLoading(){
+  const ids=['ls1','ls2','ls3','ls4'];
+  let i=1;
+  const t=setInterval(()=>{
+    if(i>=ids.length){clearInterval(t);return;}
+    document.getElementById(ids[i-1]).classList.remove('active');
+    document.getElementById(ids[i-1]).classList.add('done');
+    document.getElementById(ids[i]).classList.add('active');
+    i++;
+  },1200);
+}
+
+function extract(tag,txt){
+  const m=txt.match(new RegExp(`<${tag}>(.*?)<\/${tag}>`,'s'));
+  return m?m[1].trim():'';
+}
+
+async function generateNote(){
+  if(!selectedFile){alert('Please upload an IEP document first.');return;}
+  const staff=document.getElementById('staffMember').value;
+  if(!staff){alert('Please select the HVRP Staff Member.');return;}
+  const session=document.getElementById('sessionType').value;
+  const today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const ext=selectedFile.name.split('.').pop().toLowerCase();
+
+  document.getElementById('uploadCard').style.display='none';
+  document.getElementById('loadingCard').style.display='block';
+  setStep(2);
+  animateLoading();
+
+  const sys=`You are a professional clinical case note writer for The Houston Launch Pad (THLP), a DOL-VETS HVRP grantee in Houston, Texas (Grant #23560HV000039).
+Read the uploaded IEP document carefully and convert all information into a professional clinical case note.
+Requirements:
+- Third person voice ("This veteran presented...", "The participant reported...")
+- Professional clinical language for federal grant documentation
+- 2 CFR Part 200 compliant
+- Specific and factual based on IEP content
+- 2-4 sentences minimum per section
+
+Respond ONLY in this exact XML format:
+<participant_name>[full name from IEP]</participant_name>
+<ssn_last4>[last 4 digits only]</ssn_last4>
+<initial_consultation>[clinical narrative]</initial_consultation>
+<socioeconomic_barriers>[clinical narrative]</socioeconomic_barriers>
+<employment_barriers>[clinical narrative]</employment_barriers>
+<employment_plan>[clinical narrative]</employment_plan>
+<action_plan>[clinical narrative]</action_plan>`;
+
+  try{
+    let messages;
+    if(ext==='pdf'){
+      messages=[{role:'user',content:[
+        {type:'document',source:{type:'base64',media_type:'application/pdf',data:fileB64}},
+        {type:'text',text:`This is a completed HVRP IEP for a veteran at The Houston Launch Pad. Session: ${session}. Staff: ${staff}. Date: ${today}. Read ALL fields and draft the clinical note.`}
+      ]}];
+    } else {
+      messages=[{role:'user',content:`A case manager has uploaded a completed IEP (${ext.toUpperCase()}) for an HVRP veteran. File: "${selectedFile.name}". Session: ${session}. Staff: ${staff}. Date: ${today}. Field Site: The Houston Launch Pad.
+
+Draft a professional clinical note using standard HVRP IEP fields: participant name, SSN, employment goals, barriers (socioeconomic and employment), training plan, supportive services, and action steps. Use realistic professional clinical language a case manager can edit.`}];
+    }
+
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages})
+    });
+    const data=await res.json();
+    const txt=data.content?.[0]?.text||'';
+
+    const name=extract('participant_name',txt)||'See IEP';
+    const ssn=extract('ssn_last4',txt)||'????';
+
+    document.getElementById('outName').textContent=name;
+    document.getElementById('outSSN').textContent=ssn!=='????'?'xxxx-'+ssn:'See IEP';
+    document.getElementById('outDate').textContent=today;
+    document.getElementById('outStaff').textContent=staff;
+    document.getElementById('outSession').textContent=session;
+    document.getElementById('outInitial').textContent=extract('initial_consultation',txt);
+    document.getElementById('outSocio').textContent=extract('socioeconomic_barriers',txt);
+    document.getElementById('outEmpBarriers').textContent=extract('employment_barriers',txt);
+    document.getElementById('outEmpPlan').textContent=extract('employment_plan',txt);
+    document.getElementById('outAction').textContent=extract('action_plan',txt);
+
+    window._meta={name,ssn};
+    document.getElementById('loadingCard').style.display='none';
+    document.getElementById('outputCard').style.display='block';
+    setStep(3);
+    window.scrollTo({top:0,behavior:'smooth'});
+
+  }catch(err){
+    document.getElementById('loadingCard').style.display='none';
+    document.getElementById('uploadCard').style.display='block';
+    setStep(1);
+    alert('Error generating note. Please try again.\n\n'+err.message);
+  }
+}
+
+function savePDF(){
+  const m=window._meta||{};
+  const name=(m.name||'Veteran').replace(/[^a-zA-Z0-9]/g,'_');
+  const ssn=m.ssn||'0000';
+  const dt=new Date().toISOString().split('T')[0];
+  const fn=`${name}_SSN${ssn}_ClinicalNote_${dt}.pdf`;
+  document.getElementById('printBanner').textContent='📄 Save as: '+fn;
+  document.getElementById('printBanner').style.display='block';
+  document.title=fn;
+  setStep(4);
+  setTimeout(()=>window.print(),300);
+}
+
+function startNew(){
+  removeFile();
+  document.getElementById('outputCard').style.display='none';
+  document.getElementById('uploadCard').style.display='block';
+  document.getElementById('printBanner').style.display='none';
+  document.getElementById('staffMember').value='';
+  // Reset loading steps
+  ['ls1','ls2','ls3','ls4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.classList.remove('done','active');
+    if(i===0)el.classList.add('done');
+    if(i===1)el.classList.add('active');
+  });
+  setStep(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
