@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Hub — The Houston Launch Pad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ─── RESET & BASE ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:       #0b1d3a;
+    --navy-mid:   #122545;
+    --navy-light: #1a3a5c;
+    --gold:       #c8973a;
+    --gold-light: #e6b355;
+    --gold-pale:  rgba(200,151,58,0.12);
+    --sky:        #5ba4cf;
+    --white:      #f0f4f8;
+    --gray:       #8a9bb0;
+    --border:     rgba(255,255,255,0.09);
+    --success:    #3aaf85;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Subtle texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(91,164,207,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 90% 100%, rgba(200,151,58,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── NAV (matches houstonlaunchpad.com style) ─── */
+  .site-nav {
+    background: var(--navy-mid);
+    border-bottom: 1px solid rgba(200,151,58,0.2);
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 62px;
+    gap: 20px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .nav-links a {
+    color: var(--gray);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 6px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover { color: var(--white); background: rgba(255,255,255,0.06); }
+  .nav-links a.active { color: var(--gold); background: var(--gold-pale); }
+
+  /* ─── PAGE WRAPPER ─── */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 52px 24px 80px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--gold-pale);
+    border: 1px solid rgba(200,151,58,0.28);
+    border-radius: 20px;
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    padding: 5px 16px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(34px, 6vw, 56px);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.04;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 em { color: var(--gold); font-style: normal; }
+
+  .hero p {
+    color: var(--gray);
+    font-size: 16px;
+    font-weight: 300;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  /* ─── SECTION HEADER ─── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-head h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .section-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── HUB GRID ─── */
+  .hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 18px;
+    margin-bottom: 52px;
+  }
+
+  .hub-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px 22px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s;
+    cursor: pointer;
+  }
+
+  .hub-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .hub-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(200,151,58,0.35);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.45);
+  }
+
+  .hub-card:hover::before { opacity: 1; }
+
+  /* Featured card */
+  .hub-card.featured {
+    border-color: rgba(200,151,58,0.25);
+    background: linear-gradient(135deg, var(--navy-mid) 0%, rgba(200,151,58,0.04) 100%);
+  }
+
+  .hub-card.featured::before { opacity: 0.5; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .card-icon {
+    width: 46px; height: 46px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .card-icon.gold   { background: rgba(200,151,58,0.14); }
+  .card-icon.sky    { background: rgba(91,164,207,0.14); }
+  .card-icon.green  { background: rgba(58,175,133,0.14); }
+  .card-icon.purple { background: rgba(155,100,220,0.14); }
+
+  .card-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  .card-badge.ai    { background: rgba(200,151,58,0.12); color: var(--gold); border: 1px solid rgba(200,151,58,0.25); }
+  .card-badge.staff { background: rgba(91,164,207,0.12); color: var(--sky);  border: 1px solid rgba(91,164,207,0.25); }
+  .card-badge.doc   { background: rgba(58,175,133,0.12); color: var(--success); border: 1px solid rgba(58,175,133,0.25); }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 5px;
+  }
+
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.09em;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.58;
+    flex: 1;
+    margin-bottom: 18px;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 18px;
+  }
+
+  .tag {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 4px;
+    color: var(--gray);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    text-transform: uppercase;
+  }
+
+  .card-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    margin-top: auto;
+  }
+
+  .card-url {
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 0.04em;
+    font-family: monospace;
+  }
+
+  .open-arrow {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    transition: gap 0.2s;
+  }
+
+  .hub-card:hover .open-arrow { gap: 9px; }
+
+  /* ─── QUICK LINKS (smaller cards for doc center etc.) ─── */
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 52px;
+  }
+
+  .quick-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 18px 14px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: background 0.2s, border-color 0.2s, transform 0.18s;
+    cursor: pointer;
+  }
+
+  .quick-card:hover {
+    background: rgba(200,151,58,0.06);
+    border-color: rgba(200,151,58,0.25);
+    transform: translateY(-2px);
+  }
+
+  .quick-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .quick-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+  }
+
+  .quick-desc {
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.45;
+  }
+
+  /* ─── INFO STRIP ─── */
+  .info-strip {
+    background: rgba(91,164,207,0.06);
+    border: 1px solid rgba(91,164,207,0.15);
+    border-radius: 10px;
+    color: var(--sky);
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 14px 20px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .info-strip .info-icon { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
+
+  /* ─── FOOTER ─── */
+  .page-footer {
+    border-top: 1px solid var(--border);
+    color: var(--gray);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding-top: 22px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .page-footer a { color: rgba(200,151,58,0.6); text-decoration: none; }
+  .page-footer a:hover { color: var(--gold); }
+
+  /* ─── ANIMATIONS ─── */
+  .hub-card, .quick-card {
+    animation: fadeUp 0.5s ease both;
+  }
+  .hub-grid .hub-card:nth-child(1) { animation-delay: 0.05s; }
+  .hub-grid .hub-card:nth-child(2) { animation-delay: 0.1s;  }
+  .hub-grid .hub-card:nth-child(3) { animation-delay: 0.15s; }
+  .hub-grid .hub-card:nth-child(4) { animation-delay: 0.2s;  }
+  .quick-grid .quick-card:nth-child(1) { animation-delay: 0.25s; }
+  .quick-grid .quick-card:nth-child(2) { animation-delay: 0.3s;  }
+  .quick-grid .quick-card:nth-child(3) { animation-delay: 0.35s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 680px) {
+    .nav-links { display: none; }
+    .page { padding: 36px 16px 60px; }
+    .hub-grid, .quick-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV — matches houstonlaunchpad.com style -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="https://houstonlaunchpad.com">
+      🚀 <span>THLP</span> Houston Launch Pad
+    </a>
+    <div class="nav-links">
+      <a href="https://houstonlaunchpad.com/#programs">Programs</a>
+      <a href="https://houstonlaunchpad.com/#services">Services</a>
+      <a href="https://houstonlaunchpad.com/#contact">Contact</a>
+      <a href="ai-hub.html" class="active">AI Hub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">⚡ THLP Digital Workspace</div>
+    <h1>The <em>AI Hub</em><br>Command Center</h1>
+    <p>All THLP digital tools and workspaces in one place — click any card to open.</p>
+  </div>
+
+  <!-- AI AGENT HUBS -->
+  <div class="section-head"><h2>AI Agent Hubs</h2></div>
+
+  <div class="hub-grid">
+
+    <!-- THLP AI Agent Hub -->
+    <a class="hub-card featured" href="YOUR_THLP_HUB_URL_HERE" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon gold">🤖</div>
+        <span class="card-badge ai">AI Agents</span>
+      </div>
+      <div class="card-title">THLP AI Agent Hub</div>
+      <div class="card-subtitle">Veterans Services · 5 Specialized Agents</div>
+      <p class="card-desc">AI-powered agents for grant compliance, veteran employment, peer support, grant writing, and veteran resource navigation. Built for THLP case managers and staff.</p>
+      <div class="card-tags">
+        <span class="tag">Grant & Compliance</span>
+        <span class="tag">Employment</span>
+        <span class="tag">Peer Support</span>
+        <span class="tag">Grant Writing</span>
+        <span class="tag">Resources</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-url">thlp-hub.netlify.app</span>
+        <span class="open-arrow">Open Hub →</span>
+      </div>
+    </a>
+
+    <!-- D&D / Clean Slate Hub -->
+    <a class="hub-card" href="YOUR_DD_CLEANSLATE_HUB_URL_HERE" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon sky">🏗️</div>
+        <span class="card-badge ai">AI Agents</span>
+      </div>
+      <div class="card-title">D&D · Clean Slate Hub</div>
+      <div class="card-subtitle">Operations & Reentry · 4 Agents</div>
+      <p class="card-desc">AI agents for D&D Maintenance operations, bids & proposals, and Clean Slate Houston Foundation grant writing and reentry program support.</p>
+      <div class="card-tags">
+        <span class="tag">Operations</span>
+        <span class="tag">Bids</span>
+        <span class="tag">HUB/MBE</span>
+        <span class="tag">Reentry</span>
+        <span class="tag">Grants</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-url">ddcs-hub.netlify.app</span>
+        <span class="open-arrow">Open Hub →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- STAFF PORTALS -->
+  <div class="section-head"><h2>Staff Portals & Training</h2></div>
+
+  <div class="hub-grid">
+
+    <!-- Training Site -->
+    <a class="hub-card" href="https://training.houstonlaunchpad.com" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon green">📚</div>
+        <span class="card-badge staff">Staff</span>
+      </div>
+      <div class="card-title">THLP Training Portal</div>
+      <div class="card-subtitle">training.houstonlaunchpad.com</div>
+      <p class="card-desc">Staff training resources, onboarding materials, HVRP program guides, compliance training, and professional development for THLP team members.</p>
+      <div class="card-tags">
+        <span class="tag">Onboarding</span>
+        <span class="tag">Compliance</span>
+        <span class="tag">HVRP</span>
+        <span class="tag">Training</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-url">training.houstonlaunchpad.com</span>
+        <span class="open-arrow">Open Portal →</span>
+      </div>
+    </a>
+
+    <!-- Hub Site -->
+    <a class="hub-card" href="https://hub.houstonlaunchpad.com" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon sky">🗂️</div>
+        <span class="card-badge staff">Staff</span>
+      </div>
+      <div class="card-title">THLP Staff Hub</div>
+      <div class="card-subtitle">hub.houstonlaunchpad.com</div>
+      <p class="card-desc">Internal staff hub for team resources, shared tools, communications, and program coordination across THLP departments and grant programs.</p>
+      <div class="card-tags">
+        <span class="tag">Internal</span>
+        <span class="tag">Resources</span>
+        <span class="tag">Team</span>
+        <span class="tag">Programs</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-url">hub.houstonlaunchpad.com</span>
+        <span class="open-arrow">Open Hub →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- DOCUMENT CENTER -->
+  <div class="section-head"><h2>Document Centers</h2></div>
+
+  <div class="quick-grid">
+
+    <a class="quick-card" href="https://houstonlaunchpad.com/hvrp-documents" target="_blank" rel="noopener">
+      <div class="quick-icon">📋</div>
+      <div>
+        <div class="quick-title">HVRP Document Center</div>
+        <div class="quick-desc">Grant forms, PAR templates, FFR documentation, compliance checklists, and HVRP reporting tools.</div>
+      </div>
+    </a>
+
+    <a class="quick-card" href="https://houstonlaunchpad.com/staff-documents" target="_blank" rel="noopener">
+      <div class="quick-icon">📁</div>
+      <div>
+        <div class="quick-title">Staff Document Center</div>
+        <div class="quick-desc">HR forms, policies, timesheets, case management templates, and program documentation.</div>
+      </div>
+    </a>
+
+    <a class="quick-card" href="https://houstonlaunchpad.com/compliance" target="_blank" rel="noopener">
+      <div class="quick-icon">✅</div>
+      <div>
+        <div class="quick-title">Compliance Resources</div>
+        <div class="quick-desc">2 CFR 200 guides, cost allocation plans, audit prep materials, and DOL-VETS compliance references.</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- INFO STRIP -->
+  <div class="info-strip">
+    <span class="info-icon">ℹ️</span>
+    <span>All AI Hub tools require your Anthropic API key to activate agents. Keys are stored only in your browser — nothing is shared between tools or organizations. Questions? Contact <strong>Deirdre Gilbert</strong> at THLP.</span>
+  </div>
+
+  <div class="page-footer">
+    © 2026 The Houston Launch Pad · 2636 South Loop West, Suite 560, Houston TX 77054 ·
+    <a href="https://houstonlaunchpad.com">houstonlaunchpad.com</a>
+  </div>
+
+</div>
+
+</body>
+</html>
