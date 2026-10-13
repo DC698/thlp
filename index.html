@@ -441,7 +441,7 @@ body.locked > *:not(#lockScreen){display:none!important}
 
   <!-- CLIENT FILE TAB -->
   <div class="tab-panel" id="panel-clientfile">
-    <div class="panel-header"><div class="panel-icon">&#128194;</div><div><h2>Client's File</h2><p>Select a case manager to view their DocuShare folder and assigned veteran client files</p></div></div>
+    <div class="panel-header"><div class="panel-icon">&#128194;</div><div><h2>Client's File</h2><p>Select a case manager to open their existing DocuShare folder</p></div></div>
 
     <div class="cf-controls">
       <span class="cf-label">Case Manager:</span>
@@ -464,22 +464,7 @@ body.locked > *:not(#lockScreen){display:none!important}
       </a>
     </div>
 
-    <div id="clientSearchWrap" style="display:none">
-      <div class="client-search-row">
-        <span class="cs-icon">&#128269;</span>
-        <input type="text" id="clientSearchInput" placeholder="Search by name, veteran ID, program, or status..." autocomplete="off"/>
-        <button id="clearClientSearch" title="Clear">&#10005;</button>
-        <span id="clientSearchCount"></span>
-      </div>
-    </div>
-    <div id="cfStats" class="cf-stats" style="display:none">
-      <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total</div></div>
-      <div class="stat-card"><div class="stat-num" id="statActive">0</div><div class="stat-label">Active</div></div>
-      <div class="stat-card"><div class="stat-num" id="statPending">0</div><div class="stat-label">Pending</div></div>
-      <div class="stat-card"><div class="stat-num" id="statInactive">0</div><div class="stat-label">Inactive</div></div>
-      <div class="stat-card"><div class="stat-num" id="statShowing">0</div><div class="stat-label">Showing</div></div>
-    </div>
-    <div id="cfContent"><div class="cf-empty"><h3>No Case Manager Selected</h3><p>Use the dropdown above to select a case manager and view their client files.</p></div></div>
+    <div id="cfContent"><div class="cf-empty"><h3>DocuShare Client Records</h3><p>Select a case manager above to open their folder directly in DocuShare.</p></div></div>
 
   </div>
 
@@ -918,7 +903,7 @@ body.locked > *:not(#lockScreen){display:none!important}
       <!-- TAB: VETERAN FOLDERS -->
       <div class="ap-tab-panel" id="aptab-vetfolders">
         <div class="ap-intro">
-          <strong>Veteran Folders:</strong> In DocuShare Flex, open each veteran's folder inside the case manager's folder → copy the URL from your browser address bar → paste below. Each veteran card will get an <strong>"Open in DocuShare"</strong> button.
+          <strong>Veteran Folders:</strong> Individual client records are maintained in DocuShare. Use Case Manager Folders to manage the existing folder links.
         </div>
         <div id="adminVetRows"></div>
       </div>
@@ -1145,336 +1130,7 @@ const caseManagers=[
   {id:'cm4',name:'Carl Poole'},
 ];
 
-// ── Client records — add real veteran names here ──
-// Format: {id:'VET-XXXX', name:'First Last', status:'active|pending|inactive', program:'HVRP', docs:0, lastUpdate:'Mar 17, 2026'}
-const clientRecords={
-  cm2:[ // Renee Milo — 123 clients (alphabetical)
-    {id:'6458',name:'Adams Daymon',status:'active',program:'HVRP',docs:0,lastUpdate:'12/08/2025'},
-    {id:'2343',name:'Anderson Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'06/12/2025'},
-    {id:'8647',name:'Bailey LaShaun',status:'active',program:'HVRP',docs:0,lastUpdate:'05/19/2025'},
-    {id:'3595',name:'Bass Laricia',status:'active',program:'HVRP',docs:0,lastUpdate:'07/30/2024'},
-    {id:'9011',name:'Bell Robyne',status:'active',program:'HVRP',docs:0,lastUpdate:'07/15/2025'},
-    {id:'4785',name:'Bolds Michele',status:'active',program:'HVRP',docs:0,lastUpdate:'05/28/2024'},
-    {id:'9938',name:'Bouknight Treyvon',status:'active',program:'HVRP',docs:0,lastUpdate:'07/18/2024'},
-    {id:'7752',name:'Bright Shirley',status:'active',program:'HVRP',docs:0,lastUpdate:'04/28/2025'},
-    {id:'7186',name:'Brown Tamasha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/20/2025'},
-    {id:'5738',name:'Butler Albert',status:'active',program:'HVRP',docs:0,lastUpdate:'09/26/2024'},
-    {id:'3502',name:'Cantrell Alexander',status:'active',program:'HVRP',docs:0,lastUpdate:'03/27/2025'},
-    {id:'0263',name:'Carey Kevin',status:'active',program:'HVRP',docs:0,lastUpdate:'08/19/2024'},
-    {id:'1983',name:'Carroll James',status:'active',program:'HVRP',docs:0,lastUpdate:'05/22/2025'},
-    {id:'7820',name:'Cheatham Aaron',status:'active',program:'HVRP',docs:0,lastUpdate:'11/12/2025'},
-    {id:'4863',name:'Coine Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'08/26/2025'},
-    {id:'4872',name:'Crawford Gerald',status:'active',program:'HVRP',docs:0,lastUpdate:'04/23/2024'},
-    {id:'9971',name:'Crumbley Barrala',status:'active',program:'HVRP',docs:0,lastUpdate:'04/17/2025'},
-    {id:'9771',name:'Daniels Aaron',status:'active',program:'HVRP',docs:0,lastUpdate:'11/18/2024'},
-    {id:'6753',name:'Del Pilar Ruben',status:'active',program:'HVRP',docs:0,lastUpdate:'02/02/2026'},
-    {id:'5667',name:'Demaris Jr Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'01/06/2026'},
-    {id:'3312',name:'Dorgan Terrence',status:'active',program:'HVRP',docs:0,lastUpdate:'02/05/2025'},
-    {id:'6828',name:'Dupree Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'12/03/2024'},
-    {id:'3270',name:'El-Bey Zaye',status:'active',program:'HVRP',docs:0,lastUpdate:'07/28/2025'},
-    {id:'2347',name:'England Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'02/19/2026'},
-    {id:'6646',name:'Familuyi Theortis',status:'active',program:'HVRP',docs:0,lastUpdate:'01/27/2026'},
-    {id:'8718',name:'Fernandes Rochelle',status:'active',program:'HVRP',docs:0,lastUpdate:'08/26/2025'},
-    {id:'3657',name:'Flores Quinones Alfredo',status:'active',program:'HVRP',docs:0,lastUpdate:'05/21/2024'},
-    {id:'2074',name:'Fontenot William',status:'active',program:'HVRP',docs:0,lastUpdate:'03/20/2025'},
-    {id:'8860',name:'Franco Jr Ignacio',status:'active',program:'HVRP',docs:0,lastUpdate:'10/15/2024'},
-    {id:'0144',name:'Garrett Monika',status:'active',program:'HVRP',docs:0,lastUpdate:'02/14/2024'},
-    {id:'5282',name:'Gholar Jason',status:'active',program:'HVRP',docs:0,lastUpdate:'09/08/2025'},
-    {id:'2369',name:'Gil Marvin',status:'active',program:'HVRP',docs:0,lastUpdate:'08/19/2024'},
-    {id:'0897',name:'Goree Maurice',status:'active',program:'HVRP',docs:0,lastUpdate:'04/02/2025'},
-    {id:'1440',name:'Goya Obarijima',status:'active',program:'HVRP',docs:0,lastUpdate:'08/13/2025'},
-    {id:'7997',name:'Green Dominic',status:'active',program:'HVRP',docs:0,lastUpdate:'01/07/2026'},
-    {id:'3291',name:'Hampton Derek',status:'active',program:'HVRP',docs:0,lastUpdate:'12/09/2025'},
-    {id:'5859',name:'Hawkins Isabelita',status:'active',program:'HVRP',docs:0,lastUpdate:'06/02/2025'},
-    {id:'6995',name:'Haynes Sidney',status:'active',program:'HVRP',docs:0,lastUpdate:'02/27/2025'},
-    {id:'6999',name:'Holmes Bridgette',status:'active',program:'HVRP',docs:0,lastUpdate:'06/20/2024'},
-    {id:'3745',name:'Hosticka William',status:'active',program:'HVRP',docs:0,lastUpdate:'05/16/2024'},
-    {id:'3797',name:'Howard Jacarra',status:'active',program:'HVRP',docs:0,lastUpdate:'11/13/2025'},
-    {id:'2977',name:'Huggins Karen',status:'active',program:'HVRP',docs:0,lastUpdate:'08/12/2024'},
-    {id:'0376',name:'Hutchin Riley',status:'active',program:'HVRP',docs:0,lastUpdate:'08/13/2024'},
-    {id:'9536',name:'Iqbal Rameez',status:'active',program:'HVRP',docs:0,lastUpdate:'01/28/2026'},
-    {id:'1849',name:'Jackson Fredrick',status:'active',program:'HVRP',docs:0,lastUpdate:'02/18/2026'},
-    {id:'2230',name:'James Willie',status:'active',program:'HVRP',docs:0,lastUpdate:'01/20/2026'},
-    {id:'0372',name:'Jefferson Sonia',status:'active',program:'HVRP',docs:0,lastUpdate:'09/24/2024'},
-    {id:'3333',name:'Jesus Lord',status:'active',program:'HVRP',docs:0,lastUpdate:'02/25/2026'},
-    {id:'8366',name:'Johnson Cordell',status:'active',program:'HVRP',docs:0,lastUpdate:'05/07/2024'},
-    {id:'7589',name:'Johnson Darren',status:'active',program:'HVRP',docs:0,lastUpdate:'11/19/2024'},
-    {id:'6972',name:'Johnson Karisha',status:'active',program:'HVRP',docs:0,lastUpdate:'11/18/2025'},
-    {id:'6214',name:'Johnson Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/19/2024'},
-    {id:'9422',name:'Jones Christian',status:'active',program:'HVRP',docs:0,lastUpdate:'02/12/2025'},
-    {id:'1455',name:'Jones Tomorrow',status:'active',program:'HVRP',docs:0,lastUpdate:'09/24/2025'},
-    {id:'0084',name:'Juneman Bryan',status:'active',program:'HVRP',docs:0,lastUpdate:'02/03/2025'},
-    {id:'8665',name:'Keeler Jeffrey',status:'active',program:'HVRP',docs:0,lastUpdate:'04/23/2025'},
-    {id:'3761',name:'Kennedy Robert',status:'active',program:'HVRP',docs:0,lastUpdate:'08/27/2024'},
-    {id:'7265',name:'King Dedrick',status:'active',program:'HVRP',docs:0,lastUpdate:'12/15/2025'},
-    {id:'4540',name:'King Kelcie',status:'active',program:'HVRP',docs:0,lastUpdate:'10/23/2024'},
-    {id:'4883',name:'Kirksey Candice',status:'active',program:'HVRP',docs:0,lastUpdate:'01/20/2026'},
-    {id:'2022',name:'Kutch Roderick',status:'active',program:'HVRP',docs:0,lastUpdate:'10/21/2024'},
-    {id:'7280',name:'Landry Ronald',status:'active',program:'HVRP',docs:0,lastUpdate:'03/25/2025'},
-    {id:'8144',name:'Lane Andrew',status:'active',program:'HVRP',docs:0,lastUpdate:'05/13/2025'},
-    {id:'7172',name:'Lang Lacy',status:'active',program:'HVRP',docs:0,lastUpdate:'06/25/2024'},
-    {id:'0597',name:'Larry Xavier',status:'active',program:'HVRP',docs:0,lastUpdate:'11/13/2024'},
-    {id:'3533',name:'Lewis Rickey',status:'active',program:'HVRP',docs:0,lastUpdate:'01/12/2026'},
-    {id:'7175',name:'Lucas Fanniece',status:'active',program:'HVRP',docs:0,lastUpdate:'04/02/2025'},
-    {id:'1455',name:'Manney Shawn',status:'active',program:'HVRP',docs:0,lastUpdate:'01/08/2026'},
-    {id:'8364',name:'Marte Rollins Lidia',status:'active',program:'HVRP',docs:0,lastUpdate:'02/12/2026'},
-    {id:'1927',name:'Martinez Tomas',status:'active',program:'HVRP',docs:0,lastUpdate:'07/28/2025'},
-    {id:'9594',name:'Martin Garfield',status:'active',program:'HVRP',docs:0,lastUpdate:'07/10/2025'},
-    {id:'1089',name:'Mccoy Louis',status:'active',program:'HVRP',docs:0,lastUpdate:'08/19/2025'},
-    {id:'5405',name:'Mcleod Vincent',status:'active',program:'HVRP',docs:0,lastUpdate:'11/25/2025'},
-    {id:'9990',name:'Michael Brandon',status:'active',program:'HVRP',docs:0,lastUpdate:'09/20/2023'},
-    {id:'7757',name:'Monroe Leland',status:'active',program:'HVRP',docs:0,lastUpdate:'06/05/2025'},
-    {id:'1002',name:'Moore Marlin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/27/2024'},
-    {id:'9978',name:'Morgan Kendrick',status:'active',program:'HVRP',docs:0,lastUpdate:'07/07/2025'},
-    {id:'0210',name:'Morrow Andrew',status:'active',program:'HVRP',docs:0,lastUpdate:'02/18/2026'},
-    {id:'6892',name:'Mourland Eric',status:'active',program:'HVRP',docs:0,lastUpdate:'01/07/2025'},
-    {id:'3123',name:'Nelson Darius',status:'active',program:'HVRP',docs:0,lastUpdate:'10/07/2025'},
-    {id:'7307',name:'Newman Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'02/25/2026'},
-    {id:'3065',name:'Norris Robert',status:'active',program:'HVRP',docs:0,lastUpdate:'01/09/2025'},
-    {id:'4987',name:'Oates Shaunise',status:'active',program:'HVRP',docs:0,lastUpdate:'11/19/2025'},
-    {id:'5116',name:'OHara Terence',status:'active',program:'HVRP',docs:0,lastUpdate:'11/10/2025'},
-    {id:'5376',name:'Oku Nii-Nortey',status:'active',program:'HVRP',docs:0,lastUpdate:'05/27/2025'},
-    {id:'4797',name:'Omar Jasmine',status:'active',program:'HVRP',docs:0,lastUpdate:'09/15/2025'},
-    {id:'8154',name:'Osuji Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'11/05/2025'},
-    {id:'6204',name:'Owens Clifton',status:'active',program:'HVRP',docs:0,lastUpdate:'06/23/2025'},
-    {id:'0847',name:'Pangeni Binita',status:'active',program:'HVRP',docs:0,lastUpdate:'04/09/2025'},
-    {id:'9305',name:'Pauletha Young',status:'active',program:'HVRP',docs:0,lastUpdate:'06/05/2025'},
-    {id:'6463',name:'Pharr Jr Andre',status:'active',program:'HVRP',docs:0,lastUpdate:'08/18/2025'},
-    {id:'6241',name:'Pitts Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'07/22/2025'},
-    {id:'4996',name:'Pleasant Javana',status:'active',program:'HVRP',docs:0,lastUpdate:'09/10/2024'},
-    {id:'8379',name:'Pleitez Erick',status:'active',program:'HVRP',docs:0,lastUpdate:'08/13/2024'},
-    {id:'8208',name:'Prouty Noel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/26/2024'},
-    {id:'4929',name:'Ramirez Arturo',status:'active',program:'HVRP',docs:0,lastUpdate:'10/13/2025'},
-    {id:'3807',name:'Rhem Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'09/27/2023'},
-    {id:'6093',name:'Robey DeWayne',status:'active',program:'HVRP',docs:0,lastUpdate:'07/29/2025'},
-    {id:'0984',name:'Rogers Mitchell',status:'active',program:'HVRP',docs:0,lastUpdate:'05/22/2024'},
-    {id:'1756',name:'Romain Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'08/21/2025'},
-    {id:'6036',name:'Scott Andrea',status:'active',program:'HVRP',docs:0,lastUpdate:'06/17/2025'},
-    {id:'9686',name:'Scott Yvonna',status:'active',program:'HVRP',docs:0,lastUpdate:'02/19/2024'},
-    {id:'2321',name:'Scurry Kenneth',status:'active',program:'HVRP',docs:0,lastUpdate:'04/16/2024'},
-    {id:'7696',name:'Sheffield Linda',status:'active',program:'HVRP',docs:0,lastUpdate:'09/25/2024'},
-    {id:'3805',name:'Tavera Evaristo',status:'active',program:'HVRP',docs:0,lastUpdate:'09/11/2025'},
-    {id:'8350',name:'Thomas LaJuan',status:'active',program:'HVRP',docs:0,lastUpdate:'11/19/2024'},
-    {id:'2576',name:'Thompson Shaquana',status:'active',program:'HVRP',docs:0,lastUpdate:'03/06/2024'},
-    {id:'4602',name:'Tijerina Manuel',status:'active',program:'HVRP',docs:0,lastUpdate:'07/03/2025'},
-    {id:'6057',name:'Turner Cherylyn',status:'active',program:'HVRP',docs:0,lastUpdate:'01/20/2026'},
-    {id:'9581',name:'Turner Terrence',status:'active',program:'HVRP',docs:0,lastUpdate:'10/15/2024'},
-    {id:'8637',name:'Valdez Reynaldo',status:'active',program:'HVRP',docs:0,lastUpdate:'07/02/2024'},
-    {id:'2973',name:'Walker Christian',status:'active',program:'HVRP',docs:0,lastUpdate:'04/08/2025'},
-    {id:'1341',name:'Walker David',status:'active',program:'HVRP',docs:0,lastUpdate:'10/31/2024'},
-    {id:'9247',name:'Wardell James',status:'active',program:'HVRP',docs:0,lastUpdate:'01/13/2025'},
-    {id:'3002',name:'Washington John',status:'active',program:'HVRP',docs:0,lastUpdate:'08/20/2024'},
-    {id:'4340',name:'Watkins Belinda',status:'active',program:'HVRP',docs:0,lastUpdate:'03/06/2025'},
-    {id:'9619',name:'West Jayla',status:'active',program:'HVRP',docs:0,lastUpdate:'08/29/2024'},
-    {id:'5691',name:'White Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'09/19/2023'},
-    {id:'6815',name:'Wilborn Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'01/10/2024'},
-    {id:'1919',name:'Wilkins Alfrado',status:'active',program:'HVRP',docs:0,lastUpdate:'08/12/2025'},
-    {id:'9357',name:'Williams Elizabeth',status:'active',program:'HVRP',docs:0,lastUpdate:'09/23/2024'},
-    {id:'2683',name:'Williams Morris',status:'active',program:'HVRP',docs:0,lastUpdate:'03/07/2024'},
-    {id:'5939',name:'Williams Zaveri',status:'active',program:'HVRP',docs:0,lastUpdate:'03/10/2025'}
-  ],
-  cm3:[ // Brandi Nicholson — 132 clients (alphabetical)
-    {id:'6325',name:'Abron Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2675',name:'Abron Benjamin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8693',name:'Ajani Oluwasegun',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0276',name:'Alderete Ryan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2851',name:'Alexander Kameron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6247',name:'Allen Trevon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8966',name:'Anderson Damion',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4323',name:'Ardoin Deonte',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5278',name:'Armstrong Marvin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8471',name:'Arnold William',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0798',name:'Barber Fatima',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8910',name:'Barnett Tricia',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8033',name:'Batiste Green Danielle',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2683',name:'Beeghley-Washington Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2368',name:'Bell Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3803',name:'Bevans Bianca',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1023',name:'Blanton Mikal',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3899',name:'Breaux Emile',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5978',name:'Breed Shandra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4456',name:'Brooks Natasha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1947',name:'Brown Harold',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8875',name:'Brown Harrison',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5340',name:'Brown Tyrell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8793',name:'Buenavista Barton',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3153',name:'Burns Billy',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3177',name:'Calderon Edvin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8989',name:'Champs Darrell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7820',name:'Cheatham Aaron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6688',name:'Childress Robert',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0730',name:'Coleman Samuel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0354',name:'Coleman Sophia',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2634',name:'Conner Benny',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8033',name:'Cruz Kevin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7452',name:'Cunningham Fredrick',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1838',name:'Daly John',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9009',name:'Dautruche Ridley',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5295',name:'Dixon Mark',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3291',name:'Echendu Chimeniem',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9321',name:'Edwards Jamaal',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7183',name:'Elliott Cameron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2003',name:'Emeka Henry',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2461',name:'Estrada Joe',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7384',name:'Farrera Francisco',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8810',name:'Felton Derick',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8324',name:'Franks Kyle',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5571',name:'Galbert Connell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2369',name:'Garcia Daniel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6583',name:'Gilbert Kenneth',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0353',name:'Gonzales Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9673',name:'Guerra Fernando',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6971',name:'Guidry jr Earl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5950',name:'Guyton Carl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2596',name:'Harper Donald',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7400',name:'Harrington Don',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3864',name:'Harris Geneice',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7470',name:'Harris Paul',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5878',name:'Harvey Alphonso',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9384',name:'Hasley Claude',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4260',name:'Holt Elijah',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7742',name:'Jackson Lorna',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2367',name:'Jackson Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2881',name:'James Desmond',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7555',name:'Jasso Jesse',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5871',name:'Johnson Eric',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2638',name:'Johnson Keneisha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5432',name:'Johnson Ray',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8465',name:'Jordan Jon-Erick',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3746',name:'Joshua Tiffany',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5037',name:'Kearse ZseVon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8244',name:'Kiger Christina',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0363',name:'King Melvin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1356',name:'King Quadree',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1811',name:'Labbe Wilfred',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9378',name:'Latulas Joseph',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6838',name:'LeBlanc Lemuel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6769',name:'Lewis Nicolette',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0028',name:'Lewis Star',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9420',name:'Lindsay Don Alonzo',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9561',name:'McCarty Erica',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7243',name:'Mccurry Rebecca',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7980',name:'Mcdonald Allen',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1090',name:'McDow James',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6691',name:'McGahey Shelby',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4659',name:'Metheny Paul',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6685',name:'Milton Quinton',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3565',name:'Mitchell Quinnesha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2825',name:'Monroe Robin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7847',name:'Montgomery Jeffery',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0461',name:'Moore Joel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1791',name:'Mwamba Keith',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0303',name:'Nelson Jemisha',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9172',name:'Nguyen Dang',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2638',name:'Nicholson Brandi',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8390',name:'Page Ebonie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2520',name:'Peoples Gary',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8212',name:'Powers Lester',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8908',name:'Randle Alexis',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9561',name:'Reid Lonzie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6252',name:'Rhines Carlton',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0414',name:'Roberson Troy',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1822',name:'Roberts Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6366',name:'Rovira Heather',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0801',name:'Rulvalcaba Angel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6034',name:'Runco Joseph',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5396',name:'Rylander Johnnie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5345',name:'Salas Phillip',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9337',name:'Sanders Sierra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3754',name:'Sandles Rachel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6381',name:'Seitzberg Robert',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2087',name:'Shepard Nicole',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3248',name:'Sims Floyd',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9875',name:'Smith Chrisean',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8467',name:'Smith Dion',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1231',name:'Smith Donice',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3072',name:'Smith Donnell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7913',name:'Smith Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5193',name:'Spencer Cautilda',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3635',name:'Tabb Sebastian',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0806',name:'Taylor Xavier',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5609',name:'Thervil Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3086',name:'Umberhind Koch Krista',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0545',name:'Vasquez Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2090',name:'Vences Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3690',name:'Waddy Kendon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1341',name:'Walker David',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2789',name:'Ward Tyrell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5801',name:'Washington Jr Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2232',name:'Waters Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7530',name:'White Rickey',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6162',name:'Wimberly Trevarius',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3282',name:'Ybarra Ybarra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6771',name:'Young Ell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-  ],
-  cm4:[ // Carl Poole — 65 clients (alphabetical)
-    {id:'6011',name:'Abrego Sanchez Alfonso',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4056',name:'Alvear Sandra',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5370',name:'Ash Ell',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9120',name:'Ashlie Fountain',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6393',name:'Barletta Harold',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8098',name:'Belmar Jr Eric',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8875',name:'Blackman Napoleon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2421',name:'Brooks David',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9621',name:'Butler Jonathon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9991',name:'Byrd Andrew',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9577',name:'Cabaniss Donnie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5112',name:'Carr Garielle',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0963',name:'Danso Emmanuel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9238',name:'Davis Jordan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5650',name:'Diallo Sy',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0622',name:'Dixon Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2416',name:'Ferraro Anthony',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9846',name:'Fisher Jamarian',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3522',name:'Franklin Kamaal',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8304',name:'Gambrell Tyrone',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'3936',name:'Gauthier Ronny',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1414',name:'Gilbert Deirdre',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4938',name:'Gordwin Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4309',name:'Guidry Charles',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0541',name:'Hamboa Frank',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0360',name:'Harvey Quentin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9974',name:'Harvey-Hinds Jhanique',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9323',name:'Heiman Eddie',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8866',name:'Henson Afrionlunsa',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2366',name:'Jackson Cheryl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7872',name:'Jones Paul',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9151',name:'King James',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6371',name:'Larkin Evan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'1206',name:'Lillard Jaimee',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5310',name:'Malith Kog',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6297',name:'Marcus Lee',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2021',name:'Mayo Sheldon',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9704',name:'Mellott Daniel',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2679',name:'Moore David',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6214',name:'Moore Eric',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6586',name:'Moore Marion',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6102',name:'Odukoya Adebola',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0254',name:'Orange Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0356',name:'Owens Adrian',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0438',name:'Payne Nathan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8798',name:'Permenter Bentley',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6200',name:'Redd DeAnna',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'5500',name:'Robinson Yasmin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2572',name:'Roman Ulises',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4249',name:'Scott Ron',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0144',name:'Selvey Larry',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2517',name:'Smith Dennis',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'8279',name:'Sneed Phillip',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0353',name:'Sorenson Christopher',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'7428',name:'Spruell Gergory',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4350',name:'Taylor Michael',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6361',name:'Temple Bentiana',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'9303',name:'Valyan Bryant',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4714',name:'Walker Vance',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0953',name:'Ward Bryan',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'2949',name:'White Carl',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'0096',name:'Williams Darren',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6446',name:'Williams Lindsay',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'6573',name:'Williams Torrin',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-    {id:'4288',name:'Willis Dominique',status:'active',program:'HVRP',docs:0,lastUpdate:'03/18/2026'},
-  ],
-};
+// Archived client records are maintained directly in DocuShare.
 
 // ══════════════════════════════════════════
 // STORAGE
@@ -1506,7 +1162,6 @@ const DEFAULT_LINKS={
   "cm_folder_cm2": "https://houstonlaunchpad.docushareflex.com/xcm/spyglass/falcon2/View/Folder-587",
   "cm_folder_cm3": "https://houstonlaunchpad.docushareflex.com/xcm/spyglass/falcon2/View/Folder-1011",
   "cm_folder_cm4": "https://houstonlaunchpad.docushareflex.com/xcm/spyglass/falcon2/View/Folder-586",
-  "vet_6458": "https://houstonlaunchpad.docushareflex.com/xcm/spyglass/falcon2/View/Folder-19773",
   "clinical_1": "https://dc698.github.io/thlp/Clinical_Note_Agent.html",
   "clinical_2": "https://dc698.github.io/thlp/Clinical_Note_Agent.html",
   "wave_receipts": "https://next.waveapps.com/6eda28e7-7e39-4ce5-8e5a-0cf895691a45/dashboard/"
@@ -1713,7 +1368,7 @@ function handleWaveClick(e){
 // ══════════════════════════════════════════
 const cmSel=document.getElementById('caseManagerSelect');
 caseManagers.forEach(cm=>{const o=document.createElement('option');o.value=cm.id;o.textContent=cm.name;cmSel.appendChild(o)});
-let currentClients=[];
+// Client records are managed directly in DocuShare.
 
 function updateCMBanner(id){
   const banner=document.getElementById('cmFolderBanner');
@@ -1739,100 +1394,12 @@ function updateCMBanner(id){
 
 function onCMChange(){
   const id=cmSel.value;
-  const sw=document.getElementById('clientSearchWrap');
-  const st=document.getElementById('cfStats');
-  document.getElementById('clientSearchInput').value='';
-  document.getElementById('clearClientSearch').style.display='none';
-  document.getElementById('clientSearchCount').textContent='';
   updateCMBanner(id);
-  if(!id){
-    sw.style.display='none';st.style.display='none';
-    document.getElementById('cfContent').innerHTML='<div class="cf-empty"><h3>No Case Manager Selected</h3><p>Use the dropdown above to select a case manager and view their client files.</p></div>';
-    document.getElementById('cnt-clientfile').textContent='—';
-    currentClients=[];return;
-  }
-  currentClients=clientRecords[id]||[];
-  sw.style.display='block';
-  renderClientStats(currentClients,currentClients.length);
-  st.style.display='flex';
-  document.getElementById('cnt-clientfile').textContent=currentClients.length;
-  renderClientCards(currentClients,'',id);
+  document.getElementById('cnt-clientfile').textContent='—';
+  document.getElementById('cfContent').innerHTML=id
+    ? '<div class="cf-empty"><h3>Access Client Files in DocuShare</h3><p>Use the <strong>Open CM Folder in DocuShare</strong> button above to access client records.</p></div>'
+    : '<div class="cf-empty"><h3>No Case Manager Selected</h3><p>Choose a case manager to access their DocuShare folder.</p></div>';
 }
-
-function renderClientStats(all,showing){
-  document.getElementById('statTotal').textContent=all.length;
-  document.getElementById('statActive').textContent=all.filter(c=>c.status==='active').length;
-  document.getElementById('statPending').textContent=all.filter(c=>c.status==='pending').length;
-  document.getElementById('statInactive').textContent=all.filter(c=>c.status==='inactive').length;
-  document.getElementById('statShowing').textContent=showing;
-}
-
-function renderClientCards(clients,q,cmId){
-  const el=document.getElementById('cfContent');
-  if(!clients.length){
-    el.innerHTML=q?'<div class="cf-empty"><h3>No clients match your search</h3></div>':'<div class="cf-empty"><h3>No veterans added yet</h3><p>Veteran names for this case manager have not been entered yet. Please provide the names to update this dashboard.</p></div>';
-    return;
-  }
-  const hl=s=>{if(!q)return s;return s.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>')};
-  const groups=[
-    {label:'Active Clients',icon:'✅',key:'active',chip:'chip-active'},
-    {label:'Pending Clients',icon:'⏳',key:'pending',chip:'chip-pending'},
-    {label:'Inactive Clients',icon:'📂',key:'inactive',chip:'chip-inactive'},
-  ];
-  let html='';
-  groups.forEach(g=>{
-    const grp=clients.filter(c=>c.status===g.key);
-    if(!grp.length)return;
-    html+=`<div class="cf-section"><div class="cf-section-title"><span>${g.icon}</span>${g.label} (${grp.length})</div><div class="forms-grid">`;
-    grp.forEach(c=>{
-      const ini=c.name.split(' ').filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join('');
-      const dsLink=getLink('vet_'+(cmId||'')+'_'+c.id)||getLink('vet_'+c.id);
-      const dsBtnHtml=dsLink
-        ?`<a class="client-ds-btn" href="${dsLink}" target="_blank">📂 Open in DocuShare</a>`
-        :`<button class="client-ds-btn ds-pending" onclick="openAdmin('vetfolders')">📂 Add DocuShare Link</button>`;
-      html+=`<div class="client-card">
-        <div class="client-card-header">
-          <div class="client-avatar">${ini}</div>
-          <div><div class="client-name">${hl(c.name)}</div><div class="client-id">${hl(c.id)}</div></div>
-        </div>
-        <div class="client-card-body">
-          <div class="client-meta">
-            <span class="meta-chip ${g.chip}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span>
-            <span class="meta-chip chip-program">${hl(c.program)}</span>
-          </div>
-          <div class="client-docs">📎 Documents on file: <span class="doc-pill">${c.docs}</span></div>
-        </div>
-        <div class="client-card-footer">
-          <span class="client-date">Updated: ${c.lastUpdate}</span>
-          ${dsBtnHtml}
-        </div>
-      </div>`;
-    });
-    html+='</div></div>';
-  });
-  el.innerHTML=html;
-}
-
-const csi=document.getElementById('clientSearchInput');
-const ccb=document.getElementById('clearClientSearch');
-const csc=document.getElementById('clientSearchCount');
-csi.addEventListener('input',doClientSearch);
-ccb.addEventListener('click',clearClientSearch);
-function doClientSearch(){
-  const q=csi.value.trim();
-  ccb.style.display=q?'block':'none';
-  if(!currentClients.length)return;
-  const matched=q?currentClients.filter(c=>
-    c.name.toLowerCase().includes(q.toLowerCase())||
-    c.id.toLowerCase().includes(q.toLowerCase())||
-    c.program.toLowerCase().includes(q.toLowerCase())||
-    c.status.toLowerCase().includes(q.toLowerCase())
-  ):currentClients;
-  csc.textContent=q?matched.length+' found':'';
-  renderClientStats(currentClients,matched.length);
-  renderClientCards(matched,q);
-}
-function clearClientSearch(){csi.value='';ccb.style.display='none';csc.textContent='';renderClientStats(currentClients,currentClients.length);renderClientCards(currentClients,'')}
 
 // ══════════════════════════════════════════
 // ADMIN PANEL
@@ -1870,27 +1437,10 @@ function buildAdminRows(){
   });
   document.getElementById('adminCMRows').innerHTML=cmHtml;
 
-  // ── VETERAN FOLDER ROWS ──
-  let vHtml='';
-  caseManagers.forEach(cm=>{
-    const vets=clientRecords[cm.id]||[];
-    if(!vets.length)return;
-    vHtml+=`<div class="ap-section"><div class="ap-section-title">📁 ${cm.name}'s Veterans</div>`;
-    vets.forEach(v=>{
-      const vetKey='vet_'+cm.id+'_'+v.id;
-      const val=links[vetKey]||links['vet_'+v.id]||''; // fallback to old key
-      const linked=!!val;
-      vHtml+=`<div class="ap-form-row">
-        <div class="ap-form-label">🗂️ ${v.name}<small>${v.id} · ${v.status.charAt(0).toUpperCase()+v.status.slice(1)}</small></div>
-        <input class="ap-input" data-id="${vetKey}" type="url" placeholder="Paste DocuShare veteran folder URL..." value="${val}" oninput="liveStatusUpdate(this)"/>
-        <span class="ap-status ${linked?'linked':'pending'}" id="apst-${vetKey}">${linked?'✅ Linked':'⏳ Pending'}</span>
-      </div>`;
-    });
-    vHtml+='</div>';
-  });
-  document.getElementById('adminVetRows').innerHTML=vHtml;
+  // Individual client records and links are maintained directly in DocuShare.
+  document.getElementById('adminVetRows').innerHTML='<div class="ap-intro">Individual client records are managed in DocuShare. Use the Case Manager Folders tab for the three existing folder links.</div>';
 
-  // ── QB & WAVE ROWS — pre-fill from saved links ──
+    // ── QB & WAVE ROWS — pre-fill from saved links ──
   const links2=loadLinks();
   [...qbItems,{id:'wave_receipts',label:'wave_receipts'}].forEach(item=>{
     const inp=document.querySelector(`.ap-input[data-id="${item.id}"]`);
